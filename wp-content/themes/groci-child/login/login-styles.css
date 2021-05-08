@@ -1,0 +1,17 @@
+body.login div#login form#loginform input#wp-submit {
+    background-color: orange;
+    border: medium none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0 36px 2px;
+    text-shadow: none;
+}
+
+#login h1 a, .login h1 a {
+    background-image: url(http://e_supermart.test/wp-content/uploads/2018/08/logo-footer-1.png);
+    height:200px;
+    width:300px;
+    background-size: 300px 200px;
+    background-repeat: no-repeat;
+    padding-bottom: 10px;
+}
