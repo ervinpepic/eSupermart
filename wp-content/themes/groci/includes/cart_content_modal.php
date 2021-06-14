@@ -10,3 +10,4 @@
 		<?php woocommerce_mini_cart(); ?>
 		</div>
       </div>
+	  <div class="cart-overlay"></div>

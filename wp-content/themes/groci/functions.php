@@ -3,7 +3,7 @@
  * functions.php
  * @package WordPress
  * @subpackage Groci
- * @since Groci 2.1.2
+ * @since Groci 2.1.3
  * 
  */
  

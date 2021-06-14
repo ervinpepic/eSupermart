@@ -579,6 +579,24 @@ class Helpers
     }
     
     /**
+     * Sort from the longest to the shortest
+     *
+     * @param $a
+     * @param $b
+     *
+     * @return int
+     */
+    public static function sortFromLongest( $a, $b )
+    {
+        $la = mb_strlen( $a );
+        $lb = mb_strlen( $b );
+        if ( $la == $lb ) {
+            return strcmp( $b, $a );
+        }
+        return $lb - $la;
+    }
+    
+    /**
      * Get taxonomy parents
      *
      * @param int $term_id
@@ -1039,7 +1057,7 @@ class Helpers
         if ( !$query->get( 'dgwt_wcas', false ) ) {
             return $posts;
         }
-        $query->set( 's', $query->get( 'dgwt_wcas', '' ) );
+        $query->set( 's', wp_unslash( $query->get( 'dgwt_wcas', '' ) ) );
         return $posts;
     }
     

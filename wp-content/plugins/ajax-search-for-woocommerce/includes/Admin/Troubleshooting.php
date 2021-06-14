@@ -14,6 +14,8 @@ class Troubleshooting
 {
     const  SECTION_ID = 'dgwt_wcas_troubleshooting' ;
     const  TRANSIENT_RESULTS_KEY = 'dgwt_wcas_troubleshooting_async_results' ;
+    const  TRANSIENT_TEST_KEY = 'dgwt_wcas_test_transients' ;
+    const  TRANSIENT_TEST_KEY2 = 'dgwt_wcas_test_transients2' ;
     const  ASYNC_TEST_NONCE = 'troubleshooting-async-test' ;
     const  RESET_ASYNC_TESTS_NONCE = 'troubleshooting-reset-async-tests' ;
     public function __construct()
@@ -126,6 +128,8 @@ class Troubleshooting
             'results_async' => array(),
         ),
         );
+        set_transient( self::TRANSIENT_TEST_KEY, '1', HOUR_IN_SECONDS );
+        set_transient( self::TRANSIENT_TEST_KEY2, '1', 1 );
         $asyncTestsResults = get_transient( self::TRANSIENT_RESULTS_KEY );
         
         if ( !empty($asyncTestsResults) && is_array( $asyncTestsResults ) ) {
@@ -274,7 +278,7 @@ class Troubleshooting
         
         if ( $markAsCritical ) {
             $result['status'] = 'critical';
-            $linkToDocs = 'https://fibosearch.com/documentation/troubleshooting/the-indexer-was-stuck/';
+            $linkToDocs = 'https://fibosearch.com/documentation/troubleshooting/the-search-index-could-not-be-built/';
             $linkToWpHealth = admin_url( 'site-health.php' );
             $result['label'] = __( 'Your site could not complete a loopback request', 'ajax-search-for-woocommerce' );
             if ( !dgoraAsfwFs()->is_premium() ) {

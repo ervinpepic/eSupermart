@@ -5,7 +5,7 @@ Author: KlbTheme (Sinan ISIK)
 Author URI: http://themeforest.net/user/KlbTheme
 Domain Path: /languages
 Description: This WordPress theme is best for use in such business areas as corporate, many types of agencies and bureaus, portfolio showcases, landscape, building, engineering, planning, construction, design
-Version: 2.1.2
+Version: 2.1.3
 License: GNU General Public License version 3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Tags: right-sidebar, left-sidebar,  one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, custom-background, custom-colors, custom-header, custom-menu, editor-style, featured-image-header, featured-images, full-width-template, microformats, post-formats, sticky-post, theme-options, threaded-comments, translation-ready
@@ -2902,4 +2902,18 @@ svg.loader-image.preloader {
 
 p.woocommerce-SavedPaymentMethods-saveNew {
     display: inline-block;
+}
+
+.cart-overlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    z-index: 10;
+}
+
+.toggled .cart-overlay {
+    display: block;
 }

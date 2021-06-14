@@ -5,7 +5,7 @@
  * Description: Extension for All-in-One WP Migration that enables using import from file
  * Author: ServMask, Inc.
  * Author URI: https://servmask.com/
- * Version: 1.7
+ * Version: 1.8
  * Text Domain: all-in-one-wp-migration-file-extension
  * Domain Path: /languages
  * Network: True

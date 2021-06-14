@@ -20,7 +20,11 @@ $(document).ready(function() {
 	// ===========Right Sidebar============
 	$('[data-toggle="offcanvas"]').on('click', function () {
         $('body').toggleClass('toggled');
-	});  
+	}); 
+
+	$('.cart-overlay').on('click', function () {
+        $('body').toggleClass('toggled');
+	}); 
 	
 	$('[data-toggle="offcanvasmobile"]').on('click', function () {
 		$('body').toggleClass('toggled-mobile');
