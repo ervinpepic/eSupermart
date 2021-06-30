@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas\Integrations\Themes\ShopIsle;
+namespace DgoraWcas\Integrations\Themes\Electro;
 
 use DgoraWcas\Abstracts\ThemeIntegration;
 
@@ -9,11 +9,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class ShopIsle extends ThemeIntegration {
+class Electro extends ThemeIntegration {
 
 	public function __construct() {
-		$this->themeSlug = 'shop-isle';
-		$this->themeName = 'Shop Isle';
+		$this->themeSlug = 'electro';
+		$this->themeName = 'Electro';
 
 		parent::__construct();
 	}

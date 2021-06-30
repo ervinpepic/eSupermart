@@ -205,6 +205,7 @@
         that.hintValue = '';
         that.selection = null;
         that.overlayMobileState = 'off';
+		that.isMouseDownOnSearchElements = false;
 
         // Initialize and set options:
         that.initialize();
@@ -549,11 +550,15 @@
 				}
 			});
 
-            // Clear timeout - onBlur usage
-            $(document).on('click.autocomplete', '.' + that.options.containerClass, function () {
-                var that = utils.getActiveInstance();
-                clearTimeout(that.blurTimeoutId);
-            })
+			// Use that.select(i) method instead of default browser events on <a> element
+			$(document).on('click.autocomplete', suggestionSelector, function (e) {
+				e.preventDefault();
+			});
+
+			// Mark cursor position for onBlur event
+			$('.' + that.options.containerClass).on('mousedown.autocomplete', function (e) {
+				that.isMouseDownOnSearchElements = true;
+			});
 
         },
         registerEventsDetailsPanel: function () {
@@ -564,17 +569,16 @@
                 return;
             }
 
-            // Clear timeout - onBlur usage
-            $(document).on('click.autocomplete', '.' + that.options.containerDetailsClass, function () {
-                var that = utils.getActiveInstance();
-                clearTimeout(that.blurTimeoutId);
-            })
-
             // Update quantity
             $(document).on('change.autocomplete', '[name="js-dgwt-wcas-quantity"]', function (e) {
                 var $input = $(this).closest('.js-dgwt-wcas-pd-addtc').find('[data-quantity]');
                 $input.attr('data-quantity', $(this).val());
             });
+
+			// Mark cursor position for onBlur event
+			$('.' + that.options.containerDetailsClass).on('mousedown.autocomplete', function (e) {
+				that.isMouseDownOnSearchElements = true;
+			});
 
         },
 		registerIconHandler: function () {
@@ -735,15 +739,13 @@
             	return;
 			}
 
-            // If user clicked on a suggestion, hide() will
-            // be canceled, otherwise close suggestions
-            that.blurTimeoutId = setTimeout(function () {
-                that.hide();
+			if (!that.isMouseDownOnSearchElements) {
+				that.hide();
 
-                if (that.selection && that.currentValue !== query) {
-                    (options.onInvalidateSelection || $.noop).call(that.element);
-                }
-            }, 200);
+				if (that.selection && that.currentValue !== query) {
+					(options.onInvalidateSelection || $.noop).call(that.element);
+				}
+			}
         },
         abortAjax: function () {
             var that = this;
@@ -1364,7 +1366,7 @@
             }
 
             // Disable on more product suggestion
-            if (typeof suggestion.more_products == 'string' && suggestion.more_products === 'more_products') {
+            if (typeof suggestion.type == 'string' && suggestion.type === 'more_products') {
                 return;
             }
 
@@ -1875,7 +1877,8 @@
 
                 var parent = '',
                     dataAttrs = '',
-                    is_img = false;
+                    is_img = false,
+					url = typeof suggestion.url == 'string' && suggestion.url.length ? suggestion.url : '#';
 
                 if (groupBy) {
                     html += formatGroup(suggestion, value, i);
@@ -1883,8 +1886,7 @@
 
                 if (typeof suggestion.type == 'undefined' || (suggestion.type != 'product') && suggestion.type != 'product_variation') {
 
-                    var dataUrl = '',
-                        classes = className,
+                    var classes = className,
                         innerClass = 'dgwt-wcas-st',
                         prepend = '',
                         append = '',
@@ -1956,7 +1958,7 @@
 
                     title = title.length > 0 ? ' title="' + title + '"' : '';
 
-                    html += '<div class="' + classes + '" data-index="' + i + '">';
+					html += '<a href="' + url + '" class="' + classes + '" data-index="' + i + '">';
 
                     if(isImg) {
 						html += '<span class="dgwt-wcas-si"><img src="' + suggestion.image_src + '" /></span>';
@@ -1985,7 +1987,7 @@
 					html += '</span>';
 
 					html += isImg ? '</div>' : '';
-                    html += '</div>';
+                    html += '</a>';
                 } else {
 
                     // Image
@@ -1998,7 +2000,7 @@
                     dataAttrs += typeof suggestion.post_id != 'undefined' ? 'data-post-id="' + suggestion.post_id + '" ' : '';
                     dataAttrs += typeof suggestion.taxonomy != 'undefined' ? 'data-taxonomy="' + suggestion.taxonomy + '" ' : '';
                     dataAttrs += typeof suggestion.term_id != 'undefined' ? 'data-term-id="' + suggestion.term_id + '" ' : '';
-                    html += '<div class="' + className + ' dgwt-wcas-suggestion-product' + sugVarClass + '" data-index="' + i + '" ' + dataAttrs + '>';
+                    html += '<a href="' + url + '" class="' + className + ' dgwt-wcas-suggestion-product' + sugVarClass + '" data-index="' + i + '" ' + dataAttrs + '>';
 
                     // Image
                     if (is_img) {
@@ -2028,7 +2030,8 @@
 						var vendorBody = '<span class="dgwt-wcas-product-vendor"><span class="dgwt-wcas-product-vendor-label">' + dgwt_wcas.labels.vendor_sold_by + ' </span>' + suggestion.vendor + '</span>'
 
 						if (typeof suggestion.vendor_url != 'undefined' && suggestion.vendor_url) {
-							html += '<a href="' + suggestion.vendor_url + '">' + vendorBody + '</a>';
+							// Since version v1.12.0 suggestions tag was changed from <div> to <a> and vendor links are no longer supported.
+							html += '<span class="dgwt-wcas-product-vendor-link" data-url="' + suggestion.vendor_url + '">' + vendorBody + '</span>';
 						} else {
 							html += vendorBody;
 						}
@@ -2072,6 +2075,9 @@
 
             // Add class on show
             $('body').addClass('dgwt-wcas-open');
+
+            // Reset the latest mousedown position
+			that.isMouseDownOnSearchElements = false;
 
             that.automaticAlignment();
 

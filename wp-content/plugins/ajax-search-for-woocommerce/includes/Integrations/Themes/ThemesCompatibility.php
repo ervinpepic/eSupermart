@@ -100,7 +100,7 @@ class ThemesCompatibility {
 				'slug' => 'shopical',
 				'name' => 'Shopical',
 			),
-			'shopical-pro' => array(
+			'shopical-pro'  => array(
 				'slug' => 'shopical-pro',
 				'name' => 'ShopicalPro',
 			),
@@ -168,13 +168,22 @@ class ThemesCompatibility {
 				'slug' => 'top-store-pro',
 				'name' => 'TopStorePro',
 			),
-			'top-store' => array(
+			'top-store'     => array(
 				'slug' => 'top-store',
 				'name' => 'TopStore',
 			),
-			'goya' => array(
+			'goya'          => array(
 				'slug' => 'goya',
 				'name' => 'Goya',
+			),
+			'electro'       => array(
+				'slug' => 'electro',
+				'name' => 'Electro',
+			),
+			'shopisle-pro' => array(
+				'slug'      => 'shopisle-pro',
+				'className' => 'ShopIslePro',
+				'name'      => 'ShopIsle PRO',
 			),
 		);
 	}

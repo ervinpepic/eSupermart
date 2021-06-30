@@ -4,7 +4,7 @@ Tags: woocommerce search, ajax search, search by sku, product search, woocommerc
 Requires at least: 5.0
 Tested up to: 5.7
 Requires PHP: 7.0
-Stable tag: 1.11.0
+Stable tag: 1.12.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,8 +35,7 @@ Who doesn’t love instant, as-you-type suggestions? In 2021, customers expect s
 &#9989; **Support for WooCommerce search results page** - after typing enter, users get the same results as in FiboSearch bar
 &#9989; **Grouping instant search results by type** – displaying e.g. first matching categories, then matching products
 &#9989; **Google Analytics** support
-&#9989; **WPML** compatible
-&#9989; **Polylang** compatible
+&#9989; Multilingual support including **WPML**, **Polylang** and **qTranslate-XT**
 &#9989; **Personalization** of search bar and autocomplete suggestions - labels, colors, preloader, image and more
 
 = Try the PRO version =
@@ -48,7 +47,7 @@ FiboSearch also comes in a Pro version, with a modern, inverted index-based sear
 
 &#9989; **Ultra-fast search engine** based on the inverted index – works very fast, even with 100,000+ products
 &#9989; **Fuzzy search** – works even with minor typos
-&#9989; **Search in custom fields**
+&#9989; **Search in custom fields** with dedicated support for ACF
 &#9989; **Search in attributes**
 &#9989; **Search in categories**. Supports category thumbnails.
 &#9989; **Search in tags**
@@ -143,11 +142,23 @@ You can read more and compare Pro and Free features here: [Full comparison - Pro
 
 == Changelog ==
 
-= 1.11.0, May 26, 2021 =
+= 1.12.0, June 22, 2021 =
+* ADD: Integration with Electro theme
+* ADD: New test for the troubleshooting module - test language codes
+* ADD: New test for the troubleshooting module - check if the Elementor Pro has defined correct template for search results
+
+* FIX: “WOOF – Products Filter for WooCommerce” - disappearing filters if “Dynamic recount” and “Hide empty terms” was enabled and other issues
+* FIX: Remove unnecessary AJAX request on select “See all products ... (X)”
+* FIX: The search form is now generated without random ID, to be compatible with the LiteSpeed Cache plugin
+
+* REFACTOR: Change .dgwt-wcas-suggestion element from &lt;div&gt; to &lt;a&gt; to allow open a suggestion in a new tab
+
+= 1.11.0, May 24, 2021 =
 * ADD: Integration with Goya theme
 * ADD: Integration with Top and Top Store Pro theme
 * ADD: Keep the state of a details panel in memory instead of replacing it every time using jQuery.html() method. Doesn't clear quantity and "add to cart" states.
-* ADD: Prevent submit empty form
+* ADD: Prevent submit empty form 
+
 * FIX: W3 validator warning: The type attribute for the style element is not needed and should be omitted.
 * FIX: Search terms with apostrophes
 * FIX: Synchronization with the native WooCommerce option "Out of stock visibility" 
@@ -167,6 +178,7 @@ You can read more and compare Pro and Free features here: [Full comparison - Pro
 = 1.10.0, April 22, 2021 =
 * ADD: Possibility to disable select event on suggestions (click and hit the Enter key)
 * ADD: Possibility to disable submit a search form via a filter
+
 * FIX: Not working click event on suggestions after using “back arrow” on a Safari browser
 * FIX: Allow to recognize Chinese lang codes such as zh-hant and zh-hans
 * FIX: Error on PHP 8. Wrong format for printf function
@@ -178,6 +190,7 @@ You can read more and compare Pro and Free features here: [Full comparison - Pro
 
 = 1.9.0, March 15, 2021 =
 * ADD: Support for WooCommerce Private Store plugin
+
 * CHANGE: Plugin rebranding -  Replace the plugin name AJAX Search for WooCommerce with new name FiboSearch
 * CHANGE: Plugin rebranding -  Replace the old domain ajaxsearch.pro with new fibosearch.com
 * CHANGE: Plugin rebranding -  Update visual assets 
@@ -188,6 +201,7 @@ You can read more and compare Pro and Free features here: [Full comparison - Pro
 * FIX: Missing of dgwt-wcas-active class when the search was focused too early
 * FIX: Grammar and spelling errors in texts
 * FIX: Not firing jQuery onLoad event for some browsers
+
 * REMOVE: Removed useless dgwt-wcas-search-submit name attribute
 * REMOVE: Removed unused search forms from a Avada theme
 

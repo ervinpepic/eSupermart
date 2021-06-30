@@ -1434,6 +1434,8 @@
 		progressBar: '.dgwt-wcas-troubleshooting-wrapper .progress_bar',
 		progressBarInner: '.dgwt-wcas-troubleshooting-wrapper .progress-bar-inner',
 		resetButtonName: 'dgwt-wcas-reset-async-tests',
+		fixOutofstockButtonName: 'dgwt-wcas-fix-out-of-stock-relationships',
+		dismissElementorTemplateButtonName: 'dgwt-wcas-dismiss-elementor-template',
 		init: function () {
 			var _this = this;
 			if (typeof dgwt_wcas['troubleshooting'] === 'undefined') {
@@ -1467,6 +1469,38 @@
 				var data = {
 					'action': 'dgwt_wcas_troubleshooting_reset_async_tests',
 					'_wpnonce': dgwt_wcas.troubleshooting.nonce.troubleshooting_reset_async_tests
+				};
+				$.post(
+					ajaxurl,
+					data,
+					function () {
+						location.reload();
+					}
+				);
+				return false;
+			});
+
+			$(document).on('click', 'input[name="' + _this.fixOutofstockButtonName + '"]', function (e) {
+				$('input[name="' + _this.fixOutofstockButtonName + '"]').attr('disabled', 'disabled').next().addClass('loading');
+				var data = {
+					'action': 'dgwt_wcas_troubleshooting_fix_outofstock',
+					'_wpnonce': dgwt_wcas.troubleshooting.nonce.troubleshooting_fix_outofstock
+				};
+				$.post(
+					ajaxurl,
+					data,
+					function () {
+						location.reload();
+					}
+				);
+				return false;
+			});
+
+			$(document).on('click', 'input[name="' + _this.dismissElementorTemplateButtonName + '"]', function (e) {
+				$('input[name="' + _this.dismissElementorTemplateButtonName + '"]').attr('disabled', 'disabled');
+				var data = {
+					'action': 'dgwt_wcas_troubleshooting_dismiss_elementor_template',
+					'_wpnonce': dgwt_wcas.troubleshooting.nonce.troubleshooting_dismiss_elementor_template
 				};
 				$.post(
 					ajaxurl,

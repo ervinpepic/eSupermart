@@ -1228,6 +1228,10 @@ body:not(.dgwt-wcas-is-details) .dgwt-wcas-suggestion:last-child {
 	min-height: 100vh;
 }
 
+html.dgwt-wcas-overlay-mobile-on {
+	scroll-behavior: unset;
+}
+
 .dgwt-wcas-om-bar {
     display: flex;
     height: 45px;

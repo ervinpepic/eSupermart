@@ -580,7 +580,7 @@ class Settings
         ),
             'type'    => 'filters_rules_plug',
             'class'   => 'js-dgwt-wcas-adv-settings dgwt-wcas-premium-only',
-            'default' => array(),
+            'default' => '[]',
         ),
         ) ),
             'dgwt_wcas_performance'  => apply_filters( 'dgwt/wcas/settings/section=performance', array(

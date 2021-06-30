@@ -787,6 +787,9 @@ class Helpers
         if ( !empty($el) && is_numeric( $el ) ) {
             $allow = true;
         }
+        if ( DGWT_WCAS()->settings->getOption( 'search_in_product_content' ) !== 'on' ) {
+            $allow = false;
+        }
         return apply_filters( 'dgwt/wcas/search_in_variable_products', $allow );
     }
     
