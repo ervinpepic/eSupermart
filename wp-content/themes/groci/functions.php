@@ -3,7 +3,7 @@
  * functions.php
  * @package WordPress
  * @subpackage Groci
- * @since Groci 2.1.4
+ * @since Groci 2.1.5
  * 
  */
  
@@ -131,6 +131,7 @@ function groci_theme_setup() {
 	add_theme_support( 'wc-product-gallery-slider' );
 	add_theme_support( 'woocommerce', array('gallery_thumbnail_image_width' => 67,'thumbnail_image_width' => 80,) );
 	load_theme_textdomain( 'groci', get_template_directory() . '/languages' );
+	remove_theme_support( 'widgets-block-editor' );
 
 }
 add_action( 'after_setup_theme', 'groci_theme_setup' );
@@ -197,7 +198,7 @@ function groci_register_required_plugins() {
             'slug'                  => 'js_composer',
             'source'                => $mainurl . 'js-composer.zip',
             'required'              => false,
-            'version'               => '6.6.0',
+            'version'               => '6.7.0',
             'force_activation'      => false,
             'force_deactivation'    => false,
             'external_url'          => '',
@@ -219,7 +220,7 @@ function groci_register_required_plugins() {
             'slug'                  => 'revslider',
             'source'                => $mainurl . 'revslider.zip',
             'required'              => false,
-            'version'               => '6.5.3',
+            'version'               => '6.5.5',
             'force_activation'      => false,
             'force_deactivation'    => false,
             'external_url'          => '',
