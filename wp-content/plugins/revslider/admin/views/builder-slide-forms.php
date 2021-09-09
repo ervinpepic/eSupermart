@@ -78,7 +78,8 @@ if ($wpml->wpml_exists()) {
 					--><div class="slidebg_vimeo_settings slide_bg_settings">
 						<label_a><?php _e('Vimeo ID', 'revslider');?></label_a><input id="s_bg_vimeo_src" data-evt="updateslidebasic" class="slideinput easyinit" type="text" data-r="bg.vimeo" placeholder="<?php _e('Enter Vimeo ID', 'revslider');?>">
 						<div class="div25"></div>
-						<label_a><?php _e('Poster Image', 'revslider');?></label_a><div data-evt="updateslidebasic" data-evtparam="double" data-r="#slide#.slide.bg.image" data-rid="#slide#.slide.bg.imageId" data-lib="#slide#.slide.bg.imageLib" data-sty="#slide#.slide.bg.imageSourceType"  class="getImageFromMediaLibrary basic_action_button  longbutton"><i class="material-icons">style</i><?php _e('Media Library', 'revslider');?></div>
+						<label_a><?php _e('Poster Image', 'revslider');?></label_a><div data-r="#slide#.slide.bg.image" data-f="#slide#.slide.bg.vimeo" data-evtparam="double" data-evt="updateslidebasic" data-lib="#slide#.slide.bg.imageLib" data-sty="#slide#.slide.bg.imageSourceType"  class="getImageFromVimeo basic_action_button longbutton "><i class="material-icons">style</i><?php _e('Vimeo Poster', 'revslider');?></div>
+						<label_a></label_a><div data-evt="updateslidebasic" data-evtparam="double" data-r="#slide#.slide.bg.image" data-rid="#slide#.slide.bg.imageId" data-lib="#slide#.slide.bg.imageLib" data-sty="#slide#.slide.bg.imageSourceType"  class="getImageFromMediaLibrary basic_action_button  longbutton"><i class="material-icons">style</i><?php _e('Media Library', 'revslider');?></div>
 						<label_a></label_a><div data-evt="updateslidebasic" data-evtparam="double" data-r="#slide#.slide.bg.image" data-rid="#slide#.slide.bg.imageId" data-lib="#slide#.slide.bg.imageLib" data-sty="#slide#.slide.bg.imageSourceType" class="getImageFromObjectLibrary basic_action_button longbutton callEventButton"><i class="material-icons">camera_enhance</i><?php _e('Object Library', 'revslider');?></div>						
 						<label_a></label_a><div data-evt="updateslidebasic" data-r="#slide#.slide.bg.image" data-rid="#slide#.slide.bg.imageId" class="removePosterImage basic_action_button longbutton"><i class="material-icons">delete</i><?php _e('Remove', 'revslider');?></div><span class="linebreak"></span>
 					</div><!--
@@ -424,6 +425,8 @@ if ($wpml->wpml_exists()) {
 			<div id="form_sanimation_sframes_advanced" class="form_inner open">
 				<div class="form_inner_header"><i class="material-icons">tune</i><?php _e('Advanced', 'revslider');?></div>
 				<div id="form_sanimation_sframes_innerwrap" class="collapsable">
+					
+				
 					<!-- LAYER FRAME TRANSFORM  -->
 					<div id="slide_maintranssettings_wrap" class="slide_transsettings_wrap">
 						<div id="slidebasic_ts_wrapbrtn" class="ts_wrapbrtn"><div data-showtrans="#slide_transsettings" data-frametarget="slide" class="transtarget_selector selected" ><?php _e('Timing', 'revslider');?></div></div><!--
@@ -577,8 +580,7 @@ if ($wpml->wpml_exists()) {
 					<div id="slide3d_transsettings" class="group_transsettings" style="display:none">
 						<div id="sltrans_3d_wrap">
 							<div id="sltrans_in_3d_wrap">																
-								<div id="sltrans_3d_sets">
-									<div class="div25"></div>
+								<div id="sltrans_3d_sets">									
 									<label_a><?php _e('3D Effect', 'revslider');?></label_a><select id="sltrans_3d_effect" class="slideinput tos2 nosearchbox easyinit callEvent" data-showprio="show" data-show="._3DST_*val*_SHOW" data-hide="._3DST_ALL"  data-evt="updateSlideAnimation" data-evtparam="tocustom"  data-r="slideChange.d3.f" data-theme="dark">
 										<option value="none"><?php _e('None', 'revslider');?></option>
 										<option value="cube"><?php _e('Cube', 'revslider');?></option>
@@ -632,6 +634,20 @@ if ($wpml->wpml_exists()) {
 							</div>				
 						</div>
 					</div>
+				</div>
+			</div>
+
+			<div id="form_sanimation_sframes_perf" class="form_inner open">
+				<div class="form_inner_header"><i class="material-icons">speed</i><?php _e('Performance', 'revslider');?></div>
+				<div id="form_sanimation_sperform_innerwrap" class="collapsable">
+					<row id="sltrans_dpr_wrap">
+						<longoption id="sltrans_dpr"><label_a style="min-width:160px"><?php _e('Prioritize Performance', 'revslider');?></label_a><input id="slidechangedpr" type="checkbox" class="easyinit slideinput callEvent" data-evt="updateSlideAnimation" data-r="slideChange.adpr"></longoption>
+					</row>
+					<div class="div10"></div>
+					<row class="direktrow">
+						<labelhalf><i class="material-icons vmi">sms_failed</i></labelhalf>
+						<contenthalf><div class="function_info"><?php _e('Win performance in complex transitions by reducing the image quality during animations', 'revslider');?></div></contenthalf>
+					</row>
 				</div>
 			</div>
 			<!-- ADVANCED SETTINGS FOR ANIMATION -->

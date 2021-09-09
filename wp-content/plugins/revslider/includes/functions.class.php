@@ -10,6 +10,7 @@ if(!defined('ABSPATH')) exit();
 class RevSliderFunctions extends RevSliderData {
 
 	public function __construct(){
+		parent::__construct();
 	}
 
 	/**
@@ -151,26 +152,27 @@ class RevSliderFunctions extends RevSliderData {
 	 * get POST variable
 	 * before: RevSliderBase::getPostVar();
 	 */
-	public function get_post_var($key, $default = ''){
+	public function get_post_var($key, $default = '', $esc = true){
 		$val = $this->get_var($_POST, $key, $default);
-		
-		return $val;
+		return ($esc) ? esc_html($val) : $val;
 	}
 	
 	/**
 	 * get GET variable
 	 * before: RevSliderBase::getGetVar();
 	 */
-	public function get_get_var($key, $default = ''){
-		return $this->get_var($_GET, $key, $default);
+	public function get_get_var($key, $default = '', $esc = true){
+		$val = $this->get_var($_GET, $key, $default);
+		return ($esc) ? esc_html($val) : $val;
 	}
 	
 	/**
 	 * get POST or GET variable in this order
 	 * before: RevSliderBase::getPostGetVar();
 	 */
-	public function get_request_var($key, $default = ''){
-		return (array_key_exists($key, $_POST)) ? $this->get_var($_POST, $key, $default) : $this->get_var($_GET, $key, $default);
+	public function get_request_var($key, $default = '', $esc = true){
+		$val = (array_key_exists($key, $_POST)) ? $this->get_var($_POST, $key, $default) : $this->get_var($_GET, $key, $default);
+		return ($esc) ? esc_html($val) : $val;
 	}
 	
 	/**
@@ -934,7 +936,7 @@ class RevSliderFunctions extends RevSliderData {
 									if(!$mgfirst) $t_tcf .= urlencode(',');
 									$t_tcf .= urlencode($mgvv);
 									$mgfirst = false;
-								}
+								} 
 								
 								//we did not add any variants, so dont add the font
 								if($mgfirst === true) continue;
@@ -1044,6 +1046,7 @@ class RevSliderFunctions extends RevSliderData {
   font-family: '".$f_family."';
   font-style: ".$style.";
   font-weight: ".$_weight.";
+  font-display: swap;
   src: local('".$f_family."'), local('".$f_family."'), url(".$base_url.'/revslider/gfonts/'. $font_name . '/' . $font_name . '-' . $weight . '.woff2'.") format('woff2');
 }";
 						}
@@ -1054,7 +1057,7 @@ class RevSliderFunctions extends RevSliderData {
 			
 		}else{
 			$url = $this->modify_fonts_url('https://fonts.googleapis.com/css?family=');
-			$ret .= ($tcf !== '') ? '<link href="'.$url.$tcf.'" rel="stylesheet" property="stylesheet" media="all" type="text/css" >'."\n" : '';
+			$ret .= ($tcf !== '') ? '<link href="'.$url.$tcf.'&display=swap" rel="stylesheet" property="stylesheet" media="all" type="text/css" >'."\n" : '';
 			$ret .= ($tcf2 !== '') ? html_entity_decode(stripslashes($tcf2)) : '';
 		}
 		

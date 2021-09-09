@@ -189,6 +189,9 @@ class RevSliderFunctionsAdmin extends RevSliderFunctions {
 	 * Get Sliders data for the overview page
 	 **/
 	public function get_slider_overview(){
+		global $rs_do_init_action;
+		$rs_do_init_action = false;
+		
 		$rs_slider	= new RevSliderSlider();
 		$rs_slide	= new RevSliderSlide();
 		$sliders	= $rs_slider->get_sliders(false);
@@ -232,6 +235,8 @@ class RevSliderFunctionsAdmin extends RevSliderFunctions {
 				unset($sliders[$k]);
 			}
 		}
+		
+		$rs_do_init_action = true;
 		
 		return $data;
 	}
@@ -570,7 +575,7 @@ class RevSliderFunctionsAdmin extends RevSliderFunctions {
 		$upload_dir = wp_upload_dir();
 		
 		$new_path = $path;
-		$file_name = $this->get_val($import_file, 'name');
+		$file_name = basename($this->get_val($import_file, 'name'));
 		$i = 0;
 		while(file_exists($new_path)){
 			$i++;
@@ -1052,6 +1057,8 @@ class RevSliderFunctionsAdmin extends RevSliderFunctions {
 			'active_sr_inst_upd' => __('Instant Updates', 'revslider'),
 			'active_sr_one_on_one' => __('1on1 Support', 'revslider'),			
 			'parallaxsettoenabled' => __('Parallax is now generally Enabled', 'revslider'),
+			'CORSERROR' => __('External Media can not be used  for WEBGL Transitions due CORS Policy issues', 'revslider'),
+			'CORSWARNING' => __('Slider Revolution has successfully re-requested image to rectify above CORS error.', 'revslider'),
 			'timelinescrollsettoenabled' => __('Scroll Based Timeline is now generally Enabled', 'revslider'),
 			'feffectscrollsettoenabled' => __('Filter Effect Scroll is now generally Enabled', 'revslider'),
 			'nolayersinslide' => __('Slide has no Layers', 'revslider'),
@@ -1397,4 +1404,16 @@ class RevSliderFunctionsAdmin extends RevSliderFunctions {
 		
 		return $_lang;
 	}
+
+	/**
+	 * function to check if the current page is a post/page in edit mode
+	 */
+	public function is_edit_page(){
+		if(!is_admin()) return false;
+
+		global $pagenow;
+
+		return in_array($pagenow, array('post.php', 'post-new.php'));
+	}
+	
 }

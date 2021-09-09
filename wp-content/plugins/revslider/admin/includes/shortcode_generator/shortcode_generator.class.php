@@ -221,7 +221,6 @@ class RevSliderShortcodeWizard extends RevSliderFunctions {
 
 		$rsaf = new RevSliderFunctionsAdmin();
 		$rsa = $rsaf->get_short_library();
-
 		if(!empty($rsa)) $obj = $rsaf->json_encode_client_side($rsa);
 
 		$rs_compression = $rsaf->compression_settings();

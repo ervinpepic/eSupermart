@@ -461,7 +461,7 @@ if(!defined('ABSPATH')) exit();
 						</div>
 					</row>
 
-					<div class="_nsfc_ _nsfr_ _nsft_ _nsfa_ _nsfb_ _nsfsvg_">
+					<div class="_nsfc_ _nsfr_ _nsft_ _nsfa_ _nsfb_ _nsfsvg_ _nsftbsic_">
 						<label_a><?php _e('Size Presets', 'revslider');?></label_a><select id="layer_covermode" data-enable=".layersize_wrap " data-disable=".layersize_*val*" class="layerinput tos2 nosearchbox easyinit callEvent" data-updateviaevt="true" data-evt="layerSizePreset" data-r="size.covermode"><option value="custom" selected="selected"><?php _e('Custom Size', 'revslider');?></option><option value="fullwidth"><?php _e('Full Width', 'revslider');?></option><option value="fullheight"><?php _e('Full Height', 'revslider');?></option><option value="cover"><?php _e('Stretch', 'revslider');?></option><option value="cover-proportional"><?php _e('Cover', 'revslider');?></option></select>
 					</div>
 					<div class="_nflic_ _nvojcm_">
@@ -1258,8 +1258,8 @@ if(!defined('ABSPATH')) exit();
 							</row>
 							<div class="div10"></div>
 							<row class="direktrow">
-								<onelong class="dyn_inp_wrap"><label_icon class="ui_scalex"></label_icon><input id="le_frame_scale_x" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="random,cycle,inherit" data-presets_text="$C$!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="1!inherit!{0,2}![0.5|1]" data-r="#frame#.transform.scaleX"  data-steps="0.05" type="text"></onelong>
-								<oneshort class="dyn_inp_wrap"><label_icon class="ui_scaley"></label_icon><input id="le_frame_scale_y" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="random,cycle,inherit" data-presets_text="$C$!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="1!inherit!{0,2}![0.5|1]" data-r="#frame#.transform.scaleY"  data-steps="0.05" type="text"></oneshort>
+								<onelong class="dyn_inp_wrap"><label_icon class="ui_scalex"></label_icon><input id="le_frame_scale_x" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="random,cycle,inherit" data-presets_text="$C$1!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="1!inherit!{0,2}![0.5|1]" data-r="#frame#.transform.scaleX"  data-steps="0.05" type="text"></onelong>
+								<oneshort class="dyn_inp_wrap"><label_icon class="ui_scaley"></label_icon><input id="le_frame_scale_y" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="random,cycle,inherit" data-presets_text="$C$1!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="1!inherit!{0,2}![0.5|1]" data-r="#frame#.transform.scaleY"  data-steps="0.05" type="text"></oneshort>
 							</row>
 							<row class="direktrow">
 								<onelong class="dyn_inp_wrap"><label_icon class="ui_skewx"></label_icon><input id="le_frame_skew_x" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="px,random,cycle,inherit" data-presets_text="$C$px!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="50px!inherit!{0,2}![-50|50]" data-r="#frame#.transform.skewX"  data-steps="0.05" type="text"></onelong>
@@ -1289,10 +1289,12 @@ if(!defined('ABSPATH')) exit();
 								<onelong><label_a><?php _e('Use Filter', 'revslider');?></label_a><input type="checkbox" data-showhide="._ltsel_main_filter" data-showhidedep="true" class="layerinput easyinit" data-r="#frame#.filter.use"/></onelong>
 								<oneshort class="_ltsel_main_filter"><label_icon class="ui_blur"></label_icon><input class="layerinput valueduekeyboard smallinput easyinit" data-numeric="true" data-allowed="px" data-min="0" data-max="500" data-r="#frame#.filter.blur" type="text"></oneshort>									
 							</row>
-							<row class="direktrow">
+							<row>
 								<onelong class="_ltsel_main_filter"><label_icon class="ui_grayscale"></label_icon><input class="layerinput valueduekeyboard smallinput easyinit" data-numeric="true" data-allowed="%" data-min="0" data-max="100" data-r="#frame#.filter.grayscale" type="text"></onelong>
 								<oneshort class="_ltsel_main_filter"><label_icon class="ui_brightness"></label_icon><input class="layerinput valueduekeyboard smallinput easyinit" data-numeric="true" data-allowed="%" data-min="0" data-max="10000" data-r="#frame#.filter.brightness" type="text"></oneshort>
-							</row>
+							</row>								
+							<longoption class="_ltsel_main_filter"><label_a><?php _e('Set Filters on Mask', 'revslider');?></label_a><input type="checkbox" class="layerinput easyinit" data-r="timeline.filtersOnMask"/></longoption>
+							
 							<div class="div15"></div>
 							<div class="form_inner_header innerwrap_breakout"><i class="material-icons">settings_brightness</i><?php _e('Layer Back-Drop Filter', 'revslider');?></div>
 							<div class="div15"></div>
@@ -1358,7 +1360,7 @@ if(!defined('ABSPATH')) exit();
 								<label_a><?php _e('Type', 'revslider');?></label_a><select data-show=".clippath_o_*val*" data-hide=".clippath_hide" class="layerinput tos2 nosearchbox easyinit" data-r="timeline.clipPath.type">
 									<option value="rectangle"><?php _e('Rectangle', 'revslider');?></option>									
 									<option value="circle"><?php _e('Circle', 'revslider');?></option>
-									<option value="inverts"><?php _e('Inverts', 'revslider');?></option>							
+									<option value="inverts"><?php _e('Custom Mask', 'revslider');?></option>							
 								</select>
 								<label_a><?php _e('Origin', 'revslider');?></label_a><div class="clippath_o_rectangle clippath_hide" style="display:inline-block"><select class="layerinput tos2 nosearchbox easyinit"  data-r="timeline.clipPath.origin">
 											<optgroup label="<?php _e('Vertical', 'revslider');?>">
@@ -1380,8 +1382,8 @@ if(!defined('ABSPATH')) exit();
 											<optgroup label="<?php _e('Center Diagonal', 'revslider');?>">
 												<option value="clr"><?php _e('Center - Left Right', 'revslider');?></option>
 												<option value="crl"><?php _e('Center - Right Left', 'revslider');?></option>
-												<option disabled="disabled" value="invh"><?php _e('Invert Horizontal', 'revslider');?></option>
-												<option disabled="disabled" value="invv"><?php _e('Invert Vertical', 'revslider');?></option>
+												<option disabled="disabled" value="invh"><?php _e('Horizontal Mask', 'revslider');?></option>
+												<option disabled="disabled" value="invv"><?php _e('Vertical Mask', 'revslider');?></option>
 											</optgroup>										
 										</select>
 									</div><div class="clippath_o_circle clippath_hide"  style="display:inline-block"><select class="layerinput tos2 nosearchbox easyinit clippath_hide" data-r="timeline.clipPath.origin">
@@ -1405,8 +1407,8 @@ if(!defined('ABSPATH')) exit();
 											</optgroup>																															
 										</select>
 									</div><div class="clippath_o_inverts clippath_hide"  style="display:inline-block"><select class="layerinput tos2 nosearchbox easyinit clippath_hide" data-r="timeline.clipPath.origin">											
-											<option value="invv"><?php _e('Invert Vertical', 'revslider');?></option>
-											<option value="invh"><?php _e('Invert Horizontal', 'revslider');?></option>
+											<option value="invv"><?php _e('Vertical Mask', 'revslider');?></option>
+											<option value="invh"><?php _e('Horizontal Mask', 'revslider');?></option>
 											<option disabled="disabled" value="l"><?php _e('Left', 'revslider');?></option>
 											<option disabled="disabled" value="cv"><?php _e('Center', 'revslider');?></option>											
 											<option disabled="disabled" value="r"><?php _e('Right', 'revslider');?></option>										
@@ -1421,8 +1423,8 @@ if(!defined('ABSPATH')) exit();
 											<option disabled="disabled" value="crl"><?php _e('Center - Right Left', 'revslider');?></option>											
 										</select>
 									</div>
-								<onelong><label_icon class="ui_brightness"></label_icon><input data-numeric="true" class="layerinput valueduekeyboard smallinput easyinit input_with_presets"  data-allowed="%,inherit" data-responsive="true" data-r="#frame#.transform.clip"  data-presets_text="$C$100%!$C$75%!$C$50%!$C$25%!" data-presets_val="100%!75%!50%!25%!" type="text"></onelong>
-								<div class="clippath_o_inverts clippath_hide"><onelong><label_icon class="ui_brightness"></label_icon><input data-numeric="true" class="layerinput valueduekeyboard smallinput easyinit input_with_presets"  data-allowed="%,inherit" data-responsive="true" data-r="#frame#.transform.clipB"  data-presets_text="$C$100%!$C$75%!$C$50%!$C$25%!" data-presets_val="100%!75%!50%!25%!" type="text"></onelong></div>
+								<onelong><label_icon class="ui_brightness clippath_hide clippath_o_circle clippath_o_rectangle"></label_icon><label_a class="clippath_o_inverts clippath_hide"><?php _e('Start Range', 'revslider');?></label_a><input data-numeric="true" class="layerinput valueduekeyboard smallinput easyinit input_with_presets"  data-allowed="%,inherit" data-responsive="true" data-r="#frame#.transform.clip"  data-presets_text="$C$100%!$C$75%!$C$50%!$C$25%!" data-presets_val="100%!75%!50%!25%!" type="text"></onelong>
+								<div class="clippath_o_inverts clippath_hide"><onelong><label_a><?php _e('End Range', 'revslider');?></label_a><input data-numeric="true" class="layerinput valueduekeyboard smallinput easyinit input_with_presets"  data-allowed="%,inherit" data-responsive="true" data-r="#frame#.transform.clipB"  data-presets_text="$C$100%!$C$75%!$C$50%!$C$25%!" data-presets_val="100%!75%!50%!25%!" type="text"></onelong></div>
 							</div>
 						</div>
 						<!-- CHARS TRANSFORMATIONS -->
@@ -1446,8 +1448,8 @@ if(!defined('ABSPATH')) exit();
 								</row>
 								<div class="div10"></div>
 								<row class="direktrow">
-									<onelong class="dyn_inp_wrap"><label_icon class="ui_scalex"></label_icon><input id="le_frame_chars_scale_x" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="random,cycle,inherit" data-presets_text="$C$!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="1!inherit!{0,2}![0.5|1]" data-r="#frame#.chars.scaleX"  data-steps="0.05" type="text"></onelong>
-									<oneshort class="dyn_inp_wrap"><label_icon class="ui_scaley"></label_icon><input id="le_frame_chars_scale_y" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="random,cycle,inherit" data-presets_text="$C$!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="1!inherit!{0,2}![0.5|1]" data-r="#frame#.chars.scaleY"  data-steps="0.05" type="text"></oneshort>
+									<onelong class="dyn_inp_wrap"><label_icon class="ui_scalex"></label_icon><input id="le_frame_chars_scale_x" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="random,cycle,inherit" data-presets_text="$C$1!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="1!inherit!{0,2}![0.5|1]" data-r="#frame#.chars.scaleX"  data-steps="0.05" type="text"></onelong>
+									<oneshort class="dyn_inp_wrap"><label_icon class="ui_scaley"></label_icon><input id="le_frame_chars_scale_y" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="random,cycle,inherit" data-presets_text="$C$1!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="1!inherit!{0,2}![0.5|1]" data-r="#frame#.chars.scaleY"  data-steps="0.05" type="text"></oneshort>
 								</row>
 								<row class="direktrow">
 									<onelong class="dyn_inp_wrap"><label_icon class="ui_skewx"></label_icon><input id="le_frame_chars_skew_x" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="px,random,cycle,inherit" data-presets_text="$C$px!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="50px!inherit!{0,2}![-50|50]" data-r="#frame#.chars.skewX"  data-steps="0.05" type="text"></onelong>
@@ -1519,8 +1521,8 @@ if(!defined('ABSPATH')) exit();
 								</row>
 								<div class="div10"></div>
 								<row class="direktrow">
-									<onelong class="dyn_inp_wrap"><label_icon class="ui_scalex"></label_icon><input id="le_frame_words_scale_x" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="random,cycle,inherit" data-presets_text="$C$!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="1!inherit!{0,2}![0.5|1]" data-r="#frame#.words.scaleX"  data-steps="0.05" type="text"></onelong>
-									<oneshort class="dyn_inp_wrap"><label_icon class="ui_scaley"></label_icon><input id="le_frame_words_scale_y" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="random,cycle,inherit" data-presets_text="$C$!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="1!inherit!{0,2}![0.5|1]" data-r="#frame#.words.scaleY"  data-steps="0.05" type="text"></oneshort>
+									<onelong class="dyn_inp_wrap"><label_icon class="ui_scalex"></label_icon><input id="le_frame_words_scale_x" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="random,cycle,inherit" data-presets_text="$C$1!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="1!inherit!{0,2}![0.5|1]" data-r="#frame#.words.scaleX"  data-steps="0.05" type="text"></onelong>
+									<oneshort class="dyn_inp_wrap"><label_icon class="ui_scaley"></label_icon><input id="le_frame_words_scale_y" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="random,cycle,inherit" data-presets_text="$C$1!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="1!inherit!{0,2}![0.5|1]" data-r="#frame#.words.scaleY"  data-steps="0.05" type="text"></oneshort>
 								</row>
 								<row class="direktrow">
 									<onelong class="dyn_inp_wrap"><label_icon class="ui_skewx"></label_icon><input id="le_frame_words_skew_x" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="px,random,cycle,inherit" data-presets_text="$C$px!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="50px!inherit!{0,2}![-50|50]" data-r="#frame#.words.skewX" data-steps="0.05"  type="text"></onelong>
@@ -1592,8 +1594,8 @@ if(!defined('ABSPATH')) exit();
 								</row>
 								<div class="div10"></div>
 								<row class="direktrow">
-									<onelong class="dyn_inp_wrap"><label_icon class="ui_scalex"></label_icon><input id="le_frame_lines_scale_x" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="random,cycle,inherit" data-presets_text="$C$!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="1!inherit!{0,2}![0.5|1]" data-r="#frame#.lines.scaleX" data-steps="0.05" type="text"></onelong>
-									<oneshort class="dyn_inp_wrap"><label_icon class="ui_scaley"></label_icon><input id="le_frame_lines_scale_y" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="random,cycle,inherit" data-presets_text="$C$!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="1!inherit!{0,2}![0.5|1]" data-r="#frame#.lines.scaleY" data-steps="0.05" type="text"></oneshort>
+									<onelong class="dyn_inp_wrap"><label_icon class="ui_scalex"></label_icon><input id="le_frame_lines_scale_x" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="random,cycle,inherit" data-presets_text="$C$1!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="1!inherit!{0,2}![0.5|1]" data-r="#frame#.lines.scaleX" data-steps="0.05" type="text"></onelong>
+									<oneshort class="dyn_inp_wrap"><label_icon class="ui_scaley"></label_icon><input id="le_frame_lines_scale_y" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="random,cycle,inherit" data-presets_text="$C$1!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="1!inherit!{0,2}![0.5|1]" data-r="#frame#.lines.scaleY" data-steps="0.05" type="text"></oneshort>
 								</row>
 								<row class="direktrow">
 									<onelong class="dyn_inp_wrap"><label_icon class="ui_skewx"></label_icon><input id="le_frame_lines_skew_x" class="rsdyn_inp layerinput valueduekeyboard smallinput easyinit input_with_presets" data-numeric="true" data-allowed="px,random,cycle,inherit" data-presets_text="$C$px!$I$Inherit!$R$Random {min,max}!$CY$Cycles [val|val|val]" data-presets_val="50px!inherit!{0,2}![-50|50]" data-r="#frame#.lines.skewX" data-steps="0.05" type="text"></onelong>

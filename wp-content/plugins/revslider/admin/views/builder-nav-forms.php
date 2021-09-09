@@ -283,7 +283,7 @@ if(!defined('ABSPATH')) exit();
 				<div class="form_inner_header"><i class="material-icons">palette</i><?php _e('Global Style Presets', 'revslider');?></div>
 				<!--<div class="form_intoaccordion" data-trigger="#sr_na_arr_2"><i class="material-icons">arrow_drop_down</i></div>-->
 				<div class="collapsable">
-					<label_a><?php _e('Preset', 'revslider');?></label_a><select id="sr_arrows_style_preset" data-r="nav.arrows.preset" class="sliderinput tos2 easyinit" ></select><span class="linebreak"></span>
+					<label_a><?php _e('Preset', 'revslider');?></label_a><select id="sr_arrows_style_preset" data-tags="true" data-r="nav.arrows.preset" class="sliderinput tos2 searchbox easyinit" ></select><span class="linebreak"></span>
 					<label_a></label_a><div data-evt="sliderNavPreset" data-evtparam="arrows" class="callEventButton basic_action_button autosize"><i class="material-icons">save</i><?php _e('Load', 'revslider');?></div>
 					<div data-evt="saveNavPreset" data-evtparam="arrows" class="callEventButton basic_action_button autosize"><i class="material-icons">save</i><?php _e('Save', 'revslider');?></div><span class="linebreak"></span>
 					<label_a></label_a><div data-evt="deleteNavPreset" data-evtparam="arrows" class="callEventButton basic_action_button autosize"><i class="material-icons">delete</i><?php _e('Delete', 'revslider');?></div>
@@ -423,7 +423,7 @@ if(!defined('ABSPATH')) exit();
 				<div class="form_inner_header"><i class="material-icons">palette</i><?php _e('Global Style Presets', 'revslider');?></div>
 				<!--<div class="form_intoaccordion" data-trigger="#sr_na_arr_2"><i class="material-icons">arrow_drop_down</i></div>-->
 				<div class="collapsable">
-					<label_a><?php _e('Preset', 'revslider');?></label_a><select id="sr_bullets_style_preset" data-r="nav.bullets.preset" class="sliderinput tos2 easyinit" ></select>
+					<label_a><?php _e('Preset', 'revslider');?></label_a><select id="sr_bullets_style_preset" data-tags="true" data-r="nav.bullets.preset" class="sliderinput tos2 searchbox easyinit" ></select>
 					<label_a></label_a><div data-evt="sliderNavPreset" data-evtparam="bullets" class="callEventButton basic_action_button autosize"><i class="material-icons">save</i><?php _e('Load', 'revslider');?></div>
 					<div data-evt="saveNavPreset" data-evtparam="bullets" class="callEventButton basic_action_button autosize"><i class="material-icons">save</i><?php _e('Save', 'revslider');?></div><span class="linebreak"></span>
 					<label_a></label_a><div data-evt="deleteNavPreset" data-evtparam="bullets" class="callEventButton basic_action_button autosize"><i class="material-icons">delete</i><?php _e('Delete', 'revslider');?></div>
@@ -622,7 +622,7 @@ if(!defined('ABSPATH')) exit();
 			<div id="form_nav_tabs_style" class="form_inner open">
 				<div class="form_inner_header"><i class="material-icons">palette</i><?php _e('Global Style Presets', 'revslider');?></div>
 				<div class="collapsable">
-					<label_a><?php _e('Preset', 'revslider');?></label_a><select id="sr_tabs_style_preset" data-r="nav.tabs.preset" class="sliderinput tos2 easyinit" ></select>
+					<label_a><?php _e('Preset', 'revslider');?></label_a><select id="sr_tabs_style_preset" data-tags="true" data-r="nav.tabs.preset" class="sliderinput tos2 searchbox easyinit" ></select>
 					<label_a></label_a><div data-evt="sliderNavPreset" data-evtparam="tabs" class="callEventButton basic_action_button autosize"><i class="material-icons">save</i><?php _e('Load', 'revslider');?></div>
 					<div data-evt="saveNavPreset" data-evtparam="tabs" class="callEventButton basic_action_button autosize"><i class="material-icons">save</i><?php _e('Save', 'revslider');?></div><span class="linebreak"></span>
 					<label_a></label_a><div data-evt="deleteNavPreset" data-evtparam="tabs" class="callEventButton basic_action_button autosize"><i class="material-icons">delete</i><?php _e('Delete', 'revslider');?></div>
@@ -818,7 +818,7 @@ if(!defined('ABSPATH')) exit();
 			<div id="form_nav_thumbs_style" class="form_inner open">
 				<div class="form_inner_header"><i class="material-icons">palette</i><?php _e('Global Style Presets', 'revslider');?></div>
 				<div class="collapsable">
-					<label_a><?php _e('Preset', 'revslider');?></label_a><select id="sr_thumbs_style_preset" data-r="nav.thumbs.preset" class="searchbox sliderinput tos2 easyinit" ></select>
+					<label_a><?php _e('Preset', 'revslider');?></label_a><select id="sr_thumbs_style_preset" data-tags="true" data-r="nav.thumbs.preset" class="searchbox sliderinput tos2 easyinit" ></select>
 					<label_a></label_a><div data-evt="sliderNavPreset" data-evtparam="thumbs" class="callEventButton basic_action_button autosize"><i class="material-icons">save</i><?php _e('Load', 'revslider');?></div>
 					<div data-evt="saveNavPreset" data-evtparam="thumbs" class="callEventButton basic_action_button autosize"><i class="material-icons">save</i><?php _e('Save', 'revslider');?></div><span class="linebreak"></span>
 					<label_a></label_a><div data-evt="deleteNavPreset" data-evtparam="thumbs" class="callEventButton basic_action_button autosize"><i class="material-icons">delete</i><?php _e('Delete', 'revslider');?></div>
@@ -916,8 +916,10 @@ if(!defined('ABSPATH')) exit();
 				<div class="collapsable" style="display:block">
 					<label_a><?php _e('Wheel Listener', 'revslider');?></label_a><select class="sliderinput tos2 nosearchbox easyinit"  name="sr_mousenavigation" class="sliderinput easyinit" data-r="nav.mouse.set" data-show=".sr_mousenavigation_*val*" data-hide=".sr_mousenavigationsettings"><option value="on"><?php _e('On', 'revslider');?></option><option value="carousel"><?php _e('Infinity', 'revslider');?></option><option value="off"><?php _e('Off', 'revslider');?></option></select><span class="linebreak"></span>
 					<div class="sr_mousenavigation_on sr_mousenavigation_carousel sr_mousenavigationsettings">																				
-						<label_a><?php _e('Reverse Scroll', 'revslider');?></label_a><select class="sliderinput tos2 nosearchbox easyinit"  name="sr_reversemousenavigation" class="sliderinput easyinit" data-r="nav.mouse.reverse"><option value="reverse"><?php _e('Reverse', 'revslider');?></option><option value="default"><?php _e('Default', 'revslider');?></option></select><span class="linebreak"></span>						
+						<label_a><?php _e('Reverse Scroll', 'revslider');?></label_a><select class="sliderinput tos2 nosearchbox easyinit"  name="sr_reversemousenavigation" class="sliderinput easyinit" data-r="nav.mouse.reverse"><option value="reverse"><?php _e('Reverse', 'revslider');?></option><option value="default"><?php _e('Default', 'revslider');?></option></select><span class="linebreak"></span>
+						<label_a><?php _e('Scroll Target', 'revslider');?></label_a><select class="sliderinput tos2 nosearchbox easyinit"  name="sr_targetmousenavigation" class="sliderinput easyinit" data-r="nav.mouse.target"><option value="window"><?php _e('Window', 'revslider');?></option><option value="html"><?php _e('HTML', 'revslider');?></option><option value="body"><?php _e('Body', 'revslider');?></option></select><span class="linebreak"></span>
 						<div class="div10"></div>				
+						<longoption><i class="material-icons">view_day</i><label_a><?php _e('Snap Threshold', 'revslider');?></label_a><input class="sliderinput valueduekeyboard easyinit"  data-r="nav.mouse.threshold" data-min="0" data-max="100" type="text" id="wheelsnapthreshold" ></longoption>
 						<longoption><i class="material-icons">visibility</i><label_a><?php _e('In ViewPort (%)', 'revslider');?></label_a><input class="sliderinput valueduekeyboard easyinit"  data-r="nav.mouse.viewport" data-min="0" data-max="100" type="text" id="wheelifvisible" ></longoption>
 						<longoption><i class="material-icons">schedule</i><label_a><?php _e('Call Delay', 'revslider');?></label_a><input class="sliderinput valueduekeyboard easyinit"  data-r="nav.mouse.calldelay" data-min="100" data-max="3000" data-allowed="ms" type="text" id="wheelcalldelay" ></longoption>
 						
