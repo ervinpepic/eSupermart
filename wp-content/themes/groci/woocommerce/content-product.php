@@ -23,6 +23,9 @@ global $product;
 if ( empty( $product ) || ! $product->is_visible() ) {
 	return;
 }
+
+$postview  = isset( $_POST['shop_view'] ) ? $_POST['shop_view'] : '';
+
 ?>
 <?php if(wc_get_loop_prop( 'columns' ) == '4'){ ?>
    <?php $column = '3'; ?>
@@ -30,7 +33,7 @@ if ( empty( $product ) || ! $product->is_visible() ) {
    <?php $column = '4'; ?>
 <?php } ?>
  
-<?php if (groci_shop_view() == 'list_view') { ?>
+<?php if (groci_shop_view() == 'list_view' || $postview == 'list_view') { ?>
 <div class="col-md-12 pmb-3">
 <?php } else { ?>
 <div class="col-md-<?php echo esc_attr($column); ?> <?php echo esc_attr(ot_get_option('groci_shop_mobile_columns')); ?> pmb-3">

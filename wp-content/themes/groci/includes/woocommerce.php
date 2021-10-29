@@ -100,13 +100,15 @@ function groci_shop_thumbnail () {
 			$percentage .= '%</span>';			
 		}
 
+		$postview  = isset( $_POST['shop_view'] ) ? $_POST['shop_view'] : '';
+
     ?>
 
 
 	<?php
 
 
-		if (groci_shop_view() == 'list_view') {
+		if (groci_shop_view() == 'list_view' || $postview == 'list_view') {
 			$output .= '<div class="product">';
 			
 			$output .= '<div class="row product-list-row">';
