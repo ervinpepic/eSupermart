@@ -956,8 +956,8 @@
             $suggestionsWrapp.css('height', 'auto');
             $detailsWrapp.css('height', 'auto');
 
-            var sH = $suggestionsWrapp.outerHeight(),
-                dH = $detailsWrapp.outerHeight(),
+            var sH = $suggestionsWrapp.outerHeight(false),
+                dH = $detailsWrapp.outerHeight(false),
                 minHeight = 340;
 
             $suggestionsWrapp.find('.dgwt-wcas-suggestion:last-child').removeClass('dgwt-wcas-suggestion-no-border-bottom');
@@ -1032,8 +1032,8 @@
 
             // Choose orientation
             var orientation = that.options.orientation,
-                containerHeight = $form.outerHeight(),
-                height = that.el.outerHeight(),
+                containerHeight = $form.outerHeight(false),
+                height = that.el.outerHeight(false),
                 offset = that.el.offset(),
                 styles = {'top': offset.top, 'left': offset.left};
 
@@ -1054,7 +1054,7 @@
                 if (ft < $suggestionsContainer.height()) {
                     $suggestionsContainer.height(ft - 10);
                 }
-                styles.top += -$suggestionsContainer.outerHeight();
+                styles.top += -$suggestionsContainer.outerHeight(false);
             } else {
                 styles.top += height;
             }
@@ -2476,7 +2476,7 @@
                 upperBound,
                 lowerBound,
                 $suggestionContainer = that.getSuggestionsContainer(),
-                heightDelta = $(activeItem).outerHeight();
+                heightDelta = $(activeItem).outerHeight(false);
 
             offsetTop = activeItem.offsetTop;
             upperBound = $suggestionContainer.scrollTop();
@@ -2738,6 +2738,8 @@
 				} catch (error) {
 				}
 			}
+
+            $(document).trigger('dgwtWcasGAEvent', {'term': label, 'category': category});
         }
     };
 

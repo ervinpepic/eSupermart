@@ -13,14 +13,15 @@ $layout = Helpers::getLayoutSettings();
 $submitText = Helpers::getLabel( 'submit' );
 $hasSubmit  = DGWT_WCAS()->settings->getOption( 'show_submit_button' );
 $uniqueID   = ++ DGWT_WCAS()->searchInstances;
-$layoutType = !empty($args['layout'])  ? $args['layout'] : $layout->layout;
+$layoutType = ! empty( $args['layout'] ) ? $args['layout'] : $layout->layout;
+$isAMP      = Helpers::isAMPEndpoint();
 
 $customParams = apply_filters( 'dgwt/wcas/search_bar/custom_params', array(), DGWT_WCAS()->searchInstances );
 
 ?>
-<div class="dgwt-wcas-search-wrapp <?php echo Helpers::searchWrappClasses( $args ); ?>">
+<div <?php echo $isAMP ? "id='dgwt-wcas-search-wrapp{$uniqueID}'" : ''; ?> class="dgwt-wcas-search-wrapp <?php echo Helpers::searchWrappClasses( $args ); ?>">
 	<?php if(in_array($layoutType, array('icon', 'icon-flexible'))): ?>
-	<div class="dgwt-wcas-search-icon js-dgwt-wcas-search-icon-handler"><?php echo Helpers::getMagnifierIco('dgwt-wcas-ico-magnifier-handler'); ?></div>
+	<div <?php echo $isAMP ? "on='tap:dgwt-wcas-search-wrapp{$uniqueID}.toggleClass(class=\"dgwt-wcas-layout-icon-open\")'" : ""; ?> class="dgwt-wcas-search-icon js-dgwt-wcas-search-icon-handler"><?php echo Helpers::getMagnifierIco('dgwt-wcas-ico-magnifier-handler'); ?></div>
 	<div class="dgwt-wcas-search-icon-arrow"></div>
 	<?php endif; ?>
 	<form class="dgwt-wcas-search-form" role="search" action="<?php echo Helpers::searchFormAction(); ?>" method="get">

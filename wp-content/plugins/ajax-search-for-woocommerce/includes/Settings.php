@@ -111,9 +111,20 @@ class Settings
         
         if ( dgoraAsfwFs()->is_premium() ) {
             $suffix = '';
+            
             if ( Builder::getInfo( 'status' ) === 'error' || Builder::isIndexerWorkingTooLong() ) {
-                $suffix = '<span class="dgwt-wcas-tab-mark">!</span>';
+                $suffix .= '<span class="js-dgwt-wcas-indexer-tab-error dgwt-wcas-tab-mark active">!</span>';
+            } else {
+                $suffix .= '<span class="js-dgwt-wcas-indexer-tab-error dgwt-wcas-tab-mark">!</span>';
             }
+            
+            
+            if ( in_array( Builder::getInfo( 'status' ), array( 'preparing', 'building', 'cancellation' ) ) ) {
+                $suffix .= '<span class="js-dgwt-wcas-indexer-tab-progress dgwt-wcas-tab-progress active"></span>';
+            } else {
+                $suffix .= '<span class="js-dgwt-wcas-indexer-tab-progress dgwt-wcas-tab-progress"></span>';
+            }
+            
             $sections[30] = array(
                 'id'    => 'dgwt_wcas_performance',
                 'title' => __( 'Indexer', 'ajax-search-for-woocommerce' ) . $suffix,
@@ -661,30 +672,6 @@ class Settings
                 'type'  => 'desc',
                 'desc'  => Helpers::indexerDemoHtml(),
                 'class' => 'dgwt-wcas-premium-only wcas-opt-tntsearch',
-            );
-        }
-        
-        // Show info about rebranding
-        // Show info for all users with install date < Fri Mar 12 2021 22:59:00 GMT+0000
-        // @TODO Remove it in March 2022
-        $installDate = get_option( FeedbackNotice::ACTIVATION_DATE_OPT );
-        
-        if ( !empty($installDate) && is_numeric( $installDate ) && $installDate < 1615589940 ) {
-            $settingsFields['dgwt_wcas_basic'][5] = array(
-                'name'  => 'rebranding_head',
-                'label' => __( 'News', 'ajax-search-for-woocommerce' ),
-                'type'  => 'head',
-                'class' => 'dgwt-wcas-sgs-header',
-            );
-            $desc = __( 'AJAX Search for WooCommerce rebrands to FiboSearch', 'ajax-search-for-woocommerce' ) . '. ';
-            $desc .= '<a href="https://fibosearch.com/ajax-search-for-woocommerce-rebrands-to-fibosearch/" target="_blank">';
-            $desc .= __( 'Read more', 'ajax-search-for-woocommerce' ) . '.';
-            $desc .= '</a>';
-            $settingsFields['dgwt_wcas_basic'][6] = array(
-                'name'  => 'rebranding_desc',
-                'label' => __( 'New plugin name', 'ajax-search-for-woocommerce' ),
-                'type'  => 'desc',
-                'desc'  => $desc,
             );
         }
         

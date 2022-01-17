@@ -50,7 +50,7 @@ add_action( 'wp_footer', function () {
 							// Header style: Default, Centered Inline Logo
 							var mainHeader = $('.et_header_style_left #main-header, .et_header_style_split #main-header');
 							if (mainHeader.eq(0)) {
-								var mainHeaderHeight = mainHeader.outerHeight();
+								var mainHeaderHeight = mainHeader.outerHeight(false);
 								if (mainHeaderHeight > 0) {
 									$('.et_search_form_container .dgwt-wcas-search-wrapp').css('top', (mainHeaderHeight - 40) / 2);
 								}
@@ -85,7 +85,7 @@ add_action( 'wp_footer', function () {
 				});
 
 				// Open overlay automatically
-				$('#et_top_search #et_search_icon').on('click', function () {
+				$('#et_top_search #et_search_icon, #et_top_search_mob #et_search_icon').on('click', function () {
 					if ($(window).width() <= 980) {
 						var $handler = $('.et_search_outer .js-dgwt-wcas-enable-mobile-form');
 						if ($handler.length) {
@@ -95,7 +95,7 @@ add_action( 'wp_footer', function () {
 						setTimeout(function () {
 							var $closeBtn = $('.et_close_search_field');
 							if ($closeBtn.length) {
-								$closeBtn[0].click();
+								$closeBtn.click();
 							}
 						}, 1100)
 					}
@@ -112,7 +112,7 @@ add_action( 'wp_footer', function () {
 						setTimeout(function () {
 							var $closeBtn = $('.et_pb_menu__close-search-button');
 							if ($closeBtn.length) {
-								$closeBtn[0].click();
+								$closeBtn.click();
 							}
 						}, 1100)
 					} else {

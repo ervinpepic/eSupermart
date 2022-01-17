@@ -20,6 +20,7 @@ class Troubleshooting
     const  RESET_ASYNC_TESTS_NONCE = 'troubleshooting-reset-async-tests' ;
     const  FIX_OUTOFSTOCK_NONCE = 'troubleshooting-fix-outofstock' ;
     const  DISMIS_ELEMENTOR_TEMPLATE_NONCE = 'troubleshooting-dismiss-elementor-template' ;
+    const  SWITCH_ALTERNATIVE_ENDPOINT = 'troubleshooting-switch-alternative-endpoint' ;
     public function __construct()
     {
         if ( !$this->checkRequirements() ) {
@@ -31,7 +32,6 @@ class Troubleshooting
         add_action( DGWT_WCAS_SETTINGS_KEY . '-form_bottom_' . self::SECTION_ID, array( $this, 'tabContent' ) );
         add_action( 'wp_ajax_dgwt_wcas_troubleshooting_test', array( $this, 'asyncTest' ) );
         add_action( 'wp_ajax_dgwt_wcas_troubleshooting_reset_async_tests', array( $this, 'resetAsyncTests' ) );
-        add_action( 'wp_ajax_dgwt_wcas_troubleshooting_fix_outofstock', array( $this, 'fixOutOfStock' ) );
         add_action( 'wp_ajax_dgwt_wcas_troubleshooting_dismiss_elementor_template', array( $this, 'dismissElementorTemplate' ) );
     }
     
@@ -131,10 +131,11 @@ class Troubleshooting
     {
         $localize['troubleshooting'] = array(
             'nonce' => array(
-            'troubleshooting_async_test'                 => wp_create_nonce( self::ASYNC_TEST_NONCE ),
-            'troubleshooting_reset_async_tests'          => wp_create_nonce( self::RESET_ASYNC_TESTS_NONCE ),
-            'troubleshooting_fix_outofstock'             => wp_create_nonce( self::FIX_OUTOFSTOCK_NONCE ),
-            'troubleshooting_dismiss_elementor_template' => wp_create_nonce( self::DISMIS_ELEMENTOR_TEMPLATE_NONCE ),
+            'troubleshooting_async_test'                  => wp_create_nonce( self::ASYNC_TEST_NONCE ),
+            'troubleshooting_reset_async_tests'           => wp_create_nonce( self::RESET_ASYNC_TESTS_NONCE ),
+            'troubleshooting_fix_outofstock'              => wp_create_nonce( self::FIX_OUTOFSTOCK_NONCE ),
+            'troubleshooting_dismiss_elementor_template'  => wp_create_nonce( self::DISMIS_ELEMENTOR_TEMPLATE_NONCE ),
+            'troubleshooting_switch_alternative_endpoint' => wp_create_nonce( self::SWITCH_ALTERNATIVE_ENDPOINT ),
         ),
             'tests' => array(
             'direct'        => array(),
@@ -682,10 +683,11 @@ class Troubleshooting
         if ( isset( $info['wp-server']['fields'] ) ) {
             ob_start();
             ?>
+			<br /><hr /><br />
 			<p><b><?php 
             _e( 'Server environment', 'ajax-search-for-woocommerce' );
             ?></b></p>
-			<table class="widefat striped" role="presentation">
+			<table style="max-width: 600px" class="widefat striped" role="presentation">
 				<tbody>
 				<?php 
             foreach ( $info['wp-server']['fields'] as $field_name => $field ) {

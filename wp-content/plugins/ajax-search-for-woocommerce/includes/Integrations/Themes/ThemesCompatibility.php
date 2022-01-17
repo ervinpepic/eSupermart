@@ -199,6 +199,15 @@ class ThemesCompatibility {
 				'slug' => 'generatepress',
 				'name' => 'GeneratePress',
 			),
+			'open-shop-pro' => array(
+				'slug'      => 'open-shop-pro',
+				'className' => 'OpenShopPro',
+				'name'      => 'Open Shop Pro',
+			),
+			'uncode' => array(
+				'slug'      => 'uncode',
+				'name'      => 'Uncode',
+			),
 		);
 	}
 

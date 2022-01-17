@@ -4,7 +4,7 @@ Tags: woocommerce search, ajax search, search by sku, product search, woocommerc
 Requires at least: 5.0
 Tested up to: 5.8
 Requires PHP: 7.0
-Stable tag: 1.14.0
+Stable tag: 1.15.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,7 +14,7 @@ The most popular WooCommerce product search plugin. Gives your users a well-desi
 
 The most popular **WooCommerce product search plugin**. It gives your users a well-designed advanced AJAX search bar with live search suggestions.
 
-By default, WooCommerce provides a very simple search solution, without live product search or even SKU search. FiboSearch (Ajax Search for WooCommerce) provides advanced search with live suggestions.
+By default, WooCommerce provides a very simple search solution, without live product search or even SKU search. FiboSearch (formerly Ajax Search for WooCommerce) provides advanced search with live suggestions.
 
 Who doesn’t love instant, as-you-type suggestions? In 2021, customers expect smart product search. Baymard Institute’s latest UX research reveals that search autocomplete, auto-suggest, or an instant search feature **is now offered on 96% of major e-commerce sites**. It's a must-have feature for every online business that can’t afford to lose customers. Why? FiboSearch helps users save time and makes shopping easier. As a result, Fibo really boosts sales.
 
@@ -105,7 +105,7 @@ We have prepared a one-click replacement of the search bar for the following the
 *  Astra
 *  Avada
 *  Sailent
-*  and 30 more... See a complete list of integrated themes on [our documentation](https://fibosearch.com/documentation/themes-integrations/?utm_source=readme&utm_medium=referral&utm_campaign=asfw&utm_content=theme-integrations).
+*  and 31 more... See a complete list of integrated themes on [our documentation](https://fibosearch.com/documentation/themes-integrations/?utm_source=readme&utm_medium=referral&utm_campaign=asfw&utm_content=theme-integrations).
 
 
 If you want to replace your search bar in another theme, please [contact our support team](https://fibosearch.com/contact/?utm_source=readme&utm_medium=referral&utm_campaign=asfw&utm_content=contact&utm_gen=utmdc).
@@ -141,6 +141,25 @@ You can read more and compare Pro and Free features here: [Full comparison - Pro
 5. Settings page
 
 == Changelog ==
+
+= 1.15.0, December 16, 2021 =
+* ADD: Integration with a Uncode theme
+* ADD: Integration with Uncode theme - support for dark menu skin
+* ADD: Possibility to submit the search event to Google Analytics in your own way
+* ADD: Basic support for AMP
+* ADD: Allow getting search results programmatically
+
+* FIX: Integration with the Goya theme has stopped working
+* FIX: Divi theme integration - overlay on mobile was fixed. Support for new Divi ID #et_top_search_mob
+* FIX: Divi theme integration - search form did not disappear after exiting mobile overlay
+* FIX: Search suggestions were invisible because of a bug in the old version of jQuery UI. The method outerHeight() returned an object instead of a number
+* FIX: Simplifying integration with Polylang
+
+* CHANGE: Remove info about rebranding
+
+
+
+
 
 = 1.14.0, October 19, 2021 =
 * ADD: Integration with “GeneratePress” theme

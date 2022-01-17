@@ -1,5 +1,7 @@
 <?php
 
+use DgoraWcas\Helpers;
+
 // Exit if accessed directly
 if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
 	exit;
@@ -19,6 +21,17 @@ if ( ! function_exists( 'storefront_product_search' ) ) {
 add_action( 'wp_footer', 'dgwt_wcas_storefront_inverse_orientation', 100 );
 
 function dgwt_wcas_storefront_inverse_orientation() {
+	if ( Helpers::isAMPEndpoint() ) {
+		?>
+		<style>
+			#page.search-mobile-active .storefront-handheld-footer-bar ul li.search .site-search {
+				bottom: 100%;
+			}
+		</style>
+		<?php
+
+		return;
+	}
 	?>
 	<script>
 		(function ($) {
@@ -36,4 +49,18 @@ function dgwt_wcas_storefront_inverse_orientation() {
 		}(jQuery));
 	</script>
 	<?php
+}
+
+/**
+ * Toole mobile search when AMP is active
+ */
+if ( ! function_exists( 'storefront_handheld_footer_bar_search' ) ) {
+	function storefront_handheld_footer_bar_search() {
+		if ( Helpers::isAMPEndpoint() ) {
+			echo '<a on="tap:page.toggleClass(class=\'search-mobile-active\')" href="javascript:void(0);">' . esc_attr__( 'Search', 'storefront' ) . '</a>';
+		} else {
+			echo '<a href="">' . esc_attr__( 'Search', 'storefront' ) . '</a>';
+		}
+		storefront_product_search();
+	}
 }

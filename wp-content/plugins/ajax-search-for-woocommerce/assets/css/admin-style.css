@@ -1548,7 +1548,7 @@ td.dgwt-wcas-indexing-details-row a {
 }
 
 .dgwt-wcas-tab-mark {
-	display: inline-block;
+	display: none;
 	vertical-align: top;
 	box-sizing: border-box;
 	margin: 1px 0 -1px 4px;
@@ -1561,6 +1561,10 @@ td.dgwt-wcas-indexing-details-row a {
 	font-size: 11px;
 	line-height: 1.6;
 	text-align: center;
+}
+
+.dgwt-wcas-tab-mark.active {
+	display: inline-block;
 }
 
 .dgwt-wcas-troubleshooting-wrapper {
@@ -1606,6 +1610,7 @@ h3.dgwt-wcas-troubleshooting-issue-title {
 	font-family: monospace;
 }
 
+.dgwt-wcas-tab-progress,
 .dgwt-wcas-troubleshooting-wrapper .dgwt-wcas-ajax-loader {
 	-moz-transition: opacity 0.2s;
 	-webkit-transition: opacity 0.2s;
@@ -1622,6 +1627,16 @@ h3.dgwt-wcas-troubleshooting-issue-title {
 
 .dgwt-wcas-troubleshooting-wrapper .dgwt-wcas-ajax-loader.loading {
 	opacity: 1;
+}
+
+.dgwt-wcas-tab-progress {
+	margin-top: -5px;
+	display: none;
+	opacity: 1;
+}
+
+.dgwt-wcas-tab-progress.active {
+	display: inline-block;
 }
 
 /* Settings - Filters rules */

@@ -2,8 +2,8 @@
 
 namespace DgoraWcas;
 
-use  DgoraWcas\Engines\TNTSearchMySQL\Indexer\Utils ;
 use  DgoraWcas\Engines\TNTSearchMySQL\SearchQuery\SearchResultsPageQuery ;
+use  DgoraWcas\Integrations\Solver ;
 // Exit if accessed directly
 if ( !defined( 'ABSPATH' ) ) {
     exit;
@@ -1100,6 +1100,139 @@ class Helpers
     }
     
     /**
+     * Get frontend scripts settings
+     *
+     * @return array
+     */
+    public static function getScriptsSettings()
+    {
+        $layout = self::getLayoutSettings();
+        // Localize
+        $localize = array(
+            'labels'                       => self::getLabels(),
+            'ajax_search_endpoint'         => self::getEndpointUrl( 'search' ),
+            'ajax_details_endpoint'        => self::getEndpointUrl( 'details' ),
+            'ajax_prices_endpoint'         => self::getEndpointUrl( 'prizes' ),
+            'action_search'                => DGWT_WCAS_SEARCH_ACTION,
+            'action_result_details'        => DGWT_WCAS_RESULT_DETAILS_ACTION,
+            'action_get_prices'            => DGWT_WCAS_GET_PRICES_ACTION,
+            'min_chars'                    => 3,
+            'width'                        => 'auto',
+            'show_details_box'             => false,
+            'show_images'                  => false,
+            'show_price'                   => false,
+            'show_desc'                    => false,
+            'show_sale_badge'              => false,
+            'show_featured_badge'          => false,
+            'dynamic_prices'               => false,
+            'is_rtl'                       => ( is_rtl() == true ? true : false ),
+            'show_preloader'               => false,
+            'show_headings'                => false,
+            'preloader_url'                => '',
+            'taxonomy_brands'              => '',
+            'img_url'                      => DGWT_WCAS_URL . 'assets/img/',
+            'is_premium'                   => dgoraAsfwFs()->is_premium(),
+            'mobile_breakpoint'            => $layout->breakpoint,
+            'mobile_overlay_wrapper'       => $layout->mobile_overlay_wrapper,
+            'mobile_overlay_delay'         => apply_filters( 'dgwt/wcas/scripts/overlay_delay_ms', 0 ),
+            'debounce_wait_ms'             => apply_filters( 'dgwt/wcas/scripts/debounce_wait_ms', 400 ),
+            'send_ga_events'               => apply_filters( 'dgwt/wcas/scripts/send_ga_events', true ),
+            'enable_ga_site_search_module' => apply_filters( 'dgwt/wcas/scripts/enable_ga_site_search_module', false ),
+            'magnifier_icon'               => self::getMagnifierIco( '' ),
+            'close_icon'                   => self::getIcon( 'close' ),
+            'back_icon'                    => self::getIcon( 'arrow-left' ),
+            'preloader_icon'               => self::getIcon( 'preloader' ),
+            'custom_params'                => (object) apply_filters( 'dgwt/wcas/scripts/custom_params', array() ),
+            'convert_html'                 => true,
+            'suggestions_wrapper'          => apply_filters( 'dgwt/wcas/scripts/suggestions_wrapper', 'body' ),
+            'show_product_vendor'          => dgoraAsfwFs()->is_premium() && class_exists( 'DgoraWcas\\Integrations\\Marketplace\\Marketplace' ) && DGWT_WCAS()->marketplace->showProductVendor(),
+            'disable_hits'                 => apply_filters( 'dgwt/wcas/scripts/disable_hits', false ),
+            'disable_submit'               => apply_filters( 'dgwt/wcas/scripts/disable_submit', false ),
+        );
+        if ( Multilingual::isMultilingual() ) {
+            $localize['current_lang'] = Multilingual::getCurrentLanguage();
+        }
+        // Min characters
+        $min_chars = DGWT_WCAS()->settings->getOption( 'min_chars' );
+        if ( !empty($min_chars) && is_numeric( $min_chars ) ) {
+            $localize['min_chars'] = absint( $min_chars );
+        }
+        $sug_width = DGWT_WCAS()->settings->getOption( 'sug_width' );
+        if ( !empty($sug_width) && is_numeric( $sug_width ) && $sug_width > 100 ) {
+            $localize['sug_width'] = absint( $sug_width );
+        }
+        // Show/hide Details panel
+        if ( DGWT_WCAS()->settings->getOption( 'show_details_box' ) === 'on' ) {
+            $localize['show_details_box'] = true;
+        }
+        // Show/hide images
+        if ( DGWT_WCAS()->settings->getOption( 'show_product_image' ) === 'on' ) {
+            $localize['show_images'] = true;
+        }
+        // Show/hide price
+        if ( DGWT_WCAS()->settings->getOption( 'show_product_price' ) === 'on' ) {
+            $localize['show_price'] = true;
+        }
+        // Show/hide description
+        if ( DGWT_WCAS()->settings->getOption( 'show_product_desc' ) === 'on' ) {
+            $localize['show_desc'] = true;
+        }
+        // Show/hide description
+        if ( DGWT_WCAS()->settings->getOption( 'show_product_sku' ) === 'on' ) {
+            $localize['show_sku'] = true;
+        }
+        // Show/hide sale badge
+        if ( DGWT_WCAS()->settings->getOption( 'show_sale_badge' ) === 'on' ) {
+            $localize['show_sale_badge'] = true;
+        }
+        // Show/hide featured badge
+        if ( DGWT_WCAS()->settings->getOption( 'show_featured_badge' ) === 'on' ) {
+            $localize['show_featured_badge'] = true;
+        }
+        // Set preloader
+        
+        if ( DGWT_WCAS()->settings->getOption( 'show_preloader' ) === 'on' ) {
+            $localize['show_preloader'] = true;
+            $localize['preloader_url'] = esc_url( trim( DGWT_WCAS()->settings->getOption( 'preloader_url' ) ) );
+        }
+        
+        // Show/hide autocomplete headings
+        if ( DGWT_WCAS()->settings->getOption( 'show_grouped_results' ) === 'on' ) {
+            $localize['show_headings'] = true;
+        }
+        return apply_filters( 'dgwt/wcas/scripts/localize', $localize );
+    }
+    
+    /**
+     * Get endpoint URL
+     *
+     * @param string $type
+     *
+     * @return string
+     */
+    public static function getEndpointUrl( $type = '' )
+    {
+        $url = '';
+        if ( !in_array( $type, array( 'search', 'details', 'prices' ) ) ) {
+            return $url;
+        }
+        switch ( $type ) {
+            case 'search':
+                $url = \WC_AJAX::get_endpoint( DGWT_WCAS_SEARCH_ACTION );
+                break;
+            case 'details':
+                $url = \WC_AJAX::get_endpoint( DGWT_WCAS_RESULT_DETAILS_ACTION );
+                break;
+            case 'prices':
+                $url = \WC_AJAX::get_endpoint( DGWT_WCAS_GET_PRICES_ACTION );
+                break;
+            default:
+                break;
+        }
+        return apply_filters( "dgwt/wcas/endpoint/{$type}", $url );
+    }
+    
+    /**
      * Checking the current code is run by the object of the given class
      *
      * @param string $class_name Class name
@@ -1242,6 +1375,16 @@ class Helpers
             'order_again',
             '_wpnonce'
         ), home_url( '/', $scheme ) ) ), DGWT_WCAS_SEARCH_ACTION ) );
+    }
+    
+    /**
+     * Check that the AMP version of the page is displayed
+     *
+     * @return bool
+     */
+    public static function isAMPEndpoint()
+    {
+        return function_exists( 'is_amp_endpoint' ) && is_amp_endpoint();
     }
 
 }

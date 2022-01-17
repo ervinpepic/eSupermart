@@ -47,4 +47,4 @@ add_action( 'wp_footer', function () {
 		}
 	</style>
 	<?php
-} );
+}, 12);

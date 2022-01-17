@@ -260,6 +260,8 @@
         actionTriggerClass: 'js-ajax-build-index',
         actionStopTriggerClass: 'js-ajax-stop-build-index',
         indexingWrappoerClass: 'js-dgwt-wcas-indexing-wrapper',
+        indexerTabProgressClass: 'js-dgwt-wcas-indexer-tab-progress',
+        indexerTabErrorClass: 'js-dgwt-wcas-indexer-tab-error',
         getWrapper: function () {
             var _this = this;
 
@@ -276,6 +278,8 @@
                 $btn.attr('disabled', 'disabled');
 
                 $('.dgwt-wcas-settings-info').addClass('wcas-ajax-build-index-wait');
+                $('.' + _this.indexerTabErrorClass).removeClass('active');
+                $('.' + _this.indexerTabProgressClass).addClass('active');
 
                 var emergency = $btn.hasClass('js-ajax-build-index-emergency') ? true : false;
 
@@ -353,7 +357,14 @@
 
                             if (response.data.loop) {
                                 _this.heartbeat();
-                            } else if (response.data.refresh_once.length > 0) {
+                            } else {
+                                $('.' + _this.indexerTabProgressClass).removeClass('active');
+                                if (response.data.status === 'error') {
+                                    $('.' + _this.indexerTabErrorClass).addClass('active');
+                                }
+                            }
+
+                            if (!response.data.loop && response.data.refresh_once.length > 0) {
                             	// If refresh cookie non exist and Troubleshooting tab is hidden then reload
 								if (
 									!document.cookie.split(';').some(function (item) {
@@ -1450,6 +1461,7 @@
 		progressBarInner: '.dgwt-wcas-troubleshooting-wrapper .progress-bar-inner',
 		resetButtonName: 'dgwt-wcas-reset-async-tests',
 		fixOutofstockButtonName: 'dgwt-wcas-fix-out-of-stock-relationships',
+        switchAlternativeEndpoint: 'dgwt-wcas-switch-alternative-endpoint',
 		dismissElementorTemplateButtonName: 'dgwt-wcas-dismiss-elementor-template',
 		init: function () {
 			var _this = this;
@@ -1501,6 +1513,24 @@
 					'action': 'dgwt_wcas_troubleshooting_fix_outofstock',
 					'_wpnonce': dgwt_wcas.troubleshooting.nonce.troubleshooting_fix_outofstock
 				};
+				$.post(
+					ajaxurl,
+					data,
+					function () {
+						location.reload();
+					}
+				);
+				return false;
+			});
+
+			$(document).on('click', 'input[name="' + _this.switchAlternativeEndpoint + '"]', function (e) {
+                var action = parseInt($(this).data('switch')) === 1 ? 'enable' : 'disable';
+				$('input[name="' + _this.switchAlternativeEndpoint + '"]').attr('disabled', 'disabled').next().addClass('loading');
+                var data = {
+                    'action': 'dgwt_wcas_troubleshooting_switch_alternative_endpoint',
+                    '_wpnonce': dgwt_wcas.troubleshooting.nonce.troubleshooting_switch_alternative_endpoint,
+                    'switch': action,
+                };
 				$.post(
 					ajaxurl,
 					data,

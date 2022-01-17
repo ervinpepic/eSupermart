@@ -48,10 +48,12 @@ class Shortcode {
 
 	public static function getForm( $args ) {
 
-		// Enqueue required scripts
-		wp_enqueue_script( 'jquery-dgwt-wcas' );
-		if ( DGWT_WCAS()->settings->getOption( 'show_details_box' ) === 'on' ) {
-			wp_enqueue_script( 'woocommerce-general' );
+		// Enqueue required scripts (only if AMP is not active)
+		if ( ! Helpers::isAMPEndpoint() ) {
+			wp_enqueue_script( 'jquery-dgwt-wcas' );
+			if ( DGWT_WCAS()->settings->getOption( 'show_details_box' ) === 'on' ) {
+				wp_enqueue_script( 'woocommerce-general' );
+			}
 		}
 
 		ob_start();

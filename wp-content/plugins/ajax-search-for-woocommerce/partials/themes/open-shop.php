@@ -53,6 +53,9 @@ add_action( 'wp_footer', function () {
 		.dgwt-wcas-overlay-mobile .dgwt-wcas-search-wrapp {
 			padding-left: 0;
 		}
+		.below-header-bar .dgwt-wcas-search-wrapp {
+			padding-left: 18px;
+		}
 	</style>
 	<?php
 	if ( get_theme_mod( 'open_shop_sticky_header', false ) === true ) {

@@ -114,15 +114,29 @@ class Search
             add_filter( 'dgwt/wcas/labels', array( $this, 'setTaxonomiesLabels' ), 5 );
             add_filter( 'dgwt/wcas/labels', array( $this, 'fixTaxonomiesLabels' ), PHP_INT_MAX - 5 );
         }
-    
+        
+        // Fixes if "Polylang" is active but without "Polylang for WooCommerce" or "Hyyan WooCommerce Polylang Integration"
+        if ( Multilingual::isPolylang() && !class_exists( 'Polylang_Woocommerce' ) && !defined( 'Hyyan_WPI_DIR' ) ) {
+            add_filter(
+                'woocommerce_ajax_get_endpoint',
+                array( $this, 'fixPolylangWooEndpoint' ),
+                10,
+                2
+            );
+        }
     }
     
     /**
      * Get search results via ajax
+     *
+     * @param string $phrase Search phrase.
+     * @param bool $return Whether to return the results.
+     * @param string $context Search context: 'autocomplete' or 'all-results'.
+     *
+     * @return mixed|void
      */
-    public function getSearchResults()
+    public function getSearchResults( $phrase = '', $return = false, $context = 'autocomplete' )
     {
-        global  $woocommerce ;
         $start = microtime( true );
         if ( !defined( 'DGWT_WCAS_AJAX' ) ) {
             define( 'DGWT_WCAS_AJAX', true );
@@ -140,17 +154,23 @@ class Search
         $results = array();
         $keyword = '';
         $remote = false;
-        // Compatibile with v1.1.7
-        if ( !empty($_REQUEST['dgwt_wcas_keyword']) ) {
-            $keyword = sanitize_text_field( $_REQUEST['dgwt_wcas_keyword'] );
-        }
-        if ( !empty($_REQUEST['s']) ) {
-            $keyword = sanitize_text_field( $_REQUEST['s'] );
-        }
         
-        if ( !empty($_REQUEST['remote']) ) {
-            $remote = true;
-            $showHeadings = false;
+        if ( $return ) {
+            $keyword = sanitize_text_field( $phrase );
+            if ( $context === 'all-results' ) {
+                $remote = true;
+            }
+        } else {
+            // Compatible with v1.1.7
+            if ( !empty($_REQUEST['dgwt_wcas_keyword']) ) {
+                $keyword = sanitize_text_field( $_REQUEST['dgwt_wcas_keyword'] );
+            }
+            if ( !empty($_REQUEST['s']) ) {
+                $keyword = sanitize_text_field( $_REQUEST['s'] );
+            }
+            if ( !empty($_REQUEST['remote']) ) {
+                $remote = true;
+            }
         }
         
         $keyword = apply_filters( 'dgwt/wcas/phrase', $keyword );
@@ -227,8 +247,15 @@ class Search
                         '.',
                         ''
                     ) . ' sec';
-                    echo  json_encode( apply_filters( 'dgwt/wcas/page_search_results/output', $output ) ) ;
-                    die;
+                    $result = apply_filters( 'dgwt/wcas/page_search_results/output', $output );
+                    
+                    if ( $return ) {
+                        return $result;
+                    } else {
+                        echo  json_encode( $result ) ;
+                        die;
+                    }
+                
                 }
                 
                 $relevantProducts = array();
@@ -334,8 +361,15 @@ class Search
         ) . ' sec';
         $output['engine'] = 'free';
         $output['v'] = DGWT_WCAS_VERSION;
-        echo  json_encode( apply_filters( 'dgwt/wcas/search_results/output', $output ) ) ;
-        die;
+        $result = apply_filters( 'dgwt/wcas/search_results/output', $output );
+        
+        if ( $return ) {
+            return $result;
+        } else {
+            echo  json_encode( $result ) ;
+            die;
+        }
+    
     }
     
     /**
@@ -958,6 +992,28 @@ class Search
         }
         
         return $labels;
+    }
+    
+    /**
+     * Add language to WC endpoint if Polylang is active
+     *
+     * @param $url
+     * @param $request
+     *
+     * @return string
+     * @see polylang-wc/frontend/frontend.php:306
+     */
+    public function fixPolylangWooEndpoint( $url, $request )
+    {
+        
+        if ( PLL() instanceof \PLL_Frontend ) {
+            // Remove wc-ajax to avoid the value %%endpoint%% to be encoded by add_query_arg (used in plain permalinks).
+            $url = remove_query_arg( 'wc-ajax', $url );
+            $url = PLL()->links_model->switch_language_in_link( $url, PLL()->curlang );
+            return add_query_arg( 'wc-ajax', $request, $url );
+        }
+        
+        return $url;
     }
 
 }

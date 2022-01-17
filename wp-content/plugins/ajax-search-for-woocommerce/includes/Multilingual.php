@@ -43,7 +43,7 @@ class Multilingual {
 	 * @return bool
 	 */
 	public static function isPolylang() {
-		return did_action( 'pll_init' ) && ( class_exists( 'Polylang_Woocommerce' ) || defined( 'Hyyan_WPI_DIR' ) );
+		return did_action( 'pll_init' );
 	}
 
 	/**
