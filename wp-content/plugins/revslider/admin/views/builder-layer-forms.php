@@ -534,7 +534,7 @@ if(!defined('ABSPATH')) exit();
 			</div>
 			<!-- LAYER STYLE FONT -->
 			<div id="form_layerstyle_font" class="form_inner open _shft_">
-				<div class="form_inner_header"><i class="material-icons">title</i><?php _e('Font & Icon', 'revslider');?></div>
+				<div id="flf_font_icon" class="form_inner_header"><i class="material-icons">title</i><?php _e('Font & Icon', 'revslider');?></div>
 				<div class="collapsable">
 
 					<row class="directrow __idle__">
@@ -579,7 +579,9 @@ if(!defined('ABSPATH')) exit();
 						<div class="svglayer_simplecoloring">
 							<div class="div15"></div>
 							<div><label_a><?php _e('SVG Color', 'revslider');?></label_a><input type="text" data-editing="SVG Color" data-mode="single" name="layerSVGColor" id="layerSVGColor" class="my-color-field layerinput easyinit" data-visible="true" data-r="idle.svg.color.#size#.v" value="transparent"></div>
+							<div class="div5"></div>
 							<div><label_a><?php _e('Stroke Color', 'revslider');?></label_a><input type="text" data-editing="Stroke Color" data-mode="single" name="layerStrokeColor" id="layerStrokeColor" class="my-color-field layerinput easyinit" data-visible="true" data-r="idle.svg.strokeColor" value="transparent"></div>
+							<div class="div15"></div>
 							<row class="directrow">
 								<onelong><label_icon class="ui_strokewidth"></label_icon><input class="layerinput valueduekeyboard smallinput easyinit" data-allowed="px"  data-numeric="true" data-r="idle.svg.strokeWidth" data-min="-1" data-max="500" type="text"></onelong>
 								<oneshort><label_icon class="ui_strokedasharray"></label_icon><input class="layerinput valueduekeyboard smallinput easyinit" data-r="idle.svg.strokeDashArray" type="text"></oneshort>
@@ -588,6 +590,7 @@ if(!defined('ABSPATH')) exit();
 								<onelong><label_icon class="ui_strokedashoffset"></label_icon><input class="layerinput valueduekeyboard smallinput easyinit" data-allowed="px"  data-numeric="true" data-r="idle.svg.strokeDashOffset" data-min="0" data-max="500" type="text"></onelong>
 								<oneshort></oneshort>
 							</row>
+							<div class="div25"></div>
 							<longoption><label_a><?php _e('Style All Elements', 'revslider');?></label_a><input type="checkbox" class="easyinit layerinput" data-evt="SvgSelectAllChanged" data-r="idle.svg.styleAll"></longoption>
 						</div>
 					</div>
@@ -1000,7 +1003,7 @@ if(!defined('ABSPATH')) exit();
 			<div class="form_inner open">
 				<div class="form_inner_header"><i class="material-icons">mouse</i><?php _e('Hover', 'revslider');?></div>
 				<div class="collapsable">
-					<label_a><?php _e('Cursor', 'revslider');?></label_a><select class="layerinput tos2 nosearchbox easyinit" id="layer_css_cursor" data-r="idle.cursor"><option value="auto" selected="selected">Auto</option><option value="default">Default</option><option value="crosshair">Crosshair</option><option value="pointer">Pointer</option><option value="move">Move</option><option value="text">Text</option><option value="wait">Wait</option><option value="help">Help</option><option value="zoom-in">Zoom-in</option><option value="zoom-out">Zoom-out</option></select><span class="linebreak"></span>
+					<label_a><?php _e('Cursor', 'revslider');?></label_a><select class="layerinput tos2 nosearchbox easyinit" id="layer_css_cursor" data-r="idle.cursor"><option value="auto" selected="selected">Auto</option><option value="default">Default</option><option value="crosshair">Crosshair</option><option value="pointer">Pointer</option><option value="move">Move</option><option value="text">Text</option><option value="wait">Wait</option><option value="help">Help</option><option value="zoom-in">Zoom-in</option><option value="zoom-out">Zoom-out</option><option value="none">None</option></select><span class="linebreak"></span>
 					<label_a><?php _e('Pointer Event', 'revslider');?></label_a><select class="layerinput tos2 nosearchbox easyinit" id="layer_css_pointerevent" data-r="hover.pointerEvents"><option value="auto" selected="selected">Auto</option><option value="none">None</option></select>
 					<label_a><?php _e('Animation', 'revslider');?></label_a><select class="layerinput tos2 nosearchbox easyinit" id="layer_use_hover" data-r="hover.usehover" data-show=".copyhoversettings*val*" data-hide=".copyhoversettings" data-showprio="show" id="layer_usehover" class="layerinput easyinit" data-evt="copyhoversettings" data-evtparam="checkiffirst" data-r="hover.usehover"><option value="true"><?php _e('Enabled', 'revslider');?></option><option value="desktop"><?php _e('Only on Desktop', 'revslider');?></option><option value="false"><?php _e('Disabled', 'revslider');?></option></select></onelong>					
 				</div>

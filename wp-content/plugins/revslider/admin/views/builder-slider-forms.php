@@ -73,7 +73,7 @@ $api = 'revapi'; // . $slider_id;
 			<!-- MODULE TITLE AND ALIAS AND SHORTCODE SETTINGS-->
 			<div class="form_inner">
 				<div class="form_inner_header"><i class="material-icons">title</i><?php _e('Module Naming', 'revslider');?></div>
-				<div class="collapsable" style="display:block !important">
+				<div id="" class="collapsable" style="display:block !important">
 					<label_a><?php _e('Title', 'revslider');?></label_a><input type="text" id="sr_title" class="sliderinput easyinit" data-r="title" placeholder="<?php _e('Enter a Module name', 'revslider')?>"/><span class="linebreak"></span>
 					<label_a><?php _e('Alias', 'revslider');?></label_a><input type="text" id="sr_alias" data-evt="updateShortCode" class="sliderinput easyinit" data-r="alias" placeholder="<?php _e('enter-a-module-name', 'revslider')?>"/><span class="linebreak"></span>
 					<label_a id="rs_shortcode_label"><?php _e('Shortcode', 'revslider');?></label_a><input readonly type="text" id="sr_shortcode" class="sliderinput easyinit" data-r="shortcode"/><span class="linebreak"></span>
@@ -83,6 +83,7 @@ $api = 'revapi'; // . $slider_id;
 						<labelhalf><i class="material-icons vmi">sms_failed</i></labelhalf>
 						<contenthalf><div class="function_info"><?php _e('Place the shortcode on the page or post where you want to show this module.', 'revslider');?></div></contenthalf>
 					</row>
+					<div id="rs_premium"></div>
 				</div><!-- END OF COLLAPSABLE-->
 			</div><!--END OF MODULE TITLE AND ALIAS AND SHORTCODE SETTINGS -->
 		</div>
@@ -549,7 +550,7 @@ $api = 'revapi'; // . $slider_id;
 						<div style="display:none"  class="form_intoaccordion" data-trigger="#slr_fsc_l2"><i class="material-icons">arrow_drop_down</i></div>
 						<div class="collapsable">
 							<div id="post_subtype_settings_wrapper">
-								<label_a><?php _e('Fetch By', 'revslider');?></label_a><select id="post_fetch_type" name="post_fetch_type" class="sliderinput tos2 nosearchbox easyinit" data-r="source.post.fetchType" data-show=".fetch_ .*val*_" data-hide=".fetch_ .dep_">
+								<label_a><?php _e('Fetch By', 'revslider');?></label_a><select id="post_fetch_type" name="post_fetch_type" class="sliderinput tos2 nosearchbox easyinit" data-r="source.post.fetchType" data-show=".fetch_ .*val*_, ._show_*val*" data-hide=".fetch_ .dep_, ._*val*_hide">
 									<option value="cat_tag"><?php _e('Categories & Tags', 'revslider');?></option>
 									<option value="related"><?php _e('Related', 'revslider');?></option>
 									<option value="popular"><?php _e('Popular', 'revslider');?></option>
@@ -566,7 +567,7 @@ if (!empty($post_type)) {
 }
 ?>
 									</select><span class="linebreak"></span>
-									<label_a><?php _e('Categories:', 'revslider');?></label_a><select id="post_category" name="post_category" multiple class="sliderinput tos2 nosearchbox easyinit" data-r="source.post.category"></select><span class="linebreak"></span>
+									<div class="_show_cat_tag _show_related _show_popular _show_recent _next_prev_hide "><label_a><?php _e('Categories:', 'revslider');?></label_a><select id="post_category" name="post_category" multiple class="sliderinput tos2 nosearchbox easyinit" data-r="source.post.category"></select><span class="linebreak"></span></div>
 								</div>
 							</div>
 							<div id="specificpost_subtype_settings_wrapper">
@@ -1131,6 +1132,7 @@ if ($wpml->wpml_exists()) {
 								<div class="div20"></div>
 								<div class="fixedscrollonoff">
 									<longoption><label_a><?php _e('Fix during Scroll', 'revslider');?></label_a><input type="checkbox"  id="sr_sbt_ge_fix_enabled" class="sliderinput easyinit"  data-setclasson="timeline" data-class="fixedscrollon" data-evt="updateFixedScrollRange" data-showhide=".all_sbt_fix_dependencies" data-showhidedep="true"  data-r="scrolltimeline.fixed"/></longoption>
+									<longoption><label_a style="overflow:visible"><?php _e('Pull Content, dyn. Bottom Margin', 'revslider');?></label_a><input type="checkbox"  id="sr_sbt_ge_pull_content" class="sliderinput easyinit" data-r="scrolltimeline.pullcontent"/></longoption>
 								</div>
 								<div class="fixedscrollsettings">
 									<div class="all_sbt_fix_dependencies">

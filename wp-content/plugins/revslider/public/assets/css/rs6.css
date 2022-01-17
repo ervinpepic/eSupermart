@@ -440,7 +440,7 @@ rs-fullwidth-wrap { position:relative;width:100%;height:auto;display: block; ove
 
 .rev_row_zone_top 				{	top:0px;}
 .rev_row_zone_bottom 			{	bottom:0px;}
-.rev_row_zone_middle			{ top: 50%; transform: perspective(1px) translateY(-50%); }
+.rev_row_zone_middle			{ top: 0px;}
 
 rs-column-wrap .rs-parallax-wrap  { vertical-align: top }
 
@@ -536,10 +536,10 @@ rs-column rs-layer { vertical-align: inherit }*/
 	-	SPECIAL TP CAPTIONS -
 **********************************/
 
-rs-layer.rs-nointeraction,
-.rs-layer.rs-nointeraction {
+a.rs-layer.rs-nointeraction >.div,
+rs-layer.rs-nointeraction:not(a),
+.rs-layer.rs-nointeraction:not(a) {
 	pointer-events: none !important
-
 }
 
 rs-static-layers	{position:absolute; z-index:101; top:0px;left:0px; display: block; width: 100%;height: 100%; pointer-events: none; overflow: hidden}
@@ -1269,7 +1269,7 @@ rs-bullet,
 rs-bullets,
 rs-navmask,
 rs-tabs,
-rs-arrow 					{	display:block;}
+rs-arrow 					{	display:block; pointer-events: all;}
 
 /*rs-layer {	font-size:20px; line-height: 25px; padding:0px; margin:0px; border-radius:0px; max-width: none;min-width:none; max-height: none; min-height: none}*/
 

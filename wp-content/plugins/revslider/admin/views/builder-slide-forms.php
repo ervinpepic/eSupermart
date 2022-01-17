@@ -801,6 +801,10 @@ if ($wpml->wpml_exists()) {
 							<option value="front"><?php _e('Over Layers (Front)', 'revslider');?></option>
 							<option value="back"><?php _e('Behind Layers (Back)', 'revslider');?></option>
 						</select>
+						<label_a><?php _e('Tag', 'revslider');?></label_a><select data-theme="dark" id="slide_tag_type" class="slideinput tos2 nosearchbox easyinit"  data-r="seo.tag">
+							<option value="l"><?php _e('&lt;RS-LAYER&gt;', 'revslider');?></option>
+							<option value="a"><?php _e('&lt;A&gt;', 'revslider');?></option>
+						</select>
 					</div>
 				</div>
 			</div><!-- END OF Link & Seo -->

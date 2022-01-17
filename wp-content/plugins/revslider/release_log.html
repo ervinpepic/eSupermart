@@ -1,22 +1,129 @@
 <div class="slider-revolution-update-list">
+	<h3 class="version-number">Version 6.5.12 (21st December 2021)</h3>
+	<div class="newfeature"><strong style="font-weight:700">New Features</strong></div>
+	<ul>
+		<li>Added new submenus: Getting Started, Help Center, Templates, Premium Support and Go Premium</li>
+	</ul>	
+	<div class="change"><strong style="font-weight:700">Changes</strong></div>
+	<ul>
+		<li>Menu burger buttons and scroll down buttons won't use out of box the intelligent size inheriting to avoid strange spacing on smaller devices</li>
+		<li>Updated GSAP to version 3.9.0</li>
+		<li>Simplified duplicating and copy pasting layers with actions triggering the duplicated layers with steps like:</li>
+		<ul>
+			<li>Deleting a layer will remove the action references pointing on it from other layers</li>
+			<li>Undoing "delete layer" will recreate the deleted action references as well</li>
+			<li>Duplicating a layer will check for all pointing action references and will also duplicate those by adjusting the target id as well</li>
+		</ul>
+	</ul>
+	<div class="bugfix"><strong style="font-weight:700">Bugfixes</strong></div>
+	<ul>
+		<li>Changing audio preload options does not have any influence on loading performance and results on frontend</li>		
+		<li>Selecting post based slider by popularity, related and recent does not allow categories to be selected</li>
+		<li>Backend is slow in Chrome if more than 200 elements are added in rows and columns. Issue happens only in WebKit browsers based on transform perspective and filters</li>
+		<li>Glitch effect of advanced transitions throws console error</li>
+		<li>Duplicating layers undo/redo group is filled with multiple steps, single redo/undo is not working</li>
+		<li>Menu link & scroll action's scroll offset value is ignored</li>
+		<li>Change between navigation and general settings in the editor does not refresh the layer rendering, generating artifacts until next refresh</li>
+		<li>Multiple rows and columns generating artifacts on Chrome version 96.0.4664.110+</li>
+		<li>Centered rows may show layers and elements in columns blurry if the content is drawn on half pixels. Core will now internally calculate the vertical position of rows and columns</li>
+	</ul>
+
+	<h3 class="version-number">Version 6.5.11 (19th November 2021)</h3>	
+	<div class="bugfix"><strong style="font-weight:700">Bugfixes</strong></div>
+	<ul>
+		<li>JavaScript error breaks the global settings in the overview mode and throws a console error getConcVals</li>
+	</ul>	
+
+	<h3 class="version-number">Version 6.5.10 (17th November 2021)</h3>
+	<div class="change"><strong style="font-weight:700">Changes</strong></div>	
+	<ul>
+		<li>Fullwidth layout in combination with timeline based scroll will allow optional to pull content now</li>
+		<li>Slider Revolution meta box now shows on all custom post types</li>
+	</ul>
+	<div class="bugfix"><strong style="font-weight:700">Bugfixes</strong></div>
+	<ul>
+		<li>Fast scrolling on some third party themes creates behavioral issue for scroll based sliders</li>
+		<li>Entering in fullscreen mode does not re-stretch the images in carousel mode</li>
+		<li>Vimeo video's "Tap to unmute" button does not work on Android</li>
+		<li>Image position shifted if Vertical middle aligned images added on Mobile sizes</li>
+		<li>Video layers with No Interaction also ignore a tag links added to the layer</li>
+		<li>Columns without content but with image background do not recognise Layer actions like mouseenter, click, mouseleave</li>
+		<li>Few random presets for BG animation were not working</li>
+		<li>Scroll to ID doesn't work correctly if viewport loading is on</li>
+		<li>Slider navigation does not work in fixed on top slider</li>
+	</ul>
+
+	<h3 class="version-number">Version 6.5.9 (11th October 2021)</h3>
+	<div class="change"><strong style="font-weight:700">Changes</strong></div>
+	<ul>		
+		<li>Added Trust Pilot review link to overview page</li>
+		<li>Added deregistration warning information</li>
+		<li>Not installed AddOns will warn now in overview, and allow a one click installation of all required elements</li>
+		<li>Added premium templates badge on original templates from library. Templates can be used only in registered and licensed environments</li>
+	</ul>
+	<div class="bugfix"><strong style="font-weight:700">Bugfixes</strong></div>
+	<ul>
+		<li>Color update for SVG layers is inconsistent on carousel if lazy loading is set to single or smart</li>
+		<li>SVG options are squeezed in editor</li>
+		<li>Slide animation "in" resets opacity to 0 when 1 is set and the editor reloads</li>
+		<li>Downsized carousel items get squeezed images on fullwidth layout</li>
+		<li>Firefox shows console warnings for -webkit-backdrop-filter</li>
+		<li>Using the carousel justify option generates console errors in rare cases and prevents the carousel from rendering BG</li>
+		<li>WPML translation priorities terms were not ignored</li>
+		<li>Dropdowns in-place search is not filtering by Option content, only by option value</li>
+		<li>Firefox mouseleave event is not triggering when slide change has been called due further actions</li>
+		<li>In very rare cases, slider height grows if column contains layer with 100% height</li>
+		<li>Slide based direction is not working if animation distances set by pixel</li>
+		<li>Changed locale for decimals in PHP results in a JavaScript error</li>
+		<li>HTML export is missing CSS and JS files from AddOns</li>
+		<li>Reverse scroll option makes slider jump to last slide</li>
+		<li>Volume level for audio layer does not work correctly on Safari</li>
+	</ul>
+
+	<h3 class="version-number">Version 6.5.8 (7th September 2021)</h3>
+	<div class="change"><strong style="font-weight:700">Changes</strong></div>
+	<ul>
+		<li>Added cursor mode "none" to the option list to be able to hide the cursor on "a" tags when mouse track is activated</li>
+		<li>Introducing tag option for slide links (available options: "a" &  "rs-layer") to avoid FireFox popup blocking on _blank targets</li>	
+		<li>Introducing a global option: "Lazy Load on BG Images". This will allow to load BG images also with lazy load, defined due the lazy load global and module based options</li>
+		<li>Editing the size of layers in a column will replace % sizes into px on edit. Added a further protection which will only change the height values if the height is set over 98% within the column of any layer</li>
+	</ul>
+	<div class="bugfix"><strong style="font-weight:700">Bugfixes</strong></div>
+	<ul>
+		<li>Carousel slider is flickering in Safari</li>
+		<li>Safari clippath animations are not visible during the animation</li>
+		<li>Some third party form options fail to work correctly. (This may have affected other third party integration as well)</li>
+		<li>Missing Elementor property on load causes the Cookiebot plugin to fail</li>
+		<li>Solid color background with opacity gets darker on refocus</li>
+		<li>First slide using the Advanced Transition's blur effect flashes black background</li>
+		<li>Advanced Transition with PanZoom BG jumps on slide change</li>
+		<li>Using fullscreen toggle on slider with parallax effect does not reset BG correctly</li>
+		<li>Blend Mode "color" is not working well in Safari. (Fallback to color-burn works)</li>
+		<li>Slider Revolution can not be added to Wordpress Widgets area. JS Failures</li>
+		<li>Revolution Slider in Essential Grid's lightbox opens only on the first time</li>
+		<li>Carousel background is squashed if the carousel's 'Keep Aspect Ratio(Justify)' option is turned off</li>
+		<li>Slider added using the Gutenberg block is pushed to the right side if the slider uses "Fixed during scroll" option</li>
+		<li>Gap (border) option does not work correctly on fullwidth and fullscreen slider</li>
+	</ul>
+
 	<h3 class="version-number">Version 6.5.7 (20th August 2021)</h3>
 	<div class="change"><strong style="font-weight:700">Changes</strong></div>
 	<ul>		
-		<li>Added global option to load YT API in header which can be useful if Google Analytics is enabled on page</li>
+		<li>Added global option to load YT Api in header which can be useful if Google Analytics enabled on page</li>
 	</ul>
 	<div class="bugfix"><strong style="font-weight:700">Bugfixes</strong></div>
 	<ul>
 		<li>Carousel slider doesn't render after reopening modal</li>
 		<li>Modal does not open after update 6.5.6</li>
 		<li>Slider background does not render for a customer after upgrading from 6.3.9 to 6.5.6</li>
-		<li>Shape, button and text layers breaks module processes if they use % based height in columns</li>
-		<li>Triggered groups shows content after resize even though they should stay invisible</li>
+		<li>Shape, Button and Text layers breaks Module processes if they use % based height in columns</li>
+		<li>Triggered groups shows content after resize even they should stay invisible</li>
 		<li>'Scroll Below Slider' action lags if page has scroll-behavior set to smooth</li>
-		<li>All default slide transitions show animations within 1000ms on frontend, even if the backend has a different value set</li>
-		<li>Modal shows horizontal scrollbar on Windows</li>
+		<li>All Default Slide transitions shows animation within 1000ms on frontend, even backend has a different value set</li>
+		<li>Modal shows horizontal scrollbar on windows</li>
 	</ul>
 	
-	<h3 class="version-number">Version 6.5.6 (6th August 2021)</h3>
+	<h3 class="version-number">Version 6.5.6 (06th August 2021)</h3>
 	<div class="change"><strong style="font-weight:700">Changes</strong></div>
 	<ul>
 		<li>Timeline default length update will also update all layer timings with "Wait for End" in each slides of that module</li>

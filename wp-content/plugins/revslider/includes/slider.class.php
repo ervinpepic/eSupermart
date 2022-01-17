@@ -15,12 +15,13 @@ class RevSliderSlider extends RevSliderFunctions {
 	public $id;
 	public $title;
 	public $alias;
-	public $settings = array();
-	public $params = array();
+	public $settings		= array();
+	public $params			= array();
 	public $slides;
 	public $type;
-	public $inited = false;
+	public $inited			= false;
 	public $map;
+	public $template_slider	= false;
 
 	/**
 	 * @var RevSliderSlide
@@ -612,12 +613,12 @@ class RevSliderSlider extends RevSliderFunctions {
 		if($templates === true) $sql .= "(";
 		
 		foreach($string as $v){
-			$sql .= $add. "params LIKE '%".$wpdb->esc_like($v)."%'";
+			$sql .= $add. "params LIKE '%%%s%%'";
 			if($add === '') $add = " OR ";
 		}
 		if($templates === true) $sql .= ") AND `type` != 'template'";
 		
-		return $wpdb->get_results($sql, ARRAY_A);
+		return $wpdb->get_results($wpdb->prepare($sql, $string), ARRAY_A);
 	}
 	
 	
@@ -985,7 +986,8 @@ class RevSliderSlider extends RevSliderFunctions {
 		$params['title']	 = $new_title;
 		$params['alias']	 = $new_alias;
 		$params['shortcode'] = '[rev_slider alias="'. $new_alias .'"]';
-		
+		if($this->template_slider) $params['pakps'] = true;
+
 		$wpdb->update(
 			$wpdb->prefix . RevSliderFront::TABLE_SLIDER,
 			array(
@@ -1684,6 +1686,17 @@ class RevSliderSlider extends RevSliderFunctions {
 		
 		$response = $wpdb->insert($wpdb->prefix . RevSliderFront::TABLE_SLIDES, $slide_to_copy);
 		
+		if($response){
+			if($this->template_slider){
+				$sl = new RevSliderSlider();
+				$sl->init_by_id($slider_id);
+				$params = $sl->get_params();
+				$params['pakps'] = true;
+				
+				$sl->update_params($params, true);
+			}
+		}
+
 		if(isset($slide_id) && $response !== false){
 			$this->map[$slide_id] = $wpdb->insert_id;
 		}
@@ -1889,6 +1902,9 @@ class RevSliderSlider extends RevSliderFunctions {
 			'order'		=> $this->get_param(array('source', 'post', 'sortDirection'), 'DESC'),
 			'tag'		=> $tags
 		);
+
+		$tax_query = $this->get_tax_query();
+		if(!empty($tax_query)) $query['tax_query'] = $tax_query;
 		
 		if(strpos($sort_by, 'meta_num_') === 0){
 			$query['orderby']	= 'meta_value_num';
@@ -1899,7 +1915,7 @@ class RevSliderSlider extends RevSliderFunctions {
 		}else{
 			$query['orderby']	= $sort_by;
 		}
-		
+
 		$get_relateds		= apply_filters('revslider_get_related_posts', $query, $post_id);
 		$tag_related_posts	= get_posts($get_relateds);
 		
@@ -1910,7 +1926,7 @@ class RevSliderSlider extends RevSliderFunctions {
 			}
 			$article_categories = get_the_category($post_id);
 			$category_string = '';
-			foreach($article_categories as $category) { 
+			foreach($article_categories as $category){
 				$category_string .= $category->cat_ID . ',';
 			}
 			
@@ -1937,7 +1953,7 @@ class RevSliderSlider extends RevSliderFunctions {
 			$cat_related_posts	= get_posts($get_relateds);
 			$tag_related_posts	= $tag_related_posts + $cat_related_posts;
 		}
-		
+
 		foreach($tag_related_posts as $post){
 			$the_post = (method_exists($post, 'to_array')) ? $post->to_array() : (array)$post;
 			if($the_post['ID'] == $post_id) continue;
@@ -1966,7 +1982,7 @@ class RevSliderSlider extends RevSliderFunctions {
 		}else{
 			$max_posts = intval($max_posts);
 		}
-		
+
 		$args = array(
 			'suppress_filters' => 0,
 			'posts_per_page' => $max_posts,
@@ -1975,6 +1991,9 @@ class RevSliderSlider extends RevSliderFunctions {
 			'orderby'   => 'comment_count',
 			'order'     => 'DESC'
 		);
+
+		$tax_query = $this->get_tax_query();
+		if(!empty($tax_query)) $args['tax_query'] = $tax_query;
 		
 		$args	= apply_filters('revslider_get_popular_posts', $args, $post_id);
 		$posts	= get_posts($args);
@@ -2014,6 +2033,10 @@ class RevSliderSlider extends RevSliderFunctions {
 		}
 		
 		$args['posts_per_page']	= $max_posts;
+		
+		$tax_query = $this->get_tax_query();
+		if(!empty($tax_query)) $args['tax_query'] = $tax_query;
+
 		$args	= apply_filters('revslider_get_latest_posts', $args, $post_id);
 		$posts	= get_posts($args);
 		
@@ -2045,6 +2068,29 @@ class RevSliderSlider extends RevSliderFunctions {
 		}
 		
 		return $my_posts;
+	}
+
+
+	public function get_tax_query(){
+		$cat_ids	= $this->get_param(array('source', 'post', 'category'));
+		$data		= $this->get_tax_by_cat_id($cat_ids);
+		$tax_query	= false;
+		if(isset($data['tax']) && isset($data['tax']) && !empty($data['tax']) && !empty($data['cats'])){
+			$cat_id = (strpos($data['cats'], ',') !== false) ? explode(',', $data['cats']) : array($data['cats']);
+			$tax_query = array('relation' => 'OR');
+
+			//add taxomonies to the query
+			$taxonomies = (strpos($data['tax'], ',') !== false) ? explode(',', $data['tax']) : array($data['tax']);
+			foreach($taxonomies as $taxomony){
+				$tax_query[] = array(
+					'taxonomy'	=> $taxomony,
+					'field'		=> 'id',
+					'terms'		=> $cat_id
+				);			
+			}
+		}
+
+		return $tax_query;
 	}
 	
 	
@@ -2269,8 +2315,9 @@ class RevSliderSlider extends RevSliderFunctions {
 		if($published == true){ //Events integration
 			$addition['post_status'] = 'publish';
 		}
-		$addition	= array_merge($addition, RevSliderWooCommerce::get_meta_query($this->get_params()));
 		
+		$addition = array_merge($addition, RevSliderWooCommerce::get_meta_query($this->get_params()));
+
 		return $this->get_posts_by_category($slider_id, $cat_ids, $sort_by, $sort_dir, $max_posts, $post_types, $taxonomies, $addition);
 	}
 	
@@ -2310,21 +2357,39 @@ class RevSliderSlider extends RevSliderFunctions {
 		$image		= '';
 		$sid		= $slider->get_id();
 		$do_ids		= ($slide_ids !== false) ? false : true;
-		
+		$addons_used = array();
+
 		if(!empty($slides)){
 			foreach($slides as $slide){
 				$id		= $slide->get_id();
 				$image	= ($post60) ? $slide->get_overview_image_attributes($type) : $slide->get_overview_image_attributes_pre60($type);
 				break;
 			}
-			if($do_ids){
-				$slide_ids = array();
-				foreach($slides as $slide){
-					$slide_ids[] = $slide->get_id();
+			if($do_ids) $slide_ids = array();
+			
+			foreach($slides as $slide){
+				if($do_ids) $slide_ids[] = $slide->get_id();
+
+				$addons = $slide->get_param('addOns');
+				if(!empty($addons)){
+					foreach($addons as $addon => $values){
+						if($this->_truefalse($this->get_val($values, 'enable', false)) === true){
+							if(!in_array($addon, $addons_used)) $addons_used[] = $addon;
+						}
+					}
 				}
 			}
 		}
-		
+
+		$addons = $slider->get_param('addOns');
+		if(!empty($addons)){
+			foreach($addons as $addon => $values){
+				if($this->_truefalse($this->get_val($values, 'enable', false)) === true){
+					if(!in_array($addon, $addons_used)) $addons_used[] = $addon;
+				}
+			}
+		}
+
 		return array(
 			'id'		=> $sid,
 			'slide_id'	=> $id,
@@ -2335,6 +2400,8 @@ class RevSliderSlider extends RevSliderFunctions {
 			'type'		=> ($post60) ? $slider->get_param('type', 'standard') : $slider->get_param('slider-type', 'standard'),
 			'size'		=> ($post60) ? $slider->get_param('layouttype') : $slider->get_param('slider_type', 'fullwidth'),
 			'bg'		=> $image,
+			'addons'	=> $addons_used,
+			'premium'	=> $slider->get_param('pakps', false),
 			'tags'		=> $this->get_tags(),
 			'favorite'	=> $favorite->is_favorite('modules', $sid),
 			'children'	=> ($slider instanceof RevSliderFolder) ? $slider->get_children() : array(),
@@ -2455,23 +2522,11 @@ class RevSliderSlider extends RevSliderFunctions {
 			$tax_query = array('relation' => 'OR');
 		
 			//add taxomonies to the query
-			if(strpos($taxonomies, ',') !== false){	//multiple taxomonies
-				$taxonomies = explode(',', $taxonomies);
-				foreach($taxonomies as $taxomony){
-					$tax_query[] = array(
-						'taxonomy'	=> $taxomony,
-						'field'		=> 'id',
-						'terms'		=> $cat_id
-					);			
-				}
-			}else{		//single taxomony
-				$tax_query[] = array(
-					'taxonomy' => $taxonomies,
-					'field' => 'id',
-					'terms' => $cat_id
-				);			
+			$taxonomies = (strpos($taxonomies, ',') !== false) ? explode(',', $taxonomies) : array($taxonomies);
+			foreach($taxonomies as $taxomony){
+				$tax_query[] = array('taxonomy' => $taxomony, 'field' => 'id', 'terms' => $cat_id);			
 			}
-			
+
 			$query['tax_query'] = $tax_query;
 		}
 		

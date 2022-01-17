@@ -188,7 +188,7 @@ class RevSliderAdmin extends RevSliderFunctionsAdmin {
 	 * @since: 6.4.0
 	 **/
 	public function add_editor_mode(){
-		echo '<script type="text/javascript">'."\n";
+		echo '<script>'."\n";
 		echo "var _R_is_Editor = 'true';\n";
 		echo '</script>'."\n";
 	}
@@ -243,16 +243,77 @@ class RevSliderAdmin extends RevSliderFunctionsAdmin {
 	 * @since: 6.0
 	 **/
 	public function add_admin_pages(){
-		$this->screens[] = add_menu_page('Slider Revolution', 'Slider Revolution', $this->user_role, 'revslider', array($this, 'display_admin_page'), 'dashicons-update');
+		//$this->screens[] = add_menu_page('Slider Revolution', 'Slider Revolution', $this->user_role, 'revslider', array($this, 'display_admin_page'), 'dashicons-update');
+
+		$tp_premium = get_option('revslider-valid', 'false');
+		$tp_ticket = $tp_premium !== 'true' ? ' class="revslider_premium"' : '';
+
+		$this->screens[] = add_menu_page('Slider Revolution', 'Slider Revolution', $this->user_role, 'revslider', null, 'dashicons-update');
+		$this->screens[] = add_submenu_page('revslider', __('Slider Revolution - Overview', 'revslider'), __('Overview', 'revslider'), $this->user_role, 'revslider', array($this, 'display_admin_page'));
+		$this->screens[] = add_submenu_page('revslider', '', __('<div id="revslider_manual_link">Getting Started</div>', 'revslider'), $this->user_role, 'revslider-documentation', array($this, 'display_external_redirects'));
+		$this->screens[] = add_submenu_page('revslider', '', __('<div id="revslider_helpcenter_link">Help Center</div>', 'revslider'), $this->user_role, 'revslider-help-center', array($this, 'display_external_redirects'));
+		$this->screens[] = add_submenu_page('revslider', '', __('<div id="revslider_templates_link">Templates</div>', 'revslider'), $this->user_role, 'revslider-templates', array($this, 'display_external_redirects'));
+		$this->screens[] = add_submenu_page('revslider', '', __('<div id="revslider_ticket_link"'. $tp_ticket .'>Premium Support</div>', 'revslider'), $this->user_role, 'revslider-ticket', array($this, 'display_external_redirects'));
+		$this->screens[] = add_dashboard_page('Slider Revolution - Welcome', 'Slider Revolution - Welcome', $this->user_role, 'revslider-welcome-screen', array($this, 'display_welcome_page'));
+
+		if($tp_premium !== 'true'){
+			$this->screens[] = add_submenu_page('revslider', '', '<div id="revslider_premium_link"><span class="dashicons dashicons-star-filled" style="font-size: 17px"></span> '.__('Go Premium', 'revslider')."</div>", $this->user_role, 'revslider-buy-license', array($this, 'display_external_redirects'));
+		}
 	}
 
+	/**
+	 * removes admin pages that should now be shown
+	 * @since 6.5.10
+	 */
+	public function remove_admin_pages(){
+		remove_submenu_page('index.php', 'revslider-welcome-screen');
+	}
+
+	/**
+	 * redirect to external URLs
+	 * @since 6.5.10
+	 */
+	public function display_external_redirects() {
+		$page = $this->get_val($_GET, 'page');
+		if(empty($page)) return;
+
+		$tp_premium = get_option('revslider-valid', 'false');
+
+		switch ( $page ) {
+			case 'revslider-buy-license':
+				wp_redirect('https://account.sliderrevolution.com/portal/pricing/?utm_source=admin&utm_medium=button&utm_campaign=srusers&utm_content=buykey');
+				exit;
+				break;
+			case 'revslider-documentation':
+				wp_redirect('https://www.sliderrevolution.com/manual/quick-setup-register-your-plugin/?utm_source=admin&utm_medium=button&utm_campaign=srusers&utm_content=usedocumentation&premium='.$tp_premium);
+				exit;
+				break;
+			case 'revslider-help-center':
+				wp_redirect('https://www.sliderrevolution.com/help-center?utm_source=admin&utm_medium=button&utm_campaign=srusers&utm_content=help&premium='.$tp_premium);
+				exit;
+				break;
+			case 'revslider-templates':
+				wp_redirect('https://www.sliderrevolution.com/examples?utm_source=admin&utm_medium=button&utm_campaign=srusers&utm_content=templates&premium='.$tp_premium);
+				exit;
+				break;
+			case 'revslider-ticket':
+				wp_redirect('https://support.sliderrevolution.com?utm_source=admin&utm_medium=button&utm_campaign=srusers&utm_content=support&premium='.$tp_premium);
+				exit;
+				break;
+			default:
+				break;
+		}
+		return;
+	}
+	
+	
 	/**
 	 * add wildcards metabox variables to posts
 	 * @var $post_types: null = all, post = only posts
 	 */
 	public function add_slider_meta_box($post_types = null){
 		try {
-			$post_types = array('post','page');
+			$post_types = array();
 			add_meta_box('slider_revolution_metabox', 'Slider Revolution', array('RevSliderAdmin', 'add_meta_box_content'), $post_types, 'side', 'default');
 		} catch (Exception $e){}
 	}
@@ -420,6 +481,8 @@ class RevSliderAdmin extends RevSliderFunctionsAdmin {
 		add_action('plugins_loaded', array($this, 'load_plugin_textdomain'));
 		add_action('admin_head', array($this, 'hide_notices'), 1);
 		add_action('admin_menu', array($this, 'add_admin_pages'));
+		add_action('admin_init', array($this, 'display_external_redirects'));
+		add_action('admin_head', array($this, 'remove_admin_pages'));
 		add_action('add_meta_boxes', array($this, 'add_slider_meta_box'));
 		add_action('save_post', array($this, 'on_save_post'));
 		add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_styles'));
@@ -433,8 +496,8 @@ class RevSliderAdmin extends RevSliderFunctionsAdmin {
 		add_action('publish_post', array($cache, 'check_for_post_transient_deletion'));
 		add_action('publish_future_post', array($cache, 'check_for_post_transient_deletion'));
 		
-		if(isset($pagenow) && $pagenow == 'plugins.php'){
-			add_action('admin_notices', array($this, 'add_plugins_page_notices'));
+		if(isset($pagenow) && $pagenow == 'plugins.php' && get_option('revslider-valid', 'false') == 'false'){
+			add_filter('plugin_action_links_' . RS_PLUGIN_SLUG_PATH, array($this, 'add_plugin_action_links'));
 		}
 		
 		add_action('admin_init', array($this, 'merge_addon_notices'), 99);
@@ -519,63 +582,12 @@ class RevSliderAdmin extends RevSliderFunctionsAdmin {
 	}
 	
 	/**
-	 * add plugin notices to the Slider Revolution Plugin at the overview page of plugins
-	 * @return void;
+	 * add a go premium button to the plugins page for Slider Revolution
 	 **/
-	public static function add_plugins_page_notices(){
-		if(get_option('revslider-valid', 'false') != 'false') return;
-		
-		$plugins = get_plugins();
-		
-		foreach($plugins as $plugin_id => $plugin){
-			$slug = dirname($plugin_id);
-			if(empty($slug) || $slug !== 'revslider') continue;
+	public function add_plugin_action_links($links){
+		$links['go_premium'] = '<a href="https://account.sliderrevolution.com/portal/pricing/?utm_source=admin&utm_medium=button&utm_campaign=srusers&utm_content=buykey" target="_blank" style="color: #F7345E; font-weight: 700;">'.__('Go Premium', 'revslider').'</a>';
 
-			add_action('after_plugin_row_' . $plugin_id, array('RevSliderAdmin', 'add_notice_wrap_pre'), 10, 3);
-			add_action('after_plugin_row_' . $plugin_id, array('RevSliderAdmin', 'show_purchase_notice'), 10, 3);
-			add_action('after_plugin_row_' . $plugin_id, array('RevSliderAdmin', 'add_notice_wrap_post'), 10, 3);
-			
-			break;
-		}
-	}
-
-	/**
-	 * Add the pre HTML for plugin notice on the plugin overview page
-	 **/
-	public static function add_notice_wrap_pre($plugin_file, $plugin_data, $plugin_status){
-		$wp_list_table = _get_list_table('WP_Plugins_List_Table');
-		$slug = dirname($plugin_file);
-		if(is_network_admin()){
-			$active_class = is_plugin_active_for_network($plugin_file) ? ' active' : '';
-		}else{
-			$active_class = is_plugin_active($plugin_file) ? ' active' : '';
-		}
-		
-		?>
-		<tr class="plugin-update-tr<?php echo $active_class; ?>" id="<?php echo $slug; ?>-update" data-plugin="<?php echo $plugin_file; ?>"><td colspan="<?php echo $wp_list_table->get_column_count(); ?>" class="plugin-update colspanchange">
-			<div class="update-message notice inline notice-warning notice-alt">
-		<?php
-	}
-
-	/**
-	 * Add the post HTML for plugin notice on the plugin overview page
-	 **/
-	public static function add_notice_wrap_post($plugin_file, $plugin_data, $plugin_status){
-		?>
-			</div>
-		</tr>
-		<?php
-	}
-
-	/**
-	 * Show message for activation benefits
-	 **/
-	public static function show_purchase_notice($plugin_file, $plugin_data, $plugin_status){
-		?>
-		<p>
-			<?php _e('Activate Slider Revolution for <a href="https://www.sliderrevolution.com/premium-slider-revolution/" target="_blank" rel="noopener">premium benefits (e.g. live updates)</a>.', 'revslider');?>
-		</p>
-		<?php
+		return $links;
 	}
 
 	/**
@@ -584,7 +596,7 @@ class RevSliderAdmin extends RevSliderFunctionsAdmin {
 	public function add_suggested_privacy_content() {
 		if(function_exists('wp_add_privacy_policy_content')){
 			$content = $this->get_default_privacy_content();
-			wp_add_privacy_policy_content(__( 'Slider Revolution'), $content);
+			wp_add_privacy_policy_content(__('Slider Revolution'), $content);
 		}
 	}
 	
@@ -728,6 +740,14 @@ class RevSliderAdmin extends RevSliderFunctionsAdmin {
 					}else{
 						$this->ajax_response_error(__('Deregistration failed!', 'revslider'));
 					}
+				break;
+				case 'close_deregister_popup':
+					update_option('revslider-deregister-popup', 'false');
+					$this->ajax_response_success(__('Saved', 'revslider'));
+				break;
+				case 'deactivate_trustpilot':
+					update_option('revslider-trustpilot', 'false');
+					$this->ajax_response_success(__('Saved', 'revslider'));
 				break;
 				case 'dismiss_dynamic_notice':
 					$ids = $this->get_val($data, 'id', array());
@@ -1179,19 +1199,21 @@ class RevSliderAdmin extends RevSliderFunctionsAdmin {
 					$return = array_search($alias,$arrSliders);
 
 					foreach($arrSliders as $sliderony){
-						if( $sliderony->get_alias() == $alias ){
-							$slider_found = $sliderony->get_overview_data();
-							$return = $slider_found["bg"]["src"];
-							$title = $slider_found['title'];
-						}
+						if($sliderony->get_alias() != $alias) continue;
+
+						$slider_found	= $sliderony->get_overview_data();
+						$return			= $this->get_val($slider_found, array('bg', 'src'));
+						$title			= $this->get_val($slider_found, 'title');
+						$premium_state	= $this->get_val($slider_found, 'premium');
+
+						break;
 					}
 
-					if(!$return) $return = "";
+					if(!$return) $return = '';
 
 					if(!empty($title)){
-						$this->ajax_response_data(array('image' => $return, 'title' => $title));
-					}
-					else{
+						$this->ajax_response_data(array('image' => $return, 'title' => $title, 'premium' => $premium_state));
+					}else{
 						$this->ajax_response_error( __('The Slider with the alias "' . $alias . '" is not available!', 'revslider') );
 					}
 
@@ -1548,7 +1570,8 @@ class RevSliderAdmin extends RevSliderFunctionsAdmin {
 							$upd->upgrade_slider_to_latest($slider);
 							$slider->init_by_id($slider_id);
 						}
-
+						global $rs_preview_mode;
+						$rs_preview_mode = true;
 						$content = '[rev_slider alias="' . esc_attr($slider->get_alias()) . '"][/rev_slider]';
 					}elseif(!empty($slider_data)){
 						$_slides = array();
@@ -2409,7 +2432,7 @@ class RevSliderAdmin extends RevSliderFunctionsAdmin {
 			$this->show_error($this->view, $e->getMessage());
 		}
 	}
-	
+
 	
 	/**
 	 * show an nice designed error
@@ -2533,12 +2556,12 @@ class RevSliderAdmin extends RevSliderFunctionsAdmin {
 		
 		if(!empty($rs_meta_create)){
 			foreach($rs_meta_create as $attach_id => $save_dir){
+				unset($rs_meta_create[$attach_id]);
+				update_option('rs_image_meta_todo', $rs_meta_create);
+
 				if($attach_data = @wp_generate_attachment_metadata($attach_id, $save_dir)){
 					@wp_update_attachment_metadata($attach_id, $attach_data);
 				}
-				unset($rs_meta_create[$attach_id]);
-				
-				update_option('rs_image_meta_todo', $rs_meta_create);
 			}
 		}
 	}
