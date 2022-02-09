@@ -4,13 +4,13 @@
  * Plugin Name: FiboSearch - AJAX Search for WooCommerce
  * Plugin URI: https://fibosearch.com?utm_source=wp-admin&utm_medium=referral&utm_campaign=author_uri&utm_gen=utmdc
  * Description: The most popular WooCommerce product search. Gives your users a well-designed advanced AJAX search bar with live search suggestions.
- * Version: 1.15.0
+ * Version: 1.16.0
  * Author: FiboSearch Team
  * Author URI: https://fibosearch.com?utm_source=wp-admin&utm_medium=referral&utm_campaign=author_uri&utm_gen=utmdc
  * Text Domain: ajax-search-for-woocommerce
  * Domain Path: /languages
  * WC requires at least: 3.3
- * WC tested up to: 6.0
+ * WC tested up to: 6.1
  *
  */
 // Exit if accessed directly
@@ -127,7 +127,7 @@ if ( !class_exists( 'DGWT_WC_Ajax_Search' ) && !function_exists( 'dgoraAsfwFs' )
         /**
          * Check requirements
          *
-         * @return void
+         * @return bool
          */
         private function checkRequirements()
         {
@@ -166,7 +166,6 @@ if ( !class_exists( 'DGWT_WC_Ajax_Search' ) && !function_exists( 'dgoraAsfwFs' )
 			    </p>
 		    </div>
 		    <?php 
-            return;
         }
         
         /**
@@ -284,27 +283,31 @@ if ( !class_exists( 'DGWT_WC_Ajax_Search' ) && !function_exists( 'dgoraAsfwFs' )
                 wp_localize_script( 'dgwt-wcas-admin-js', 'dgwt_wcas', $localize );
                 // Enqueue CSS
                 wp_enqueue_style( 'dgwt-wcas-admin-style' );
-                wp_enqueue_style( 'wp-color-picker' );
-                wp_enqueue_script( 'dgwt-wcas-admin-js' );
-                wp_enqueue_script( 'wp-color-picker' );
-                wp_enqueue_script(
-                    'dgwt-wcas-admin-popper-js',
-                    DGWT_WCAS_URL . 'assets/js/popper.min.js',
-                    array( 'jquery' ),
-                    DGWT_WCAS_VERSION
-                );
-                wp_enqueue_script(
-                    'dgwt-wcas-admin-tooltip-js',
-                    DGWT_WCAS_URL . 'assets/js/tooltip.min.js',
-                    array( 'jquery' ),
-                    DGWT_WCAS_VERSION
-                );
-                wp_enqueue_style(
-                    'dgwt-wcas-style',
-                    apply_filters( 'dgwt/wcas/scripts/css_style_url', DGWT_WCAS_URL . 'assets/css/style' . $min . '.css' ),
-                    array(),
-                    DGWT_WCAS_VERSION
-                );
+                
+                if ( !dgoraAsfwFs()->is_activation_mode() ) {
+                    wp_enqueue_style( 'wp-color-picker' );
+                    wp_enqueue_script( 'dgwt-wcas-admin-js' );
+                    wp_enqueue_script( 'wp-color-picker' );
+                    wp_enqueue_script(
+                        'dgwt-wcas-admin-popper-js',
+                        DGWT_WCAS_URL . 'assets/js/popper.min.js',
+                        array( 'jquery' ),
+                        DGWT_WCAS_VERSION
+                    );
+                    wp_enqueue_script(
+                        'dgwt-wcas-admin-tooltip-js',
+                        DGWT_WCAS_URL . 'assets/js/tooltip.min.js',
+                        array( 'jquery' ),
+                        DGWT_WCAS_VERSION
+                    );
+                    wp_enqueue_style(
+                        'dgwt-wcas-style',
+                        apply_filters( 'dgwt/wcas/scripts/css_style_url', DGWT_WCAS_URL . 'assets/css/style' . $min . '.css' ),
+                        array(),
+                        DGWT_WCAS_VERSION
+                    );
+                }
+            
             }
             
             if ( \DgoraWcas\Helpers::isCheckoutPage() ) {

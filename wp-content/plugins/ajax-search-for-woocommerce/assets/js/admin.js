@@ -1471,7 +1471,7 @@
 
 			const count = dgwt_wcas['troubleshooting']['tests']['issues']['critical'] + dgwt_wcas['troubleshooting']['tests']['issues']['recommended'];
 			if (count > 0) {
-				$(_this.counterClass).text(count);
+				$(_this.counterClass).text(count).addClass('active');
 				$(_this.settingsTab).addClass('enabled');
 			}
 
@@ -1576,7 +1576,7 @@
 			count = dgwt_wcas.troubleshooting.tests.issues['critical'] + dgwt_wcas.troubleshooting.tests.issues['recommended'];
 
 			if (count > 0) {
-				$(_this.counterClass).text(count);
+				$(_this.counterClass).text(count).addClass('active');
 				$(_this.settingsTab).addClass('enabled');
 			}
 

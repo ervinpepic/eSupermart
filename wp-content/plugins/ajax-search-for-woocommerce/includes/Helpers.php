@@ -128,7 +128,8 @@ class Helpers
 					 viewBox="0 0 51.539 51.361" enable-background="new 0 0 51.539 51.361" xml:space="preserve">
 		             <path fill="<?php 
                 echo  $color ;
-                ?>" d="M51.539,49.356L37.247,35.065c3.273-3.74,5.272-8.623,5.272-13.983c0-11.742-9.518-21.26-21.26-21.26 S0,9.339,0,21.082s9.518,21.26,21.26,21.26c5.361,0,10.244-1.999,13.983-5.272l14.292,14.292L51.539,49.356z M2.835,21.082 c0-10.176,8.249-18.425,18.425-18.425s18.425,8.249,18.425,18.425S31.436,39.507,21.26,39.507S2.835,31.258,2.835,21.082z"/>
+                ?>"
+						   d="M51.539,49.356L37.247,35.065c3.273-3.74,5.272-8.623,5.272-13.983c0-11.742-9.518-21.26-21.26-21.26 S0,9.339,0,21.082s9.518,21.26,21.26,21.26c5.361,0,10.244-1.999,13.983-5.272l14.292,14.292L51.539,49.356z M2.835,21.082 c0-10.176,8.249-18.425,18.425-18.425s18.425,8.249,18.425,18.425S31.436,39.507,21.26,39.507S2.835,31.258,2.835,21.082z"/>
 				</svg>
 				<?php 
                 break;
@@ -140,7 +141,8 @@ class Helpers
                 ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
 					<path fill="<?php 
                 echo  $color ;
-                ?>" d="M15.5 14h-.79l-.28-.27c1.2-1.4 1.82-3.31 1.48-5.34-.47-2.78-2.79-5-5.59-5.34-4.23-.52-7.79 3.04-7.27 7.27.34 2.8 2.56 5.12 5.34 5.59 2.03.34 3.94-.28 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                ?>"
+						  d="M15.5 14h-.79l-.28-.27c1.2-1.4 1.82-3.31 1.48-5.34-.47-2.78-2.79-5-5.59-5.34-4.23-.52-7.79 3.04-7.27 7.27.34 2.8 2.56 5.12 5.34 5.59 2.03.34 3.94-.28 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
 				</svg>
 				<?php 
                 break;
@@ -152,7 +154,7 @@ class Helpers
                 ?>" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
 					<path fill="<?php 
                 echo  $color ;
-                ?>" d="M14 6.125H3.351l4.891-4.891L7 0 0 7l7 7 1.234-1.234L3.35 7.875H14z" fill-rule="evenodd" />
+                ?>" d="M14 6.125H3.351l4.891-4.891L7 0 0 7l7 7 1.234-1.234L3.35 7.875H14z" fill-rule="evenodd"/>
 				</svg>
 				<?php 
                 break;
@@ -164,7 +166,8 @@ class Helpers
                 ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
 					<path fill="<?php 
                 echo  $color ;
-                ?>" d="M18.3 5.71c-.39-.39-1.02-.39-1.41 0L12 10.59 7.11 5.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41L10.59 12 5.7 16.89c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L12 13.41l4.89 4.89c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4z"/>
+                ?>"
+						  d="M18.3 5.71c-.39-.39-1.02-.39-1.41 0L12 10.59 7.11 5.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41L10.59 12 5.7 16.89c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L12 13.41l4.89 4.89c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4z"/>
 				</svg>
 				<?php 
                 break;
@@ -173,7 +176,7 @@ class Helpers
                 ?>
 				<svg class="dgwt-wcas-loader-circular <?php 
                 echo  $class ;
-                ?>"  viewBox="25 25 50 50">
+                ?>" viewBox="25 25 50 50">
 					<circle class="dgwt-wcas-loader-circular-path" cx="50" cy="50" r="20" fill="none" stroke="<?php 
                 echo  $color ;
                 ?>" stroke-miterlimit="10"/>
@@ -1112,7 +1115,7 @@ class Helpers
             'labels'                       => self::getLabels(),
             'ajax_search_endpoint'         => self::getEndpointUrl( 'search' ),
             'ajax_details_endpoint'        => self::getEndpointUrl( 'details' ),
-            'ajax_prices_endpoint'         => self::getEndpointUrl( 'prizes' ),
+            'ajax_prices_endpoint'         => self::getEndpointUrl( 'prices' ),
             'action_search'                => DGWT_WCAS_SEARCH_ACTION,
             'action_result_details'        => DGWT_WCAS_RESULT_DETAILS_ACTION,
             'action_get_prices'            => DGWT_WCAS_GET_PRICES_ACTION,
@@ -1249,7 +1252,7 @@ class Helpers
             $backtrace_limit = 10;
         }
         $result = false;
-        $backtrace = debug_backtrace( 0, $backtrace_limit );
+        $backtrace = self::debugBacktrace( 0, $backtrace_limit );
         if ( !empty($backtrace) ) {
             foreach ( $backtrace as $item ) {
                 
@@ -1261,6 +1264,11 @@ class Helpers
             }
         }
         return $result;
+    }
+    
+    private static function debugBacktrace( $options, $limit )
+    {
+        return debug_backtrace( $options, $limit );
     }
     
     /**
@@ -1336,10 +1344,8 @@ class Helpers
         
         if ( defined( 'DGWT_WCAS_BA_USERNAME' ) && defined( 'DGWT_WCAS_BA_PASSWORD' ) ) {
             $authorization = 'Basic ' . base64_encode( wp_unslash( DGWT_WCAS_BA_USERNAME ) . ':' . wp_unslash( DGWT_WCAS_BA_PASSWORD ) );
-        } else {
-            if ( isset( $_SERVER['PHP_AUTH_USER'] ) && isset( $_SERVER['PHP_AUTH_PW'] ) ) {
-                $authorization = 'Basic ' . base64_encode( wp_unslash( $_SERVER['PHP_AUTH_USER'] ) . ':' . wp_unslash( $_SERVER['PHP_AUTH_PW'] ) );
-            }
+        } elseif ( isset( $_SERVER['PHP_AUTH_USER'] ) && isset( $_SERVER['PHP_AUTH_PW'] ) ) {
+            $authorization = 'Basic ' . base64_encode( wp_unslash( $_SERVER['PHP_AUTH_USER'] ) . ':' . wp_unslash( $_SERVER['PHP_AUTH_PW'] ) );
         }
         
         return $authorization;
@@ -1385,6 +1391,38 @@ class Helpers
     public static function isAMPEndpoint()
     {
         return function_exists( 'is_amp_endpoint' ) && is_amp_endpoint();
+    }
+    
+    /**
+     * Get the path to the fibo directory in the theme or child theme
+     *
+     * @param string $path
+     * @param array $vars
+     *
+     * @return void
+     */
+    public static function loadTemplate( $template = '', $vars = array() )
+    {
+        $path = '';
+        // Load default partials from the plugin
+        $file = DGWT_WCAS_DIR . 'partials/' . $template;
+        if ( file_exists( $file ) ) {
+            $path = $file;
+        }
+        // Load a partial if it is localized in the child-theme
+        $file = get_stylesheet_directory() . '/fibosearch/' . $template;
+        if ( file_exists( $file ) ) {
+            $path = $file;
+        }
+        $path = apply_filters(
+            'dgwt/wcas/template',
+            $path,
+            $template,
+            $vars
+        );
+        if ( file_exists( $path ) ) {
+            include $path;
+        }
     }
 
 }

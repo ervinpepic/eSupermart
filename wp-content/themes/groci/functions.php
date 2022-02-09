@@ -3,7 +3,7 @@
  * functions.php
  * @package WordPress
  * @subpackage Groci
- * @since Groci 2.2.0
+ * @since Groci 2.2.1
  * 
  */
  
@@ -220,7 +220,7 @@ function groci_register_required_plugins() {
             'slug'                  => 'revslider',
             'source'                => $mainurl . 'revslider.zip',
             'required'              => false,
-            'version'               => '6.5.12',
+            'version'               => '6.5.15',
             'force_activation'      => false,
             'force_deactivation'    => false,
             'external_url'          => '',
@@ -231,7 +231,7 @@ function groci_register_required_plugins() {
             'slug'                  => 'envato-market',
             'source'                => $mainurl . 'envato-market.zip',
             'required'              => true,
-            'version'               => '2.0.6',
+            'version'               => '2.0.7',
             'force_activation'      => false,
             'force_deactivation'    => false,
             'external_url'          => '',

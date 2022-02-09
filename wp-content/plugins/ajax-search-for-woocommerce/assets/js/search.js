@@ -6,7 +6,7 @@
  *  For details, see the web site: https://github.com/devbridge/jQuery-Autocomplete
  *
  *  Modified by Damian Góra: http://damiangora.com
- *  Minify: https://javascript-minifier.com/
+ *  Minify: https://www.toptal.com/developers/javascript-minifier/
  */
 
 /*jslint  browser: true, white: true, single: true, this: true, multivar: true */
@@ -343,7 +343,13 @@
 				}
 			});
 
-            that.initMobileMode();
+            $(window).on('resize.autocomplete', function(){
+                that.toggleMobileMode();
+            });
+
+            if(that.isMobileMode()) {
+                that.initMobileMode();
+            }
 
             that.hideAfterClickOutsideListener();
 
@@ -428,7 +434,7 @@
             // Click close icon
 			$(document).on('click.autocomplete', '.' + that.options.closeTrigger, function () {
 				var that = utils.getActiveInstance();
-				that.close();
+				that.close(true);
 			});
 
 			// Extra tasks on submit
@@ -642,17 +648,6 @@
 							|| $target.closest('.' + that.options.containerClass).length > 0
 							|| $target.closest('.' + that.options.containerDetailsClass).length > 0
 						)) {
-							var activeInstance = utils.getActiveInstance();
-
-							if (typeof activeInstance != 'undefined') {
-								var $formWrapper = activeInstance.getFormWrapper();
-								var $form = $formWrapper.find('.' + that.options.formClass);
-
-								$form.hide();
-								activeInstance.hide(true);
-								$form.css({'left': '0'});
-							}
-
 							that.hideIconModeSearch();
 						}
 
@@ -697,12 +692,12 @@
 
         },
         initMobileMode: function () {
-            var that = this;
-			var $formWrapper = that.getFormWrapper();
+            var that = this,
+                $formWrapper = that.getFormWrapper();
 
             if (
 				$formWrapper.hasClass('js-dgwt-wcas-mobile-overlay-enabled')
-                && that.isMobileMode()
+                && !$formWrapper.find('.js-dgwt-wcas-enable-mobile-form').length
             ) {
 
                 $formWrapper.prepend('<div class="js-dgwt-wcas-enable-mobile-form dgwt-wcas-enable-mobile-form"></div>');
@@ -724,6 +719,60 @@
             }
 
         },
+        destroyMobileMode: function () {
+            var that = this,
+                $formWrapper = that.getFormWrapper(),
+                $suggestionsWrapper = that.getSuggestionsContainer();
+
+            var $el = $formWrapper.find('.js-dgwt-wcas-enable-mobile-form');
+
+            if ($formWrapper.hasClass('js-dgwt-wcas-mobile-overlay-enabled')
+                && $el.length
+            ) {
+
+                that.disableOverlayMobile();
+                $el.remove();
+
+            }
+
+        },
+        toggleMobileMode: function () {
+            var that = this,
+                $formWrapper = that.getFormWrapper(),
+                currentMode = 'desktop';
+
+            // Determine the current mode
+            if ($formWrapper.find('.js-dgwt-wcas-enable-mobile-form').length) {
+                currentMode = 'mobile';
+            }
+
+            // Toggled?
+            if ((currentMode === 'desktop' && that.isMobileMode())
+                || (currentMode === 'mobile' && !that.isMobileMode())
+            ) {
+
+                var $suggestionsWrapper = that.getSuggestionsContainer();
+
+                that.close(false);
+
+                if ($suggestionsWrapper.length) {
+                    $suggestionsWrapper.html('');
+                }
+
+                that.hideIconModeSearch();
+
+            }
+
+            // Switch to mobile mode
+            if (currentMode === 'desktop' && that.isMobileMode()) {
+                that.initMobileMode();
+            }
+
+            // Switch to desktop mode
+            if (currentMode === 'mobile' && !that.isMobileMode()) {
+                that.destroyMobileMode();
+            }
+        },
 		applyFlexibleMode: function () {
 			var that = this;
 			var $flexibleSearch = $('.js-dgwt-wcas-layout-icon-flexible');
@@ -743,8 +792,14 @@
 		},
         onFocus: function () {
             var that = this;
+            // Mark as active
             $('.' + this.options.searchFormClass).removeClass('dgwt-wcas-active');
             that.getFormWrapper().addClass('dgwt-wcas-active');
+
+            // Mark as focus
+            $('body').addClass('dgwt-wcas-focused');
+            that.getFormWrapper().addClass('dgwt-wcas-search-focused');
+
             that.fixPositionCapture();
             if (that.el.val().length >= that.options.minChars) {
                 that.onValueChange();
@@ -756,6 +811,10 @@
                 options = that.options,
                 value = that.el.val(),
                 query = that.getQuery(value);
+
+            // Remove focused classes
+            $('body').removeClass('dgwt-wcas-focused');
+            $('.' + this.options.searchFormClass).removeClass('dgwt-wcas-search-focused');
 
             if(that.isMobileMode()){
             	return;
@@ -829,14 +888,18 @@
             this.currentValue = '';
             this.suggestions = [];
         },
-		close: function (){
-			var that = this;
+        close: function (focus) {
+            var that = this;
 
-			that.hide();
-			that.clear(false);
-			that.hideCloseButton();
-			that.el.closest('.' + that.options.searchFormClass).find('.' + that.options.searchInputClass).val('').focus();
-		},
+            that.hide();
+            that.clear(false);
+            that.hideCloseButton();
+            var $el = that.el.closest('.' + that.options.searchFormClass).find('.' + that.options.searchInputClass);
+            $el.val('');
+            if (focus) {
+                $el.focus();
+            }
+        },
         disable: function () {
             var that = this;
             that.disabled = true;
@@ -2571,7 +2634,7 @@
 
 			$formWrapper.removeClass('dgwt-wcas-active');
 
-			that.close();
+			that.close(false);
 
 			// Remove mobile handler
 			if ($mobileHandler.length) {
@@ -2633,6 +2696,7 @@
             var that = this;
 
 			if (!$('html').hasClass('dgwt-wcas-overlay-mobile-on')) {
+                that.overlayMobileState = 'off';
 				return;
 			}
 

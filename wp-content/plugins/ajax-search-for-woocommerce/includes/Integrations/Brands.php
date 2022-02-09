@@ -159,7 +159,7 @@ class Brands {
 	/**
 	 * Get the name of the plugin vendor
 	 *
-	 * @return static
+	 * @return string
 	 */
 	public function getPluginName() {
 		return ! empty( $this->pluginInfo['Name'] ) ? sanitize_text_field( $this->pluginInfo['Name'] ) : '';
@@ -168,7 +168,7 @@ class Brands {
 	/**
 	 * Get the name of the plugin vendor
 	 *
-	 * @return static
+	 * @return string
 	 */
 	public function getPluginVersion() {
 		return ! empty( $this->pluginInfo['Version'] ) ? sanitize_text_field( $this->pluginInfo['Version'] ) : '';

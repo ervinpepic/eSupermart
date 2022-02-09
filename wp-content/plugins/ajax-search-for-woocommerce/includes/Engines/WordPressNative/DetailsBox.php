@@ -161,7 +161,7 @@ class DetailsBox
         );
         $file = ( $variationID ? 'product-variation' : 'product' );
         ob_start();
-        include DGWT_WCAS_DIR . 'partials/details-panel/' . $file . '.php';
+        Helpers::loadTemplate( 'details-panel/' . $file . '.php', $vars );
         $details['html'] = ob_get_clean();
         
         if ( $variationID ) {
@@ -220,14 +220,37 @@ class DetailsBox
                 $termName
             );
             echo  '<div class="dgwt-wcas-details-inner dgwt-wcas-details-inner-taxonomy dgwt-wcas-details-space">' ;
+            do_action( 'dgwt/wcas/details_panel/term_products/container_before' );
             echo  '<div class="dgwt-wcas-products-in-cat">' ;
             echo  ( !empty($title) ? $title : '' ) ;
+            $thumbSize = apply_filters( 'dgwt/wcas/suggestion_details/term_products/thumb_size', 'dgwt-wcas-product-suggestion' );
+            $responsiveImages = apply_filters( 'dgwt/wcas/suggestion_details/responsive_images', true );
             while ( $products->have_posts() ) {
                 $products->the_post();
                 $product = new Product( get_the_ID() );
+                
                 if ( $product->isValid() ) {
-                    include DGWT_WCAS_DIR . 'partials/details-panel/term-product.php';
+                    $vars = array(
+                        'ID'          => $product->getID(),
+                        'name'        => $product->getName(),
+                        'link'        => $product->getPermalink(),
+                        'imageSrc'    => $product->getThumbnailSrc( $thumbSize ),
+                        'imageSrcset' => ( $responsiveImages ? $product->getThumbnailSrcset( $thumbSize ) : '' ),
+                        'imageSizes'  => ( $responsiveImages ? $product->getThumbnailSizes( $thumbSize ) : '' ),
+                        'reviewCount' => $product->getReviewCount(),
+                        'ratingHtml'  => $product->getRatingHtml(),
+                        'priceHtml'   => $product->getPriceHTML(),
+                        'wooObject'   => $product->getWooObject(),
+                    );
+                    $vars = (object) apply_filters(
+                        'dgwt/wcas/suggestion_details/term_products/vars',
+                        $vars,
+                        $product->getID(),
+                        $product
+                    );
+                    Helpers::loadTemplate( 'details-panel/term-product.php', $vars );
                 }
+            
             }
             echo  '</div>' ;
             
@@ -236,6 +259,7 @@ class DetailsBox
                 echo  '<a class="dgwt-wcas-details-more-products" href="' . esc_url( $showMoreUrl ) . '">' . Helpers::getLabel( 'show_more_details' ) . ' (' . $totalProducts . ')</a>' ;
             }
             
+            do_action( 'dgwt/wcas/details_panel/term_products/container_after' );
             echo  '</div>' ;
         }
         

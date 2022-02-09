@@ -14,8 +14,6 @@ class Troubleshooting
 {
     const  SECTION_ID = 'dgwt_wcas_troubleshooting' ;
     const  TRANSIENT_RESULTS_KEY = 'dgwt_wcas_troubleshooting_async_results' ;
-    const  TRANSIENT_TEST_KEY = 'dgwt_wcas_test_transients' ;
-    const  TRANSIENT_TEST_KEY2 = 'dgwt_wcas_test_transients2' ;
     const  ASYNC_TEST_NONCE = 'troubleshooting-async-test' ;
     const  RESET_ASYNC_TESTS_NONCE = 'troubleshooting-reset-async-tests' ;
     const  FIX_OUTOFSTOCK_NONCE = 'troubleshooting-fix-outofstock' ;
@@ -148,8 +146,6 @@ class Troubleshooting
             'results_async' => array(),
         ),
         );
-        set_transient( self::TRANSIENT_TEST_KEY, '1', HOUR_IN_SECONDS );
-        set_transient( self::TRANSIENT_TEST_KEY2, '1', 1 );
         $asyncTestsResults = get_transient( self::TRANSIENT_RESULTS_KEY );
         
         if ( !empty($asyncTestsResults) && is_array( $asyncTestsResults ) ) {

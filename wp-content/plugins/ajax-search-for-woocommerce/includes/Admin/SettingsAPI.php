@@ -470,7 +470,7 @@ class SettingsAPI
      *
      * @param array $args settings field args
      *
-     * @return string
+     * @return void
      */
     function callback_html( $args )
     {

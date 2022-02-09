@@ -2,9 +2,9 @@
 Contributors: damian-gora, matczar
 Tags: woocommerce search, ajax search, search by sku, product search, woocommerce
 Requires at least: 5.0
-Tested up to: 5.8
+Tested up to: 5.9
 Requires PHP: 7.0
-Stable tag: 1.15.0
+Stable tag: 1.16.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -141,6 +141,23 @@ You can read more and compare Pro and Free features here: [Full comparison - Pro
 5. Settings page
 
 == Changelog ==
+
+= 1.16.0, February 03, 2022 =
+* ADD: Integration with a XStore theme
+* ADD: Allow customization of the Details Panel with actions and filters
+* ADD: Templating system to override details panel templates via child-theme
+* ADD: Troubleshooting - test if product translations are enabled in the Polylang settings
+* ADD: Add extra CSS classes when search bar is focused
+
+* FIX: Compatibility with PHP 8.1
+* FIX: Integration with Astra theme - the “Save Changes” button disappeared after turning on the integration
+* FIX: JavaScript errors on the plugin activation page
+* FIX: Bug with enabling and disabling “overlay on mobile” feature during window resizing and reaching a breakpoint
+* FIX: Missing "Troubleshooting" tab icon with the number of issues
+
+
+
+
 
 = 1.15.0, December 16, 2021 =
 * ADD: Integration with a Uncode theme

@@ -277,8 +277,20 @@ class Multilingual {
 		if ( self::isPolylang() ) {
 			$langs = pll_languages_list( array(
 				'hide_empty' => false,
-				'fields'     => 'slug'
+				'fields'     => ''
 			) );
+
+			// Filter not-active languages
+			$langs = array_filter( $langs, function ( $lang ) {
+				// By default, 'active' prop isn't available; It is set the first time the administrator deactivates the language
+				if ( isset( $lang->active ) && ! $lang->active ) {
+					return false;
+				}
+
+				return true;
+			} );
+
+			$langs = wp_list_pluck( $langs, 'slug' );
 		}
 
 

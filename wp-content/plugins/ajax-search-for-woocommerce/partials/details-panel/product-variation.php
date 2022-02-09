@@ -7,8 +7,12 @@ if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
 
 ?>
 <div class="dgwt-wcas-details-inner dgwt-wcas-details-inner-product">
+
+	<?php do_action( 'dgwt/wcas/details_panel/product_variation/container_before', $vars ); ?>
+
 	<div class="dgwt-wcas-product-details">
 
+		<?php do_action( 'dgwt/wcas/details_panel/product_variation/image_before', $vars ); ?>
 		<a href="<?php echo esc_url( $vars->link ); ?>" title="<?php echo wp_strip_all_tags($vars->name); ?>">
 			<div class="dgwt-wcas-details-main-image">
 				<img
@@ -19,6 +23,7 @@ if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
 				>
 			</div>
 		</a>
+		<?php do_action( 'dgwt/wcas/details_panel/product_variation/image_after', $vars ); ?>
 
 		<div class="dgwt-wcas-details-space">
 			<a class="dgwt-wcas-details-product-title" href="<?php echo esc_url( $vars->link ); ?>" title="<?php echo wp_strip_all_tags($vars->name); ?>">
@@ -36,9 +41,11 @@ if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
 
 			<?php endif; ?>
 
+			<?php do_action( 'dgwt/wcas/details_panel/product_variation/price_before', $vars ); ?>
 			<div class="dgwt-wcas-pd-price">
 				<?php echo $vars->priceHtml; ?>
 			</div>
+			<?php do_action( 'dgwt/wcas/details_panel/product_variation/price_after', $vars ); ?>
 
 			<?php if ( ! empty( $vars->attributes ) ): ?>
 				<div class="dgwt-wcas-details-hr"></div>
@@ -55,6 +62,7 @@ if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
 				echo $vars->stockAvailability;
 			}; ?>
 
+			<?php do_action( 'dgwt/wcas/details_panel/product_variation/add_to_cart_before', $vars ); ?>
 			<div class="dgwt-wcas-pd-addtc js-dgwt-wcas-pd-addtc">
 				<form class="dgwt-wcas-pd-addtc-form" action="" method="post" enctype="multipart/form-data">
 					<?php
@@ -73,8 +81,12 @@ if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
 					?>
 				</form>
 			</div>
+			<?php do_action( 'dgwt/wcas/details_panel/product_variation/add_to_cart_after', $vars ); ?>
 
 		</div>
 
 	</div>
+
+	<?php do_action( 'dgwt/wcas/details_panel/product_variation/container_after', $vars ); ?>
+
 </div>

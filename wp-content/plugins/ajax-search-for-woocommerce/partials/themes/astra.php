@@ -171,13 +171,3 @@ add_filter( 'wp_head', function () {
 	</style>
 	<?php
 } );
-
-add_action( 'admin_head', function () {
-	?>
-	<style>
-		#dgwt_wcas_basic .submit {
-			display: none !important;
-		}
-	</style>
-	<?php
-} );

@@ -208,6 +208,11 @@ class ThemesCompatibility {
 				'slug'      => 'uncode',
 				'name'      => 'Uncode',
 			),
+			'xstore' => array(
+				'slug'      => 'xstore',
+				'className' => 'Xstore',
+				'name'      => 'XStore',
+			),
 		);
 	}
 
@@ -247,18 +252,18 @@ class ThemesCompatibility {
 	}
 
 	/**
-	 * Get current theme onfo
+	 * Get current theme info
 	 *
-	 * @return object
+	 * @return null|object
 	 */
 	public function getTheme() {
 		return $this->theme;
 	}
 
 	/**
-	 * Get current theme onfo
+	 * Get current theme image src
 	 *
-	 * @return object
+	 * @return string
 	 */
 	public function getThemeImageSrc() {
 		$src = '';

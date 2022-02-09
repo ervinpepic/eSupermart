@@ -23,6 +23,17 @@ class AdminMenu
     public function addMenu()
     {
         $menuSuffix = '';
+        if ( dgoraAsfwFs()->is_activation_mode() ) {
+            add_action( 'admin_print_styles', function () {
+                ?>
+				<style>
+					#adminmenu > .toplevel_page_dgwt_wcas_settings {
+						display: none;
+					}
+				</style>
+				<?php 
+            } );
+        }
         add_submenu_page(
             'woocommerce',
             __( 'FiboSearch', 'ajax-search-for-woocommerce' ),
@@ -31,14 +42,16 @@ class AdminMenu
             'dgwt_wcas_settings',
             array( $this, 'settingsPage' )
         );
-        add_submenu_page(
-            'dgwt_wcas_settings',
-            'FiboSearch Debug',
-            'FiboSearch [Hidden]',
-            'manage_options',
-            'dgwt_wcas_debug',
-            array( $this, 'debugPage' )
-        );
+        if ( !dgoraAsfwFs()->is_activation_mode() ) {
+            add_submenu_page(
+                'dgwt_wcas_settings',
+                'FiboSearch Debug',
+                'FiboSearch [Hidden]',
+                'manage_options',
+                'dgwt_wcas_debug',
+                array( $this, 'debugPage' )
+            );
+        }
     }
     
     /**
