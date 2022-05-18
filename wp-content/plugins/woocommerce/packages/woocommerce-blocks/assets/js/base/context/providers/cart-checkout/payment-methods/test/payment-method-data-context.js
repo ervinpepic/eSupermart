@@ -1,13 +1,8 @@
 /**
  * External dependencies
  */
-import {
-	render,
-	screen,
-	fireEvent,
-	waitFor,
-	act,
-} from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { previewCart } from '@woocommerce/resource-previews';
 import { dispatch } from '@wordpress/data';
 import { CART_STORE_KEY as storeKey } from '@woocommerce/block-data';
@@ -29,7 +24,7 @@ import {
 import {
 	CheckoutExpressPayment,
 	SavedPaymentMethodOptions,
-} from '../../../../../../blocks/cart-checkout/payment-methods';
+} from '../../../../../../blocks/cart-checkout-shared/payment-methods';
 import { defaultCartState } from '../../../../../../data/default-states';
 
 jest.mock( '@woocommerce/settings', () => {
@@ -44,7 +39,7 @@ jest.mock( '@woocommerce/settings', () => {
 					cc: [
 						{
 							method: {
-								gateway: 'stripe',
+								gateway: 'credit-card',
 								last4: '4242',
 								brand: 'Visa',
 							},
@@ -75,7 +70,7 @@ const registerMockPaymentMethods = ( savedCards = true ) => {
 			ariaLabel: name,
 		} );
 	} );
-	[ 'stripe' ].forEach( ( name ) => {
+	[ 'credit-card' ].forEach( ( name ) => {
 		registerPaymentMethod( {
 			name,
 			label: name,
@@ -121,7 +116,7 @@ const registerMockPaymentMethods = ( savedCards = true ) => {
 };
 
 const resetMockPaymentMethods = () => {
-	[ 'cheque', 'bacs', 'stripe' ].forEach( ( name ) => {
+	[ 'cheque', 'bacs', 'credit-card' ].forEach( ( name ) => {
 		__experimentalDeRegisterPaymentMethod( name );
 	} );
 	[ 'express-payment' ].forEach( ( name ) => {
@@ -135,7 +130,7 @@ describe( 'Testing Payment Method Data Context Provider', () => {
 			registerMockPaymentMethods( false );
 
 			fetchMock.mockResponse( ( req ) => {
-				if ( req.url.match( /wc\/store\/cart/ ) ) {
+				if ( req.url.match( /wc\/store\/v1\/cart/ ) ) {
 					return Promise.resolve( JSON.stringify( previewCart ) );
 				}
 				return Promise.resolve( '' );
@@ -172,9 +167,7 @@ describe( 'Testing Payment Method Data Context Provider', () => {
 			);
 		};
 
-		act( () => {
-			render( <TestComponent /> );
-		} );
+		render( <TestComponent /> );
 
 		// should initialize by default the first payment method.
 		await waitFor( () => {
@@ -184,12 +177,10 @@ describe( 'Testing Payment Method Data Context Provider', () => {
 			expect( activePaymentMethod ).not.toBeNull();
 		} );
 
-		act( () => {
-			// Express payment method clicked.
-			fireEvent.click(
-				screen.getByText( 'express-payment express payment method' )
-			);
-		} );
+		// Express payment method clicked.
+		userEvent.click(
+			screen.getByText( 'express-payment express payment method' )
+		);
 
 		await waitFor( () => {
 			const activePaymentMethod = screen.queryByText(
@@ -198,14 +189,10 @@ describe( 'Testing Payment Method Data Context Provider', () => {
 			expect( activePaymentMethod ).not.toBeNull();
 		} );
 
-		act( () => {
-			// Express payment method closed.
-			fireEvent.click(
-				screen.getByText(
-					'express-payment express payment method close'
-				)
-			);
-		} );
+		// Express payment method closed.
+		userEvent.click(
+			screen.getByText( 'express-payment express payment method close' )
+		);
 
 		await waitFor( () => {
 			const activePaymentMethod = screen.queryByText(
@@ -213,9 +200,6 @@ describe( 'Testing Payment Method Data Context Provider', () => {
 			);
 			expect( activePaymentMethod ).not.toBeNull();
 		} );
-
-		// ["`select` control in `@wordpress/data-controls` is deprecated. Please use built-in `resolveSelect` control in `@wordpress/data` instead."]
-		expect( console ).toHaveWarned();
 	} );
 } );
 
@@ -225,7 +209,7 @@ describe( 'Testing Payment Method Data Context Provider with saved cards turned 
 			registerMockPaymentMethods( true );
 
 			fetchMock.mockResponse( ( req ) => {
-				if ( req.url.match( /wc\/store\/cart/ ) ) {
+				if ( req.url.match( /wc\/store\/v1\/cart/ ) ) {
 					return Promise.resolve( JSON.stringify( previewCart ) );
 				}
 				return Promise.resolve( '' );
@@ -255,8 +239,8 @@ describe( 'Testing Payment Method Data Context Provider with saved cards turned 
 					<CheckoutExpressPayment />
 					<SavedPaymentMethodOptions onChange={ () => void null } />
 					{ 'Active Payment Method: ' + activePaymentMethod }
-					{ paymentMethodData[ 'wc-stripe-payment-token' ] && (
-						<span>Stripe token</span>
+					{ paymentMethodData[ 'wc-credit-card-payment-token' ] && (
+						<span>credit-card token</span>
 					) }
 				</>
 			);
@@ -269,52 +253,53 @@ describe( 'Testing Payment Method Data Context Provider with saved cards turned 
 			);
 		};
 
-		act( () => {
-			render( <TestComponent /> );
-		} );
+		render( <TestComponent /> );
 
 		// Should initialize by default the default saved payment method.
 		await waitFor( () => {
 			const activePaymentMethod = screen.queryByText(
-				/Active Payment Method: stripe/
+				/Active Payment Method: credit-card/
 			);
-			const stripeToken = screen.queryByText( /Stripe token/ );
 			expect( activePaymentMethod ).not.toBeNull();
-			expect( stripeToken ).not.toBeNull();
 		} );
 
-		act( () => {
-			// Express payment method clicked.
-			fireEvent.click(
-				screen.getByText( 'express-payment express payment method' )
-			);
+		await waitFor( () => {
+			const creditCardToken = screen.queryByText( /credit-card token/ );
+			expect( creditCardToken ).not.toBeNull();
 		} );
+
+		// Express payment method clicked.
+		userEvent.click(
+			screen.getByText( 'express-payment express payment method' )
+		);
 
 		await waitFor( () => {
 			const activePaymentMethod = screen.queryByText(
 				/Active Payment Method: express-payment/
 			);
-			const stripeToken = screen.queryByText( /Stripe token/ );
 			expect( activePaymentMethod ).not.toBeNull();
-			expect( stripeToken ).toBeNull();
-		} );
-
-		act( () => {
-			// Express payment method closed.
-			fireEvent.click(
-				screen.getByText(
-					'express-payment express payment method close'
-				)
-			);
 		} );
 
 		await waitFor( () => {
+			const creditCardToken = screen.queryByText( /credit-card token/ );
+			expect( creditCardToken ).toBeNull();
+		} );
+
+		// Express payment method closed.
+		userEvent.click(
+			screen.getByText( 'express-payment express payment method close' )
+		);
+
+		await waitFor( () => {
 			const activePaymentMethod = screen.queryByText(
-				/Active Payment Method: stripe/
+				/Active Payment Method: credit-card/
 			);
-			const stripeToken = screen.queryByText( /Stripe token/ );
 			expect( activePaymentMethod ).not.toBeNull();
-			expect( stripeToken ).not.toBeNull();
+		} );
+
+		await waitFor( () => {
+			const creditCardToken = screen.queryByText( /credit-card token/ );
+			expect( creditCardToken ).not.toBeNull();
 		} );
 	} );
 } );

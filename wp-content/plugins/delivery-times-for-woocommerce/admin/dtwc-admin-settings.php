@@ -11,7 +11,7 @@
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	wp_die();
 }
 
 /**
@@ -55,7 +55,7 @@ require_once DTWC_ADMIN_DIR . '/class-dtwc-admin-settings.php';
  *
  * @since  1.0.0
  */
-if ( class_exists( 'Delivery_Times_For_WooCommerce_Admin_Settings' ) ) {
+if ( class_exists( 'DeliveryTimesForWooCommerceAdminSettings' ) ) {
 
 	/**
 	 * Load the admin settings on init
@@ -66,9 +66,9 @@ if ( class_exists( 'Delivery_Times_For_WooCommerce_Admin_Settings' ) ) {
 		/**
 		 * Object Instantiation.
 		 *
-		 * Object for the class `Delivery_Times_For_WooCommerce_Admin_Settings`.
+		 * Object for the class `DeliveryTimesForWooCommerceAdminSettings`.
 		 */
-		$dtwc_obj = new Delivery_Times_For_WooCommerce_Admin_Settings();
+		$dtwc_obj = new DeliveryTimesForWooCommerceAdminSettings();
 
 		// Section: Basic Settings.
 		$dtwc_obj->add_section(

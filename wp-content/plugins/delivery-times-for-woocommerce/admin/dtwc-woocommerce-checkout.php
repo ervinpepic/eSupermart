@@ -46,7 +46,7 @@ function dtwc_delivery_info_checkout_fields( $checkout ) {
         }
 
         // Get the prep time based on the settings in delivery prep.
-        $prep_time = date( 'H:i', strtotime( $strtotime, strtotime( current_time( 'H:i' ) ) ) );
+        //$prep_time = date( 'H:i', strtotime( $strtotime, strtotime( current_time( 'H:i' ) ) ) );
 
         // Add delivery time to array of times.
         $times[date( 'H:i', $delivery_time )] = date( apply_filters( 'dtwc_time_format', get_option( 'time_format' ) ), $delivery_time );
@@ -98,18 +98,18 @@ function dtwc_delivery_info_checkout_fields( $checkout ) {
 function dtwc_delivery_date_checkout_field_process() {
 
     // Create error message.
-    $message = __( 'Please select a delivery date.', 'delivery-times-for-woocommerce' );
+    $message = esc_attr__( 'Please select a delivery date.', 'delivery-times-for-woocommerce' );
 
     // Check if set, if its not set add an error.
-    if ( ! $_POST['dtwc_delivery_date'] && 'on' == dtwc_require_delivery_date() ) {
+    if ( ! filter_input( INPUT_POST, 'dtwc_delivery_date' ) && 'on' == dtwc_require_delivery_date() ) {
         wc_add_notice( apply_filters( 'dtwc_delivery_date_error_notice', $message ), 'error' );
     }
 
     // Create error message.
-    $message = __( 'Please select a delivery time.', 'delivery-times-for-woocommerce' );
+    $message = esc_attr__( 'Please select a delivery time.', 'delivery-times-for-woocommerce' );
 
     // Check if set, if its not set add an error.
-    if ( ! $_POST['dtwc_delivery_time'] && 'on' == dtwc_require_delivery_time() ) {
+    if ( ! filter_input( INPUT_POST, 'dtwc_delivery_time' ) && 'on' == dtwc_require_delivery_time() ) {
         wc_add_notice( apply_filters( 'dtwc_delivery_time_error_notice', $message ), 'error' );
     }
 }
@@ -121,11 +121,11 @@ add_action( 'woocommerce_checkout_process', 'dtwc_delivery_date_checkout_field_p
  * @since 1.0
  */
 function dtwc_add_order_delivery_info_to_order ( $order_id ) {
-	if ( isset( $_POST ['dtwc_delivery_date'] ) && '' != $_POST ['dtwc_delivery_date'] ) {
-		add_post_meta( $order_id, 'dtwc_delivery_date',  sanitize_text_field( $_POST ['dtwc_delivery_date'] ) );
+	if ( null !== filter_input( INPUT_POST, 'dtwc_delivery_date' ) && '' != filter_input( INPUT_POST, 'dtwc_delivery_date' ) ) {
+		add_post_meta( $order_id, 'dtwc_delivery_date',  sanitize_text_field( filter_input( INPUT_POST, 'dtwc_delivery_date' ) ) );
 	}
-	if ( isset( $_POST ['dtwc_delivery_time'] ) && '' != $_POST ['dtwc_delivery_time'] ) {
-		add_post_meta( $order_id, 'dtwc_delivery_time',  sanitize_text_field( $_POST ['dtwc_delivery_time'] ) );
+	if ( null !== filter_input( INPUT_POST, 'dtwc_delivery_time' ) && '' != filter_input( INPUT_POST, 'dtwc_delivery_time' ) ) {
+		add_post_meta( $order_id, 'dtwc_delivery_time',  sanitize_text_field( filter_input( INPUT_POST, 'dtwc_delivery_time' ) ) );
 	}
 }
 add_action( 'woocommerce_checkout_update_order_meta', 'dtwc_add_order_delivery_info_to_order' , 10, 1 );

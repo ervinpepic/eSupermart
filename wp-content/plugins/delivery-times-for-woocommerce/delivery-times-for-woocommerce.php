@@ -11,7 +11,7 @@
  * Plugin Name:          Delivery Times for WooCommerce
  * Plugin URI:           https://deviodigital.com/how-to-use-the-delivery-times-for-woocommerce-plugin/
  * Description:          Allow your customers to choose their desired delivery date and time during checkout with WooCommerce
- * Version:              1.7
+ * Version:              1.8.0
  * Author:               Devio Digital
  * Author URI:           https://www.deviodigital.com/
  * License:              GPL-2.0+
@@ -19,18 +19,18 @@
  * Text Domain:          delivery-times-for-woocommerce
  * Domain Path:          /languages
  * WC requires at least: 3.5.0
- * WC tested up to:      5.0
+ * WC tested up to:      6.4
  */
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
-	die;
+	wp_die();
 }
 
 /**
  * Current plugin version.
  */
-define( 'DTWC_VERSION', '1.7' );
+define( 'DTWC_VERSION', '1.8.0' );
 
 /**
  * The code that runs during plugin activation.
@@ -97,7 +97,7 @@ add_filter( "plugin_action_links_$pluginname", 'dtwc_settings_link' );
  * Add a check for our plugin before redirecting
  */
 function dtwc_activate() {
-    add_option( 'dtwc_do_activation_redirect', true );
+  add_option( 'dtwc_do_activation_redirect', true );
 }
 register_activation_hook( __FILE__, 'dtwc_activate' );
 
@@ -107,11 +107,11 @@ register_activation_hook( __FILE__, 'dtwc_activate' );
  * @since 1.0
  */
 function dtwc_redirect() {
-    if ( get_option( 'dtwc_do_activation_redirect', false ) ) {
-        delete_option( 'dtwc_do_activation_redirect' );
-        if ( ! isset( $_GET['activate-multi'] ) ) {
-            wp_redirect( 'admin.php?page=dtwc_settings' );
-        }
-    }
+	if ( get_option( 'dtwc_do_activation_redirect', false ) ) {
+			delete_option( 'dtwc_do_activation_redirect' );
+			if ( null === filter_input( INPUT_POST, 'activate-multi' ) ) {
+					wp_safe_redirect( 'admin.php?page=dtwc_settings' );
+			}
+	}
 }
 add_action( 'admin_init', 'dtwc_redirect' );

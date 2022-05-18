@@ -11,7 +11,7 @@
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	wp_die();
 }
 
 /**
@@ -22,13 +22,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 function dtwc_business_delivery_time_format() {
     $business = get_option( 'dtwc_business' );
     // Set to false (default).
-    $delivery_time_format = FALSE;
+    $time_format = FALSE;
 
     if ( isset( $business['delivery_time_format'] ) && '' !== $business['delivery_time_format'] ) {
-        $delivery_time_format = $business['delivery_time_format'];
+        $time_format = $business['delivery_time_format'];
     }
 
-	return apply_filters( 'dtwc_business_delivery_time_format', $delivery_time_format );
+	return apply_filters( 'dtwc_business_delivery_time_format', $time_format );
 }
 
 /**
@@ -91,13 +91,13 @@ function dtwc_delivery_date_label() {
     $basic = get_option( 'dtwc_basic' );
 
     // Set default delivery date label.
-    $delivery_date_label = __( 'Delivery date', 'delivery-times-for-woocommerce' );
+    $date_label = esc_attr__( 'Delivery date', 'delivery-times-for-woocommerce' );
 
     if ( isset( $basic['delivery_date_label'] ) && '' !== $basic['delivery_date_label'] ) {
-        $delivery_date_label = $basic['delivery_date_label'];
+        $date_label = $basic['delivery_date_label'];
     }
 
-	return apply_filters( 'dtwc_delivery_date_label', $delivery_date_label );
+	return apply_filters( 'dtwc_delivery_date_label', $date_label );
 }
 
 /**
@@ -109,13 +109,13 @@ function dtwc_require_delivery_date() {
     $basic = get_option( 'dtwc_basic' );
 
     // Turn off delivery date requirement.
-    $require_delivery_date = 'off';
+    $require_date = 'off';
 
     if ( isset( $basic['require_delivery_date'] ) && '' !== $basic['require_delivery_date'] ) {
-        $require_delivery_date = $basic['require_delivery_date'];
+        $require_date = $basic['require_delivery_date'];
     }
 
-	return apply_filters( 'dtwc_require_delivery_date', $require_delivery_date );
+	return apply_filters( 'dtwc_require_delivery_date', $require_date );
 }
 
 /**
@@ -127,13 +127,13 @@ function dtwc_delivery_time_label() {
     $basic = get_option( 'dtwc_basic' );
 
     // Set default delivery time label.
-    $delivery_time_label = __( 'Delivery time', 'delivery-times-for-woocommerce' );
+    $time_label = esc_attr__( 'Delivery time', 'delivery-times-for-woocommerce' );
 
     if ( isset( $basic['delivery_time_label'] ) && '' !== $basic['delivery_time_label'] ) {
-        $delivery_time_label = $basic['delivery_time_label'];
+        $time_label = $basic['delivery_time_label'];
     }
 
-	return apply_filters( 'dtwc_delivery_time_label', $delivery_time_label );
+	return apply_filters( 'dtwc_delivery_time_label', $time_label );
 }
 
 /**
@@ -145,13 +145,13 @@ function dtwc_require_delivery_time() {
     $basic = get_option( 'dtwc_basic' );
 
     // Turn off delivery time requirement.
-    $require_delivery_time = 'off';
+    $require_time = 'off';
 
     if ( isset( $basic['require_delivery_time'] ) && '' !== $basic['require_delivery_time'] ) {
-        $require_delivery_time = $basic['require_delivery_time'];
+        $require_time = $basic['require_delivery_time'];
     }
 
-	return apply_filters( 'dtwc_require_delivery_time', $require_delivery_time );
+	return apply_filters( 'dtwc_require_delivery_time', $require_time );
 }
 
 /**

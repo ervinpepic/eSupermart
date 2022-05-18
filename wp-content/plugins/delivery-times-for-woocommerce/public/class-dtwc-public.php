@@ -63,9 +63,9 @@ class Delivery_Times_For_WooCommerce_Public {
 
 		if ( is_checkout() ) {
 			// jQuery UI stylesheet.
-			wp_enqueue_style( $this->plugin_name . '-jquery-ui', plugin_dir_url( __FILE__ ) . 'css/jquery-ui.css', array(), $this->version, 'all' );
+			wp_enqueue_style( $this->plugin_name . '-jquery-ui', plugin_dir_url( __FILE__ ) . 'css/jquery-ui.min.css', array(), $this->version, 'all' );
 		}
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/dtwc-public.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/dtwc-public.min.css', array(), $this->version, 'all' );
 
 	}
 
@@ -146,7 +146,7 @@ class Delivery_Times_For_WooCommerce_Public {
 				$delivery_time = strtotime( '+30 minutes', $delivery_time );
 			}
 
-			// Encode the times for JavaScript usage.
+			// Encode and then decode the times for JavaScript usage.
 			$times = json_encode( $times );
 			$times = json_decode( $times );
 
@@ -164,7 +164,7 @@ class Delivery_Times_For_WooCommerce_Public {
 				'prepTime'      => $prep_time,
 				'firstDay'      => get_option( 'start_of_week' )
 			);
-			wp_localize_script( $this->plugin_name, 'dtwc_settings', $translation_array );
+			wp_localize_script( $this->plugin_name, 'dtwcSettings', $translation_array );
 		}
 
 	}

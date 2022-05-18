@@ -2,8 +2,8 @@
 
 namespace DgoraWcas\Admin;
 
-// Exit if accessed directly
 use  DgoraWcas\Helpers ;
+// Exit if accessed directly
 if ( !defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -20,10 +20,6 @@ if ( !defined( 'ABSPATH' ) ) {
  * @link http://tareq.weDevs.com Tareq's Planet
  * @example src/settings-api.php How to use the class
  */
-// Exit if accessed directly
-if ( !defined( 'ABSPATH' ) ) {
-    exit;
-}
 class SettingsAPI
 {
     /**
@@ -176,6 +172,7 @@ class SettingsAPI
                     'type'              => $type,
                     'move_dest'         => ( isset( $option['move_dest'] ) ? $option['move_dest'] : '' ),
                     'input_data'        => ( isset( $option['input_data'] ) ? $option['input_data'] : '' ),
+                    'disabled'          => ( isset( $option['disabled'] ) ? $option['disabled'] : false ),
                 );
                 add_settings_field(
                     "{$this->name}[" . $option['name'] . ']',
@@ -234,14 +231,16 @@ class SettingsAPI
         );
         $size = ( isset( $args['size'] ) && !is_null( $args['size'] ) ? $args['size'] : 'regular' );
         $type = ( isset( $args['type'] ) ? $args['type'] : 'text' );
+        $disabled = ( !empty($args['disabled']) ? 'disabled' : '' );
         $html = '<fieldset class="dgwt-wcas-fieldset">';
         $html .= sprintf(
-            '<input type="%1$s" class="%2$s-text" id="%3$s[%4$s]" name="%3$s[%4$s]" value="%5$s"/>',
+            '<input type="%1$s" class="%2$s-text" id="%3$s[%4$s]" name="%3$s[%4$s]" value="%5$s" %6$s/>',
             $type,
             $size,
             $this->name,
             $args['id'],
-            $value
+            $value,
+            $disabled
         );
         $html .= $this->get_field_description( $args );
         $html .= '</fieldset>';
@@ -281,6 +280,7 @@ class SettingsAPI
             $args['std'],
             $args
         );
+        $disabled = ( !empty($args['disabled']) ? 'disabled' : '' );
         $moveDest = ( empty($args['move_dest']) ? '' : sprintf(
             'data-move-dest="%1$s[%2$s]" class="%3$s"',
             $this->name,
@@ -296,11 +296,12 @@ class SettingsAPI
         );
         $html .= sprintf( '<input type="hidden" name="%1$s[%2$s]" value="off" />', $this->name, $args['id'] );
         $html .= sprintf(
-            '<input type="checkbox" class="checkbox" id="%1$s[%2$s]" name="%1$s[%2$s]" value="on" %3$s %4$s />',
+            '<input type="checkbox" class="checkbox" id="%1$s[%2$s]" name="%1$s[%2$s]" value="on" %3$s %4$s %5$s />',
             $this->name,
             $args['id'],
             checked( $value, 'on', false ),
-            $args['input_data']
+            $args['input_data'],
+            $disabled
         );
         $html .= sprintf( '<p class="%1$s-description-field">%2$s</p></label>', $this->name, $args['desc'] );
         $html .= '</fieldset>';
@@ -626,7 +627,8 @@ class SettingsAPI
         _e( 'No rules', 'ajax-search-for-woocommerce' );
         ?></p><br>
 			</div>
-			<button class="button button-secondary"><?php 
+			<button
+				class="button button-secondary"><?php 
         _e( 'Add new rule', 'ajax-search-for-woocommerce' );
         ?></button>
 		</div>
@@ -673,11 +675,62 @@ class SettingsAPI
                 if ( $option['name'] != $slug ) {
                     continue;
                 }
-                // Return the callback name
-                return ( isset( $option['sanitize_callback'] ) && is_callable( $option['sanitize_callback'] ) ? $option['sanitize_callback'] : false );
+                // First check if sanitize_callback was added directly to the option
+                if ( !empty($option['sanitize_callback']) && is_callable( $option['sanitize_callback'] ) ) {
+                    return $option['sanitize_callback'];
+                }
+                // Not added? Sanitize it based on a type
+                switch ( $option['type'] ) {
+                    case 'checkbox':
+                        $sanitize_callback = array( __CLASS__, 'sanitize_checkbox' );
+                        break;
+                    case 'number':
+                        $sanitize_callback = 'intval';
+                        break;
+                    case 'text':
+                    case 'textarea':
+                        $sanitize_callback = 'wp_kses_post';
+                        break;
+                    case 'color':
+                        $sanitize_callback = array( __CLASS__, 'sanitize_color' );
+                        break;
+                    case 'select':
+                        $sanitize_callback = 'sanitize_key';
+                        break;
+                    case 'file':
+                        $sanitize_callback = 'esc_url';
+                        break;
+                    default:
+                        $sanitize_callback = 'wp_kses_post';
+                }
+                return ( !empty($sanitize_callback) && is_callable( $sanitize_callback ) ? $sanitize_callback : false );
             }
         }
         return false;
+    }
+    
+    /**
+     * Sanitize checkbox
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public static function sanitize_checkbox( $value )
+    {
+        return ( in_array( $value, array( 'on', 'off' ) ) ? $value : '' );
+    }
+    
+    /**
+     * Sanitize color
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public static function sanitize_color( $value )
+    {
+        return ( preg_match( '/^#[a-f0-9]{6}$/i', $value ) ? $value : '' );
     }
     
     /**
@@ -692,18 +745,19 @@ class SettingsAPI
     function get_option( $option, $default = '', $allow_empty = true )
     {
         $options = get_option( $this->name );
+        $value = $default;
         if ( isset( $options[$option] ) ) {
             
             if ( $allow_empty ) {
-                return $options[$option];
+                $value = $options[$option];
             } else {
                 if ( !empty($options[$option]) ) {
-                    return $options[$option];
+                    $value = $options[$option];
                 }
             }
         
         }
-        return $default;
+        return apply_filters( 'dgwt/wcas/settings/load_value/key=' . $option, $value );
     }
     
     /**
@@ -742,7 +796,8 @@ class SettingsAPI
             echo  $form['id'] ;
             ?>" class="<?php 
             echo  $this->prefix ;
-            ?>group" style="display: none;">
+            ?>group"
+						 style="display: none;">
 
 						<?php 
             do_action( $this->prefix . 'form_top_' . $form['id'], $form );
@@ -755,7 +810,9 @@ class SettingsAPI
             submit_button();
             ?>
 						</div>
-
+						<?php 
+            do_action( $this->prefix . 'form_end_' . $form['id'], $form );
+            ?>
 					</div>
 				<?php 
         }
@@ -786,6 +843,7 @@ class SettingsAPI
 					$group.addClass('dgwt-wcas-group-active');
 					$group.closest('.js-dgwt-wcas-settings-body').attr('data-dgwt-wcas-active', name)
 
+					$(document).trigger('dgwt_wcas_settings_group_active', $group);
 				}
 
 				//Initiate Color Picker

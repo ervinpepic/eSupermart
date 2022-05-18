@@ -2,6 +2,7 @@
 
 namespace DgoraWcas;
 
+use  DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder ;
 use  DgoraWcas\Engines\TNTSearchMySQL\SearchQuery\SearchResultsPageQuery ;
 use  DgoraWcas\Integrations\Solver ;
 // Exit if accessed directly
@@ -86,10 +87,16 @@ class Helpers
         }
         
         
-        if ( !empty($args['mobile_overlay']) && in_array( $args['mobile_overlay'], array( '1', 'on' ) ) ) {
+        if ( !empty($args['mobile_overlay']) ) {
             $classes[] = 'js-dgwt-wcas-mobile-overlay-enabled';
         } else {
             $classes[] = 'js-dgwt-wcas-mobile-overlay-disabled';
+        }
+        
+        
+        if ( !empty($args['darken_bg']) ) {
+            $classes[] = 'dgwt-wcas-search-darkoverl-mounted';
+            $classes[] = 'js-dgwt-wcas-search-darkoverl-mounted';
         }
         
         return implode( ' ', $classes );
@@ -138,11 +145,30 @@ class Helpers
                 ?>
 				<svg class="<?php 
                 echo  $class ;
-                ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24"
+					 width="24">
 					<path fill="<?php 
                 echo  $color ;
                 ?>"
 						  d="M15.5 14h-.79l-.28-.27c1.2-1.4 1.82-3.31 1.48-5.34-.47-2.78-2.79-5-5.59-5.34-4.23-.52-7.79 3.04-7.27 7.27.34 2.8 2.56 5.12 5.34 5.59 2.03.34 3.94-.28 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+				</svg>
+				<?php 
+                break;
+            case 'magnifier-pirx':
+                $color = ( empty($color) ? '#111111' : $color );
+                ?>
+				<svg class="<?php 
+                echo  $class ;
+                ?>" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+					<path fill="<?php 
+                echo  $color ;
+                ?>" d=" M 16.722523,17.901412 C 16.572585,17.825208 15.36088,16.670476 14.029846,15.33534 L 11.609782,12.907819 11.01926,13.29667 C 8.7613237,14.783493 5.6172703,14.768302 3.332423,13.259528 -0.07366363,11.010358 -1.0146502,6.5989684 1.1898146,3.2148776
+						  1.5505179,2.6611594 2.4056498,1.7447266 2.9644271,1.3130497 3.4423015,0.94387379 4.3921825,0.48568469 5.1732652,0.2475835 5.886299,0.03022609 6.1341883,0 7.2037391,0 8.2732897,0 8.521179,0.03022609 9.234213,0.2475835 c 0.781083,0.23810119 1.730962,0.69629029 2.208837,1.0654662
+						  0.532501,0.4113763 1.39922,1.3400096 1.760153,1.8858877 1.520655,2.2998531 1.599025,5.3023778 0.199549,7.6451086 -0.208076,0.348322 -0.393306,0.668209 -0.411622,0.710863 -0.01831,0.04265 1.065556,1.18264 2.408603,2.533307 1.343046,1.350666 2.486621,2.574792 2.541278,2.720279 0.282475,0.7519
+						  -0.503089,1.456506 -1.218488,1.092917 z M 8.4027892,12.475062 C 9.434946,12.25579 10.131043,11.855461 10.99416,10.984753 11.554519,10.419467 11.842507,10.042366 12.062078,9.5863882 12.794223,8.0659672 12.793657,6.2652398 12.060578,4.756293 11.680383,3.9737304 10.453587,2.7178427
+						  9.730569,2.3710306 8.6921295,1.8729196 8.3992147,1.807606 7.2037567,1.807606 6.0082984,1.807606 5.7153841,1.87292 4.6769446,2.3710306 3.9539263,2.7178427 2.7271301,3.9737304 2.3469352,4.756293 1.6138384,6.2652398 1.6132726,8.0659672 2.3454252,9.5863882 c 0.4167354,0.8654208 1.5978784,2.0575608
+						  2.4443766,2.4671358 1.0971012,0.530827 2.3890403,0.681561 3.6130134,0.421538 z
+					"/>
 				</svg>
 				<?php 
                 break;
@@ -154,7 +180,8 @@ class Helpers
                 ?>" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
 					<path fill="<?php 
                 echo  $color ;
-                ?>" d="M14 6.125H3.351l4.891-4.891L7 0 0 7l7 7 1.234-1.234L3.35 7.875H14z" fill-rule="evenodd"/>
+                ?>"
+						  d="M14 6.125H3.351l4.891-4.891L7 0 0 7l7 7 1.234-1.234L3.35 7.875H14z" fill-rule="evenodd"/>
 				</svg>
 				<?php 
                 break;
@@ -163,7 +190,8 @@ class Helpers
                 ?>
 				<svg class="<?php 
                 echo  $class ;
-                ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24"
+					 width="24">
 					<path fill="<?php 
                 echo  $color ;
                 ?>"
@@ -177,9 +205,48 @@ class Helpers
 				<svg class="dgwt-wcas-loader-circular <?php 
                 echo  $class ;
                 ?>" viewBox="25 25 50 50">
-					<circle class="dgwt-wcas-loader-circular-path" cx="50" cy="50" r="20" fill="none" stroke="<?php 
+					<circle class="dgwt-wcas-loader-circular-path" cx="50" cy="50" r="20" fill="none"
+							stroke="<?php 
                 echo  $color ;
                 ?>" stroke-miterlimit="10"/>
+				</svg>
+				<?php 
+                break;
+            case 'face-smile':
+                $color = ( empty($color) ? '#ddd' : $color );
+                ?>
+				<svg class="<?php 
+                echo  $class ;
+                ?>" width="64" height="54" viewBox="0 0 64 54" xmlns="http://www.w3.org/2000/svg">
+					<g transform="translate(-34.294922,-62.985674)">
+						<path fill="<?php 
+                echo  $color ;
+                ?>"
+							  d="m 60.814237,116.23604 c -9.048223,-1.66914 -16.519379,-6.20497 -21.793789,-13.23128 -1.60071,-2.1324 -4.314629,-7.202619 -4.669151,-8.723059 -0.160775,-0.68952 -0.10638,-0.72795 1.948599,-1.37712 2.642805,-0.83486 2.824539,-0.83179 3.160818,0.0535 2.303833,6.06532 7.117271,11.515849 13.090786,14.823419 3.461115,1.91644 6.665367,2.90424 10.975589,3.38351 8.531032,0.94862 17.134659,-2.15367 23.386899,-8.4328 3.02499,-3.037969 4.6729,-5.555849 6.38356,-9.753479 l 0.39246,-0.963 2.31721,0.75094 c 2.22899,0.72234 2.31594,0.77987 2.28317,1.51079 -0.042,0.93936 -2.04226,5.11147 -3.54876,7.402399 -1.51073,2.29734 -5.78521,6.66064 -8.29613,8.46852 -4.24115,3.05365 -9.37348,5.21483 -14.417657,6.07116 -2.90299,0.49283 -8.586032,0.50118 -11.213604,0.0164 z M 47.412846,73.573941 c -0.309888,-0.59465 -0.464319,-1.51592 -0.477161,-2.84652 -0.02483,-2.57365 0.873951,-4.54095 2.753263,-6.02646 1.633788,-1.29143 2.83173,-1.69831 4.961024,-1.685 2.909938,0.0182 5.40834,1.54992 6.76366,4.14667 0.581876,1.11485 0.698121,1.68141 0.704505,3.43363 0.0045,1.23792 -0.144736,2.45984 -0.363942,2.97966 -0.361143,0.85641 -0.401692,0.87525 -1.4427,0.67016 -1.441299,-0.28395 -9.681541,-0.29597 -11.215046,-0.0164 -1.208977,0.22044 -1.231574,0.21163 -1.683603,-0.65577 z m 23.590775,-0.1224 c -0.24773,-0.57773 -0.44716,-1.76886 -0.46047,-2.75021 -0.0439,-3.23955 2.24441,-6.50245 5.168157,-7.3692 3.62299,-1.07405 7.38202,0.40563 9.28658,3.6555 0.92458,1.57769 1.14637,4.5061 0.47452,6.26533 l -0.46168,1.20889 -1.21243,-0.22321 c -1.58287,-0.29141 -9.51286,-0.28827 -11.113147,0.004 l -1.24453,0.22755 z"
+							  id="path21"/>
+					</g>
+				</svg>
+				<?php 
+                break;
+            case 'face-sad':
+                $color = ( empty($color) ? '#ddd' : $color );
+                ?>
+				<svg class="<?php 
+                echo  $class ;
+                ?>" width="64" height="54" viewBox="0 0 64 54" xmlns="http://www.w3.org/2000/svg">
+					<g
+						transform="translate(-34.294922,-62.985674)">
+						<path
+							fill="<?php 
+                echo  $color ;
+                ?>"
+							d="m 65.333527,90.188647 c -4.021671,0.04374 -7.952038,1.143031 -11.366869,2.831872 -2.463508,1.202323 -4.481746,2.907174 -6.347127,4.661802 -1.281094,1.28132 -2.179231,2.786709 -2.971747,4.298239 -0.224234,0.44934 -0.524822,1.14105 0.121782,1.45463 1.051756,0.40354 2.200055,0.61503 3.294735,0.93066 0.910618,-1.93591 2.051059,-3.84127 3.823337,-5.359309 2.631922,-2.416592 6.216388,-4.201746 10.051876,-4.937105 3.649681,-0.714791 7.581941,-0.473293 11.128238,0.561988 5.123487,1.585728 9.378549,4.981727 11.316726,9.159886 0.309445,0.53176 1.133677,0.34172 1.670314,0.20167 0.749446,-0.21997 1.601188,-0.3033 2.249216,-0.69551 0.392685,-0.41377 -0.04361,-0.941 -0.217903,-1.36088 -1.187297,-2.097179 -2.607848,-4.146079 -4.601341,-5.811643 -3.684753,-3.211163 -8.802941,-5.255991 -14.137691,-5.844622 -1.333029,-0.105798 -2.675274,-0.117509 -4.013546,-0.09168 z"/>
+						<path
+							fill="<?php 
+                echo  $color ;
+                ?>"
+							d="m 98.621511,94.193314 c -42.884393,-20.805093 -21.442196,-10.402547 0,0 z M 47.743964,73.489793 c -0.309888,-0.59465 -0.464319,-1.51592 -0.477161,-2.84652 -0.02483,-2.57365 0.873951,-4.54095 2.753263,-6.02646 1.633788,-1.29143 2.83173,-1.69831 4.961024,-1.685 2.909938,0.0182 5.40834,1.54992 6.76366,4.14667 0.581876,1.11485 0.698121,1.68141 0.704505,3.43363 0.0045,1.23792 -0.144736,2.45984 -0.363942,2.97966 -0.361143,0.85641 -0.401692,0.87525 -1.4427,0.67016 -1.441299,-0.28395 -9.681541,-0.29597 -11.215046,-0.0164 -1.208977,0.22044 -1.231574,0.21163 -1.683603,-0.65577 z m 23.590775,-0.1224 c -0.24773,-0.57773 -0.44716,-1.76886 -0.46047,-2.75021 -0.0439,-3.23955 2.24441,-6.50245 5.168157,-7.3692 3.62299,-1.07405 7.38202,0.40563 9.28658,3.6555 0.92458,1.57769 1.14637,4.5061 0.47452,6.26533 l -0.46168,1.20889 -1.21243,-0.22321 c -1.58287,-0.29141 -9.51286,-0.28827 -11.113147,0.004 l -1.24453,0.22755 z"/>
+					</g>
 				</svg>
 				<?php 
                 break;
@@ -776,6 +843,9 @@ class Helpers
         global  $wpdb ;
         $exist = false;
         $wpdb->hide_errors();
+        if ( empty($tableName) ) {
+            return false;
+        }
         $sql = $wpdb->prepare( "SHOW TABLES LIKE %s", $tableName );
         if ( !empty($wpdb->get_var( $sql )) ) {
             $exist = true;
@@ -841,19 +911,22 @@ class Helpers
     }
     
     /**
-     * Create HTML question mark with tooltip
+     * Create tooltip
      *
      * @param string $id
      * @param string $content
      * @param string $template
+     * @param string $placement
+     * @param string $class
      *
      * @return string
      */
-    public static function createQuestionMark(
+    public static function createTooltip(
         $id,
         $content = '',
         $template = '',
-        $placement = 'top'
+        $placement = 'right',
+        $class = ''
     )
     {
         
@@ -870,9 +943,79 @@ class Helpers
         }
         
         $id = 'js-dgwt-wcas-tooltip-id' . sanitize_key( $id );
-        $html = '<div class="js-dgwt-wcas-tooltip dgwt-wcas-questio-mark dashicons dashicons-editor-help" data-tooltip-html-el="' . $id . '" data-tooltip-placement="' . $placement . '"></div>';
+        $html = '<div class="js-dgwt-wcas-tooltip ' . $class . '" data-tooltip-html-el="' . $id . '" data-tooltip-placement="' . $placement . '"></div>';
         $html .= '<div class="' . $id . '" style="display:none;"><div class="dgwt-wcas-tooltip-wrapper">' . $content . '</div></div>';
         return $html;
+    }
+    
+    /**
+     * Create HTML override option tooltip
+     *
+     * @param string $id
+     * @param string $content
+     * @param string $template
+     * @param string $placement
+     *
+     * @return string
+     */
+    public static function getOverrideOptionText( $theme )
+    {
+        $linkToShortcodesDoc = 'https://fibosearch.com/documentation/get-started/how-to-add-fibosearch-to-your-website/#add-fibosearch-with-a-shortcode';
+        $content = '<p>' . sprintf( __( 'This option is <b>overridden</b> by the seamless integration with the %s theme. If you want to change the value of this option, disable the integration in <br /><b>WooCommerce -> FiboSearch -> Starting (tab)</b>.', 'ajax-search-for-woocommerce' ), $theme ) . '</p>';
+        $content .= '<p>' . sprintf( __( 'Furthermore, you can override this option for a specific search bar via shortcode params. <a href="%s" target="_blank">Learn more about shortcodes parameters</a>.', 'ajax-search-for-woocommerce' ), $linkToShortcodesDoc ) . '</p>';
+        return $content;
+    }
+    
+    /**
+     * Create HTML question mark with tooltip
+     *
+     * @param string $id
+     * @param string $content
+     * @param string $template
+     * @param string $placement
+     *
+     * @return string
+     */
+    public static function createQuestionMark(
+        $id,
+        $content = '',
+        $template = '',
+        $placement = 'right'
+    )
+    {
+        return self::createTooltip(
+            $id,
+            $content,
+            $template,
+            $placement,
+            'dashicons dashicons-editor-help dgwt-wcas-questio-mark'
+        );
+    }
+    
+    /**
+     * Create HTML option override tooltip
+     *
+     * @param string $id
+     * @param string $content
+     * @param string $template
+     * @param string $placement
+     *
+     * @return string
+     */
+    public static function createOverrideTooltip(
+        $id,
+        $content = '',
+        $template = '',
+        $placement = 'right'
+    )
+    {
+        return self::createTooltip(
+            $id,
+            $content,
+            $template,
+            $placement,
+            'dashicons dashicons-lock dgwt-wcas-override-tooltip'
+        );
     }
     
     /**
@@ -1050,6 +1193,19 @@ class Helpers
     }
     
     /**
+     * Check if this is a remote search request
+     *
+     * @return bool
+     */
+    public static function isRemoteSearchRequest()
+    {
+        if ( isset( $_GET['wc-ajax'] ) && $_GET['wc-ajax'] === DGWT_WCAS_SEARCH_ACTION && !empty($_GET['remote']) && isset( $_GET['s'] ) ) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
      * Restore the search phrase so that it can be used in the template.
      *
      * @param \WP_Post[] $posts Array of post objects.
@@ -1095,6 +1251,7 @@ class Helpers
             'mobile_overlay'         => ( DGWT_WCAS()->settings->getOption( 'enable_mobile_overlay' ) === 'on' ? true : false ),
             'mobile_overlay_wrapper' => apply_filters( 'dgwt/wcas/scripts/mobile_overlay_wrapper', 'body' ),
             'breakpoint'             => apply_filters( 'dgwt/wcas/scripts/mobile_breakpoint', $breakpoint ),
+            'darken_background'      => ( DGWT_WCAS()->settings->getOption( 'darken_background', 'off' ) === 'on' ? true : false ),
         );
         if ( in_array( $layout['layout'], array( 'icon', 'icon-flexible' ) ) ) {
             $layout['mobile_overlay'] = true;
@@ -1423,6 +1580,58 @@ class Helpers
         if ( file_exists( $path ) ) {
             include $path;
         }
+    }
+    
+    /**
+     * Add "No results" if suggestions are empty
+     *
+     * @param array $output
+     *
+     * @return array
+     */
+    public static function noResultsSuggestion( $output )
+    {
+        if ( empty($output['suggestions']) ) {
+            $output['suggestions'][] = array(
+                'value' => '',
+                'type'  => 'no-results',
+            );
+        }
+        return $output;
+    }
+    
+    /**
+     * Get default collate
+     *
+     * @param string $context
+     *
+     * @return string
+     */
+    public static function getCollate( $context = '' )
+    {
+        global  $wpdb ;
+        $sql = '';
+        $collate = '';
+        $charset = '';
+        
+        if ( $wpdb->has_cap( 'collation' ) ) {
+            if ( !empty($wpdb->charset) ) {
+                $charset = $wpdb->charset;
+            }
+            if ( !empty($wpdb->collate) ) {
+                $collate = $wpdb->collate;
+            }
+        }
+        
+        $charset = apply_filters( 'dgwt/wcas/db/charset', $charset, $context );
+        $collate = apply_filters( 'dgwt/wcas/db/collation', $collate, $context );
+        if ( !empty($charset) ) {
+            $sql .= " DEFAULT CHARACTER SET " . $charset;
+        }
+        if ( !empty($collate) ) {
+            $sql .= " COLLATE " . $collate;
+        }
+        return apply_filters( 'dgwt/wcas/db/collation/sql', $sql, $context );
     }
 
 }

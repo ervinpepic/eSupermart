@@ -11,20 +11,20 @@
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	wp_die();
 }
 
 /**
- * Delivery_Times_For_WooCommerce_Admin_Settings.
+ * DeliveryTimesForWooCommerceAdminSettings.
  *
  * WP Settings API Class.
  *
  * @since 1.0.0
  */
 
-if ( ! class_exists( 'Delivery_Times_For_WooCommerce_Admin_Settings' ) ) :
+if ( ! class_exists( 'DeliveryTimesForWooCommerceAdminSettings' ) ) :
 
-	class Delivery_Times_For_WooCommerce_Admin_Settings {
+	class DeliveryTimesForWooCommerceAdminSettings {
 
 		/**
 		 * Sections array.
@@ -218,7 +218,7 @@ if ( ! class_exists( 'Delivery_Times_For_WooCommerce_Admin_Settings' ) ) :
 				/**
 				 * Add a new section to a settings page.
 				 *
-				 * @param string $id
+				 * @param string $the_id
 				 * @param string $title
 				 * @param callable $callback
 				 * @param string $page | Page is same as section ID.
@@ -252,7 +252,7 @@ if ( ! class_exists( 'Delivery_Times_For_WooCommerce_Admin_Settings' ) ) :
 			foreach ( $this->fields_array as $section => $field_array ) {
 				foreach ( $field_array as $field ) {
 					// ID.
-					$id = isset( $field['id'] ) ? $field['id'] : false;
+					$the_id = isset( $field['id'] ) ? $field['id'] : false;
 
 					// Type.
 					$type = isset( $field['type'] ) ? $field['type'] : 'text';
@@ -282,7 +282,7 @@ if ( ! class_exists( 'Delivery_Times_For_WooCommerce_Admin_Settings' ) ) :
 					$sanitize_callback = isset( $field['sanitize_callback'] ) ? $field['sanitize_callback'] : '';
 
 					$args = array(
-						'id'                => $id,
+						'id'                => $the_id,
 						'type'              => $type,
 						'name'              => $name,
 						'label_for'         => $label_for,
@@ -298,7 +298,7 @@ if ( ! class_exists( 'Delivery_Times_For_WooCommerce_Admin_Settings' ) ) :
 					/**
 					 * Add a new field to a section of a settings page.
 					 *
-					 * @param string   $id
+					 * @param string   $the_id
 					 * @param string   $title
 					 * @param callable $callback
 					 * @param string   $page
@@ -307,7 +307,7 @@ if ( ! class_exists( 'Delivery_Times_For_WooCommerce_Admin_Settings' ) ) :
 					 * @since 1.0.0
 					 */
 
-					// @param string 	$id
+					// @param string 	$the_id
 					$field_id = $section . '[' . $field['id'] . ']';
 
 					add_settings_field(
@@ -582,7 +582,7 @@ if ( ! class_exists( 'Delivery_Times_For_WooCommerce_Admin_Settings' ) ) :
 			$value = $this->get_option( $args['id'], $args['section'], $args['std'] );
 			$size  = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : '500px';
 
-			echo '<div style="max-width: ' . $size . ';">';
+			echo '<div style="max-width: ' . esc_attr( $size ) . ';">';
 
 			$editor_settings = array(
 				'teeny'         => true,
@@ -607,12 +607,12 @@ if ( ! class_exists( 'Delivery_Times_For_WooCommerce_Admin_Settings' ) ) :
 		 */
 		function callback_file( $args ) {
 
-			$value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-			$size  = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
-			$id    = $args['section'] . '[' . $args['id'] . ']';
-			$label = isset( $args['options']['button_label'] ) ?
+			$value  = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
+			$size   = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
+			$the_id = $args['section'] . '[' . $args['id'] . ']';
+			$label  = isset( $args['options']['button_label'] ) ?
 			$args['options']['button_label'] :
-			__( 'Choose File' );
+			esc_attr__( 'Choose File', 'delivery-times-for-woocommerce' );
 
 			$html  = sprintf( '<input type="text" class="%1$s-text wpsa-url" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s"/>', $size, $args['section'], $args['id'], $value );
 			$html .= '<input type="button" class="button wpsa-browse" value="' . $label . '" />';
@@ -628,12 +628,12 @@ if ( ! class_exists( 'Delivery_Times_For_WooCommerce_Admin_Settings' ) ) :
 		 */
 		function callback_image( $args ) {
 
-			$value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-			$size  = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
-			$id    = $args['section'] . '[' . $args['id'] . ']';
-			$label = isset( $args['options']['button_label'] ) ?
+			$value  = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
+			$size   = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
+			$the_id = $args['section'] . '[' . $args['id'] . ']';
+			$label  = isset( $args['options']['button_label'] ) ?
 			$args['options']['button_label'] :
-			__( 'Choose Image' );
+			esc_attr__( 'Choose Image', 'delivery-times-for-woocommerce' );
 
 			$html  = sprintf( '<input type="text" class="%1$s-text wpsa-url" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s"/>', $size, $args['section'], $args['id'], $value );
 			$html .= '<input type="button" class="button wpsa-browse" value="' . $label . '" />';
@@ -726,8 +726,8 @@ if ( ! class_exists( 'Delivery_Times_For_WooCommerce_Admin_Settings' ) ) :
 			// add_options_page( $page_title, $menu_title, $capability, $menu_slug, array( $this, $callable ) );
 			add_submenu_page(
 				'woocommerce',
-				__( 'Delivery Times for WooCommerce', 'delivery-times-for-woocommerce' ),
-				__( 'Delivery Times', 'delivery-times-for-woocommerce' ),
+				esc_attr__( 'Delivery Times for WooCommerce', 'delivery-times-for-woocommerce' ),
+				esc_attr__( 'Delivery Times', 'delivery-times-for-woocommerce' ),
 				'manage_options',
 				'dtwc_settings',
 				array( $this, 'plugin_page' )
@@ -736,8 +736,8 @@ if ( ! class_exists( 'Delivery_Times_For_WooCommerce_Admin_Settings' ) ) :
 
 		public function plugin_page() {
 			echo '<div class="wrap">';
-			echo '<h1>' . __( 'Delivery Times for WooCommerce', 'delivery-times-for-woocommerce' ) . ' <span style="font-size:50%;">v' . DTWC_VERSION . '</span></h1>';
-			echo '<p>' . __( 'Brought to you by', 'delivery-times-for-woocommerce' ) . ' <a href="https://www.deviodigital.com/" target="_blank">Devio Digital</a> | <a href="https://www.deviodigital.com/documentation/" target="_blank">' . __( 'Documentation', 'delivery-times-for-woocommerce' ) . '</a>';
+			echo '<h1>' . esc_attr__( 'Delivery Times for WooCommerce', 'delivery-times-for-woocommerce' ) . ' <span style="font-size:50%;">v' . esc_attr( DTWC_VERSION ) . '</span></h1>';
+			echo '<p>' . esc_attr__( 'Brought to you by', 'delivery-times-for-woocommerce' ) . ' <a href="https://www.deviodigital.com/" target="_blank">Devio Digital</a> | <a href="https://www.deviodigital.com/documentation/" target="_blank">' . esc_attr__( 'Documentation', 'delivery-times-for-woocommerce' ) . '</a>';
 			$this->show_navigation();
 			$this->show_forms();
 			echo '</div>';
@@ -838,9 +838,7 @@ if ( ! class_exists( 'Delivery_Times_For_WooCommerce_Admin_Settings' ) ) :
 				}
 				$( '.nav-tab-wrapper a' ).click( function( evt ) {
 					$( '.nav-tab-wrapper a' ).removeClass( 'nav-tab-active' );
-					$( this )
-						.addClass( 'nav-tab-active' )
-						.blur();
+					$( this ).addClass( 'nav-tab-active' ).blur();
 					var clicked_group = $( this ).attr( 'href' );
 					if ( 'undefined' != typeof localStorage ) {
 						localStorage.setItem( 'activetab', $( this ).attr( 'href' ) );
@@ -865,11 +863,7 @@ if ( ! class_exists( 'Delivery_Times_For_WooCommerce_Admin_Settings' ) ) :
 					}) );
 
 					file_frame.on( 'select', function() {
-						attachment = file_frame
-							.state()
-							.get( 'selection' )
-							.first()
-							.toJSON();
+						attachment = file_frame.state().get( 'selection' ).first().toJSON();
 
 						self
 							.prev( '.wpsa-url' )
@@ -884,20 +878,13 @@ if ( ! class_exists( 'Delivery_Times_For_WooCommerce_Admin_Settings' ) ) :
 				$( 'input.wpsa-url' )
 					.on( 'change keyup paste input', function() {
 						var self = $( this );
-						self
-							.next()
-							.parent()
-							.children( '.wpsa-image-preview' )
-							.children( 'img' )
-							.attr( 'src', self.val() );
+						self.next().parent().children( '.wpsa-image-preview' ).children( 'img' ).attr( 'src', self.val() );
 					})
 					.change();
 			});
-
 			</script>
 
 			<style type="text/css">
-				/** WordPress 3.8 Fix **/
 				.form-table th {
 					padding: 20px 10px;
 				}
@@ -926,6 +913,6 @@ if ( ! class_exists( 'Delivery_Times_For_WooCommerce_Admin_Settings' ) ) :
 			</style>
 			<?php
 		}
-	} // Delivery_Times_For_WooCommerce_Admin_Settings ended.
+	} // DeliveryTimesForWooCommerceAdminSettings ended.
 
 endif;

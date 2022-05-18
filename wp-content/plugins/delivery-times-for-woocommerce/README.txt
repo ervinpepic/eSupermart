@@ -2,8 +2,8 @@
 Contributors: deviodigital
 Tags: delivery, delivery-times, courier, woocommerce, order-delivery
 Requires at least: 3.0.1
-Tested up to: 5.6.2
-Stable tag: 1.7
+Tested up to: 5.9.2
+Stable tag: 1.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -62,6 +62,9 @@ Learn more at [Delivery Fees for WooCommerce](https://www.wordpress.org/plugins/
 7. Delivery date & time added to WooCommerce admin Order details screen
 
 == Changelog ==
+
+= 1.8.0 =
+*   Updated various security related issues found with [Codacy](https://codacy.com) throughout multiple files in the plugin
 
 = 1.7 =
 *   Added delivery time checkout page placement setting in `admin/dtwc-admin-settings.php`

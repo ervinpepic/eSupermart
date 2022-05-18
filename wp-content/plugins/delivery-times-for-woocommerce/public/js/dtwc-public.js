@@ -1,40 +1,38 @@
 jQuery(document).ready(function( $ ) {
-	var deliveryDays = dtwc_settings.deliveryDays;
-	var weekDays = [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' ];
-	var deliveryTimes = dtwc_settings.deliveryTimes;
-	var prepDays = dtwc_settings.minDate;
+	var deliveryDays = dtwcSettings.deliveryDays;
+	var weekDays = [ "sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday" ];
+	var deliveryTimes = dtwcSettings.deliveryTimes;
+	var prepDays = dtwcSettings.minDate;
 
-	function minutes_with_leading_zeros( dt ) { 
-		return (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
+	function minutesWithLeadingZeros( dt ) { 
+		return (dt.getMinutes() < 10 ? "0" : "") + dt.getMinutes();
 	}
-	function hours_with_leading_zeros(dt) { 
-		return (dt.getHours() < 10 ? '0' : '') + dt.getHours();
+	function hoursWithLeadingZeros(dt) { 
+		return (dt.getHours() < 10 ? "0" : "") + dt.getHours();
 	}
 
 	var d = new Date();
-	var curr_hour = hours_with_leading_zeros( d );
-	var curr_min = minutes_with_leading_zeros( d );
-	var currentTime = curr_hour + ":" + curr_min;
+	var currHour = hoursWithLeadingZeros( d );
+	var currMin = minutesWithLeadingZeros( d );
+	var currentTime = currHour + ":" + currMin;
 
 	if (0 == prepDays) {
 		if ( deliveryTimes.some(el => el > currentTime) ) {
-			var minDate = $.datepicker.formatDate('yy-mm-dd', new Date());
+			var minDate = $.datepicker.formatDate("yy-mm-dd", new Date());
 		} else {
 			var minDate = new Date((new Date()).valueOf() + 1000*3600*24);
-			var minDate = $.datepicker.formatDate('yy-mm-dd', minDate);
+			var minDate = $.datepicker.formatDate("yy-mm-dd", minDate);
 		}
 	} else {
-		var minDate = dtwc_settings.minDate;
+		var minDate = dtwcSettings.minDate;
 	}
 
-	console.log(minDate);
-
-	$('#dtwc_delivery_date').datepicker( {
+	$("#dtwc_delivery_date").datepicker( {
 		minDate: minDate,
-		maxDate: dtwc_settings.maxDays,
-		showAnim: 'fadeIn',
-		dateFormat: 'yy-mm-dd',
-		firstDay: dtwc_settings.firstDay,
+		maxDate: dtwcSettings.maxDays,
+		showAnim: "fadeIn",
+		dateFormat: "yy-mm-dd",
+		firstDay: dtwcSettings.firstDay,
 		beforeShowDay: function(date) {
 			var currentWeekday = weekDays[ date.getDay() ];
 			if ( currentWeekday in deliveryDays ) {
@@ -47,9 +45,9 @@ jQuery(document).ready(function( $ ) {
 } );
 
 jQuery(document).ready(function( $ ) {
-	$('#dtwc_delivery_date').change(function() {
+	$("#dtwc_delivery_date").change(function() {
 		var chosenDate = $(this).val();
-		var today = $.datepicker.formatDate('yy-mm-dd', new Date());
+		var today = $.datepicker.formatDate("yy-mm-dd", new Date());
 
 		var x = 30; // minutes interval
 		var times = []; // time array
@@ -60,7 +58,7 @@ jQuery(document).ready(function( $ ) {
 			var hh = Math.floor(tt/60);
 			var mm = (tt%60);
 			// Time added to array.
-			times[i] = ('0' + (hh % 12)).slice(-2) + ':' + ('0' + mm).slice(-2);
+			times[i] = ("0" + (hh % 12)).slice(-2) + ":" + ("0" + mm).slice(-2);
 			// Add 30 minutes to time.
 			tt = tt + x;
 		}
@@ -68,7 +66,7 @@ jQuery(document).ready(function( $ ) {
 		// Delivery date is today.
 		if (today === chosenDate) {
 
-			var deliveryTimes = dtwc_settings.deliveryTimes;
+			var deliveryTimes = dtwcSettings.deliveryTimes;
 			var result = [];
 
 			for(var t in deliveryTimes){
@@ -82,7 +80,7 @@ jQuery(document).ready(function( $ ) {
 		// Chosen date is AFTER today.
 		if (today < chosenDate) {
 
-			var deliveryTimes = dtwc_settings.deliveryTimes;
+			var deliveryTimes = dtwcSettings.deliveryTimes;
 			var result = [];
 
 			for(var t in deliveryTimes) {
@@ -96,7 +94,7 @@ jQuery(document).ready(function( $ ) {
 		// Prep time check.
 		function dateCheck(item) {
 			// Update delivery times if selected date is today.
-			if (item<=dtwc_settings.prepTime) {
+			if (item<=dtwcSettings.prepTime) {
 				// Remove specific time from available options.
 				$("#dtwc_delivery_time option[value='" + item + "']").hide();
 			} else {

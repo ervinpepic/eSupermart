@@ -11,7 +11,7 @@
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	wp_die();
 }
 
 /**
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function dtwc_driver_dashboard_order_details_table_tbody_bottom() {
     // Order ID.
-    $order_id = $_GET['orderid'];
+    $order_id = filter_input( INPUT_GET, 'orderid' );
 
     // Get the delivery date.
     $delivery_date_meta = get_post_meta( $order_id, 'dtwc_delivery_date', true );
