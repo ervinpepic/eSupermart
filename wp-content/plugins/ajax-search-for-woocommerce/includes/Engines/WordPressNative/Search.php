@@ -41,6 +41,10 @@ class Search
      * @var array
      */
     private  $searchIn = array() ;
+    /**
+     * @var bool Whether the search results have already been overwritten.
+     */
+    private  $hooked = false ;
     public function __construct()
     {
         $this->searchIn = apply_filters( 'dgwt/wcas/native/search_in', array(
@@ -686,6 +690,10 @@ class Search
         if ( !Helpers::isSearchQuery( $query ) ) {
             return;
         }
+        if ( $this->hooked ) {
+            return;
+        }
+        $this->hooked = true;
         /**
          * Disable cache: `cache_results` defaults to false but can be enabled
          */

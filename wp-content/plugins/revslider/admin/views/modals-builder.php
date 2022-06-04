@@ -821,6 +821,11 @@ if(!defined('ABSPATH')) exit();
 								<span class="linebreak"></span>
 							</div>
 
+							<!-- SCROLL BELOW SETTINGS -->
+							<div id="la_settings_getAccelerationPermissionk" class="la_settings">								
+								<span class="linebreak"></span>
+							</div>
+
 							<!-- LAYER TARGET -->
 							<div id="la_settings_layertarget" class="la_settings">
 								<label_a><?php _e('Target Layer', 'revslider');?></label_a><select id="la_layer_target" data-evt="refreshActionView" data-theme="layer_selector_drop_down" data-r="actions.action.#actionindex#.layer_target" class="easyinit actioninput nosearchbox tos2"></select>					

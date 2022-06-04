@@ -4,7 +4,7 @@ Tags: woocommerce search, ajax search, search by sku, product search, woocommerc
 Requires at least: 5.0
 Tested up to: 6.0
 Requires PHP: 7.0
-Stable tag: 1.18.0
+Stable tag: 1.18.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -141,6 +141,9 @@ You can read more and compare Pro and Free features here: [Full comparison - Pro
 5. Settings page
 
 == Changelog ==
+
+= 1.18.1, May 23, 2022 =
+* FIX: Exceeding the memory limit on the search results page
 
 = 1.18.0, May 12, 2022 =
 * ADD: New feature - FiboSearch Analytics. This feature will be available to everyone in FiboSearch v1.19.0. To enable it in v1.18.0 declare constant `define( 'DGWT_WCAS_ANALYTICS_ENABLE', true );` in `wp-config.php`

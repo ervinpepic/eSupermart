@@ -846,6 +846,7 @@ class RevSliderFunctionsAdmin extends RevSliderFunctions {
 			'layeraction_link' => __('Simple Link', 'revslider'),
 			'layeraction_callback' => __('Call Back', 'revslider'),
 			'layeraction_modal' => __('Open Slider Modal', 'revslider'),
+			'layeraction_getAccelerationPermission' => __('iOS Gyroscope Permission', 'revslider'),
 			'layeraction_scroll_under' => __('Scroll below Slider', 'revslider'),
 			'layeraction_scrollto' => __('Scroll To ID', 'revslider'),
 			'layeraction_jumpto' => __('Jump to Slide', 'revslider'),
