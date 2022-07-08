@@ -3,7 +3,7 @@
  * functions.php
  * @package WordPress
  * @subpackage Groci
- * @since Groci 2.2.3
+ * @since Groci 2.2.4
  * 
  */
  
@@ -220,7 +220,7 @@ function groci_register_required_plugins() {
             'slug'                  => 'revslider',
             'source'                => $mainurl . 'revslider.zip',
             'required'              => false,
-            'version'               => '6.5.24',
+            'version'               => '6.5.25',
             'force_activation'      => false,
             'force_deactivation'    => false,
             'external_url'          => '',
