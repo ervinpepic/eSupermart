@@ -2,7 +2,7 @@
 /**
  * @author    ThemePunch <info@themepunch.com>
  * @link      https://www.themepunch.com/ 
- * @copyright 2019 ThemePunch
+ * @copyright 2022 ThemePunch
  */
 
 if(!defined('ABSPATH')) exit();
@@ -2981,10 +2981,10 @@ rs-module .material-icons {
 		$text = 'data-bsh="';
 		
 		if($this->get_val($layer, array('idle', 'boxShadow', 'inuse'), false) === true){
-			$color = str_replace(' ', '', $this->get_val($layer, array('idle', 'boxShadow', 'color'), 'rgba(0,0,0,0)'));
+			$color = str_replace(' ', '', $this->get_val($layer, array('idle', 'boxShadow', 'color'), 'rgba(0,0,0,0.25)'));
 			
 			if($this->get_val($layer, array('idle', 'boxShadow', 'container'), 'content') !== 'content') $text.= 'e:w'; //w for wrapper
-			if(!in_array($color, array('rgba(0,0,0,0)', '#000000'))) $text.= 'c:'.$color.';';
+			if(!in_array($color, array('rgba(0,0,0,0.25)'))) $text.= 'c:'.$color.';';
 			
 			$data = array();
 			if($this->adv_resp_sizes == true){
