@@ -245,6 +245,14 @@ class ThemesCompatibility {
 					'partialFilename' => 'thegem-elementor.php',
 				)
 			),
+			'neve'             => array(
+				'slug' => 'neve',
+				'name' => 'Neve',
+			),
+			'woostify'         => array(
+				'slug' => 'woostify',
+				'name' => 'Woostify',
+			),
 		);
 	}
 

@@ -4,13 +4,13 @@
  * Plugin Name: FiboSearch - AJAX Search for WooCommerce
  * Plugin URI: https://fibosearch.com?utm_source=wp-admin&utm_medium=referral&utm_campaign=author_uri&utm_gen=utmdc
  * Description: The most popular WooCommerce product search. Gives your users a well-designed advanced AJAX search bar with live search suggestions.
- * Version: 1.19.0
+ * Version: 1.20.0
  * Author: FiboSearch Team
  * Author URI: https://fibosearch.com?utm_source=wp-admin&utm_medium=referral&utm_campaign=author_uri&utm_gen=utmdc
  * Text Domain: ajax-search-for-woocommerce
  * Domain Path: /languages
  * WC requires at least: 5.5
- * WC tested up to: 6.8
+ * WC tested up to: 6.9
  *
  */
 // Exit if accessed directly
@@ -103,6 +103,13 @@ if ( !class_exists( 'DGWT_WC_Ajax_Search' ) && !function_exists( 'dgoraAsfwFs' )
                 }
                 
                 new \DgoraWcas\Integrations\Solver();
+                global  $wp_version ;
+                
+                if ( version_compare( $wp_version, '5.9' ) >= 0 ) {
+                    $blocks = new \DgoraWcas\Blocks();
+                    $blocks->init();
+                }
+            
             }
             
             self::$instance->tnow = time();
@@ -170,8 +177,7 @@ if ( !class_exists( 'DGWT_WC_Ajax_Search' ) && !function_exists( 'dgoraAsfwFs' )
 		    <div class="notice notice-error dgwt-wcas-notice">
 			    <p>
 				    <?php 
-            printf( __( '%s: You need PHP version at least 7.0 to run this plugin. You are currently using PHP version ', 'ajax-search-for-woocommerce' ), '<b>' . DGWT_WCAS_NAME . '</b>' );
-            echo  PHP_VERSION . '.' ;
+            printf( __( '%s: You need PHP version at least 7.0 to run this plugin. You are currently using PHP version %s.', 'ajax-search-for-woocommerce' ), '<b>' . DGWT_WCAS_NAME . '</b>', PHP_VERSION );
             ?>
 			    </p>
 		    </div>
@@ -285,6 +291,13 @@ if ( !class_exists( 'DGWT_WC_Ajax_Search' ) && !function_exists( 'dgoraAsfwFs' )
             wp_register_style(
                 'dgwt-wcas-admin-style',
                 DGWT_WCAS_URL . 'assets/css/admin-style.css',
+                array(),
+                DGWT_WCAS_VERSION
+            );
+            // Register front styles for block editor
+            wp_register_style(
+                'dgwt-wcas-style',
+                apply_filters( 'dgwt/wcas/scripts/css_style_url', DGWT_WCAS_URL . 'assets/css/style' . $min . '.css' ),
                 array(),
                 DGWT_WCAS_VERSION
             );

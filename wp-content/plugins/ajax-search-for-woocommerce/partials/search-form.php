@@ -16,6 +16,7 @@ $uniqueID   = ++ DGWT_WCAS()->searchInstances;
 $layoutType = ! empty( $args['layout'] ) ? $args['layout'] : $layout->layout;
 $iconType = ! empty( $args['icon'] ) ? $args['icon'] : $layout->icon;
 $isAMP      = Helpers::isAMPEndpoint();
+$iconColor  = ! empty( $args['icon_color'] ) ? $args['icon_color'] : '';
 $customParams = apply_filters( 'dgwt/wcas/search_bar/custom_params', array(), DGWT_WCAS()->searchInstances );
 
 if ( ! empty( $args['mobile_overlay'] ) && ! empty( $args['mobile_overlay_breakpoint'] ) ) {
@@ -29,7 +30,7 @@ if ( ! empty( $args['layout_breakpoint'] ) && ! empty( $args['layout_breakpoint'
 ?>
 <div <?php echo $isAMP ? "id='dgwt-wcas-search-wrapp{$uniqueID}'" : ''; ?> class="dgwt-wcas-search-wrapp <?php echo Helpers::searchWrappClasses( $args ); ?>">
 	<?php if ( in_array( $layoutType, array( 'icon', 'icon-flexible', 'icon-flexible-inv' ) ) ): ?>
-		<div <?php echo $isAMP ? "on='tap:dgwt-wcas-search-wrapp{$uniqueID}.toggleClass(class=\"dgwt-wcas-layout-icon-open\")'" : ""; ?> class="dgwt-wcas-search-icon js-dgwt-wcas-search-icon-handler"><?php echo Helpers::getMagnifierIco( 'dgwt-wcas-ico-magnifier-handler', $iconType ); ?></div>
+		<div <?php echo $isAMP ? "on='tap:dgwt-wcas-search-wrapp{$uniqueID}.toggleClass(class=\"dgwt-wcas-layout-icon-open\")'" : ""; ?> class="dgwt-wcas-search-icon js-dgwt-wcas-search-icon-handler"><?php echo Helpers::getMagnifierIco( 'dgwt-wcas-ico-magnifier-handler', $iconType, $iconColor ); ?></div>
 		<div class="dgwt-wcas-search-icon-arrow"></div>
 	<?php endif; ?>
 	<form class="dgwt-wcas-search-form" role="search" action="<?php echo Helpers::searchFormAction(); ?>" method="get">

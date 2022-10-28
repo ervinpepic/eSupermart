@@ -632,7 +632,7 @@ class Settings
             'name'    => 'filter_products_rules',
             'label'   => __( 'Filters', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark(
             'filter_products_head',
-            __( 'Filters that specify the product group that will be affected by the above mode', 'ajax-search-for-woocommerce' ),
+            __( 'Filters that specify the product group and taxonomy that will be affected by the above mode', 'ajax-search-for-woocommerce' ),
             '',
             'right'
         ),
@@ -689,7 +689,7 @@ class Settings
         ),
         ) ),
         );
-        $fuzzinesText1 = '<strong>' . __( 'Increases sales conversions', 'ajax-search-for-woocommerce' ) . '</strong>';
+        $fuzzinesText1 = '<strong>' . __( 'Increases sales conversions.', 'ajax-search-for-woocommerce' ) . '</strong>';
         $fuzzinesText2 = sprintf( __( 'Returns suggestions based on likely relevance, even though a search keyword may not exactly match. E.g if you type “ipho<b>m</b>e” you get the same results as for “iphone”. <a target="_blank" href="%s">Read more</a> about the fuzzy search feature.', 'ajax-search-for-woocommerce' ), $fuzzySearchLink );
         
         if ( dgoraAsfwFs()->is_premium() ) {
@@ -929,7 +929,7 @@ class Settings
     private function dependentOptions()
     {
         add_filter( 'dgwt/wcas/settings/section=form', function ( $settings ) {
-            $text = __( "You have selected the <b>Style -> Style -> Pirx (bean-shaped)</b> option. Pirx style forces a submit button to be enabled. You can find this option a few rows below. That's why this option is blocked.", 'ajax-search-for-woocommerce' );
+            $text = __( "You have selected the <b>Appearance -> Style -> Pirx</b> option. Pirx style forces a submit button to be enabled. You can find this option a few rows below. That's why this option is blocked.", 'ajax-search-for-woocommerce' );
             $settings[400]['label'] = Helpers::createOverrideTooltip( 'ovtt-pirx-submit-button', '<p>' . $text . '</p>' ) . $settings[400]['label'];
             return $settings;
         } );

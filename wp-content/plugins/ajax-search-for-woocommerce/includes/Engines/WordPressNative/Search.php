@@ -290,9 +290,26 @@ class Search
                     if ( !$product->isCorrect() ) {
                         continue;
                     }
+                    // Strip <script> and <style> tags along with their contents.
+                    $value = preg_replace( '@<(script|style)[^>]*?>.*?</\\1>@si', '', $product->getName() );
+                    // Strip remaining tags except those indicated.
+                    $value = html_entity_decode( wp_kses( $value, array(
+                        'b'      => array(
+                        'class' => true,
+                    ),
+                        'br'     => array(),
+                        'span'   => array(
+                        'class' => true,
+                    ),
+                        'strong' => array(
+                        'class' => true,
+                    ),
+                        'sub'    => array(),
+                        'sup'    => array(),
+                    ) ) );
                     $r = array(
                         'post_id' => $product->getID(),
-                        'value'   => html_entity_decode( wp_strip_all_tags( $product->getName() ) ),
+                        'value'   => $value,
                         'url'     => $product->getPermalink(),
                         'type'    => 'product',
                     );

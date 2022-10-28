@@ -680,6 +680,7 @@
         languageSwitcherClass: 'js-dgwt-wcas-analytics-lang',
         excludePhraseClass: 'js-dgwt-wcas-analytics-exclude-phrase',
         checkIndexerAction: 'js-dgwt-wcas-analytics-check-indexer',
+        resetAnalyticsAction: 'js-dgwt-wcas-analytics-reset',
         init: function () {
             var _this = this;
 
@@ -751,6 +752,7 @@
                         $el.html(response.data.html);
                         _this.loadCheckCriticalSearchesListeners();
                         _this.loadMoreListeners();
+                        _this.resetStatsListener();
                     }
                 }
             );
@@ -795,6 +797,30 @@
             })
 
 
+        },
+        resetStatsListener: function () {
+            var _this = this;
+
+            $('.' + _this.resetAnalyticsAction).on('click', function (e) {
+                var $el = $(this);
+                e.preventDefault();
+                if (confirm(dgwt_wcas.analytics.labels.reset_stats_confirm)) {
+                    var data = {
+                        'action': 'dgwt_wcas_reset_stats',
+                        '_wpnonce': dgwt_wcas.analytics.nonce.reset_stats
+                    };
+
+                    $el.next().addClass('loading');
+
+                    $.post(
+                        ajaxurl,
+                        data,
+                        function (response) {
+                            location.reload();
+                        }
+                    );
+                }
+            })
         },
         checkPhraseStatus: function ($el) {
             var _this = this,
@@ -902,10 +928,10 @@
                             $loadMoreRow.removeClass(_this.rowLoadingClass);
                             $loadMoreRow.find('img').remove();
                             $('.' + _this.criticalSearchesLoadMoreClass + ' span:first-child').text(response.data.more_label);
-                            _this.loadCheckCriticalSearchesListeners();
                         } else {
                             $loadMoreRow.remove();
                         }
+                        _this.loadCheckCriticalSearchesListeners();
                     }
                 }
             );

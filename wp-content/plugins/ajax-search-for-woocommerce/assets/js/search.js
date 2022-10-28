@@ -334,9 +334,11 @@
             .replace(/&lt;sup/g, '<sup')
             .replace(/&lt;\/sup/g, '</sup')
             .replace(/sup&gt;/g, 'sup>')
+            .replace(/&lt;sub/g, '<sub')
+            .replace(/&lt;\/sub/g, '</sub')
+            .replace(/sub&gt;/g, 'sub>')
             .replace(/&lt;(\/?(strong|b|br|span))&gt;/g, '<$1>')
             .replace(/&lt;(strong|span)\s+class\s*=\s*&quot;([^&]+)&quot;&gt;/g, '<$1 class="$2">');
-
     }
 
     DgwtWcasAutocompleteSearch.prototype = {
@@ -665,6 +667,12 @@
                     $form.fadeIn(50, function () {
                         $arrow.show();
                         that.positionPreloaderAndMic($formWrapper);
+
+                        var textEnd = that.currentValue.length;
+                        if (textEnd > 0) {
+                            $input[0].setSelectionRange(textEnd, textEnd);
+                        }
+
                         $input.focus();
                     });
 
@@ -2141,7 +2149,7 @@
                         }
                         if (typeof suggestion.breadcrumbs != 'undefined' && suggestion.breadcrumbs) {
                             title = suggestion.breadcrumbs + ' &gt; ' + suggestion.value;
-                            append += '<span class="dgwt-wcas-st-breadcrumbs">' + dgwt_wcas.labels.in + ' ' + suggestion.breadcrumbs + '</span>';
+                            append += '<span class="dgwt-wcas-st-breadcrumbs"><span class="dgwt-wcas-st-label-in">' + dgwt_wcas.labels.in + ' </span>' + suggestion.breadcrumbs + '</span>';
                             //@TODO RTL support
                         }
 
@@ -2178,7 +2186,7 @@
                     } else if (suggestion.type === 'more_products') {
                         classes += ' js-dgwt-wcas-suggestion-more dgwt-wcas-suggestion-more';
                         innerClass = 'dgwt-wcas-st-more';
-                        suggestion.value = dgwt_wcas.labels.show_more + ' (' + suggestion.total + ')';
+                        suggestion.value = dgwt_wcas.labels.show_more + '<span class="dgwt-wcas-st-more-total"> (' + suggestion.total + ')</span>';
                         highlight = false;
                     } else if (options.showHeadings && suggestion.type === 'headline') {
                         classes += ' js-dgwt-wcas-suggestion-headline dgwt-wcas-suggestion-headline';
@@ -2769,6 +2777,8 @@
                 });
             }
 
+            $formWrapper.off('click.autocomplete', '.js-dgwt-wcas-search-icon-handler');
+
             $el.removeData('autocomplete');
             $(window).off('resize.autocomplete', that.fixPosition);
 
@@ -3041,16 +3051,21 @@
             var $formWrapper = that.getFormWrapper();
             var $input = $formWrapper.find('.' + that.options.searchInputClass);
             var $voiceSearch = $formWrapper.find('.' + that.options.voiceSearchClass);
-            var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
 
-            if (!SpeechRecognition) {
+            var speechRecognition = false;
+            if (typeof SpeechRecognition === "function") {
+                speechRecognition = SpeechRecognition;
+            } else if (typeof webkitSpeechRecognition === "function") {
+                speechRecognition = webkitSpeechRecognition;
+            }
+            if (!speechRecognition) {
                 return false;
             }
 
             that.voiceSearchSetState('inactive', $voiceSearch);
             $formWrapper.addClass(that.options.voiceSearchSupportedClass);
 
-            that.voiceSearchRecognition = new SpeechRecognition();
+            that.voiceSearchRecognition = new speechRecognition();
             that.voiceSearchRecognition.lang = that.options.voiceSearchLang;
             that.voiceSearchRecognition.continuous = false;
             that.voiceSearchRecognition.interimResults = true;

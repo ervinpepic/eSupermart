@@ -34,7 +34,8 @@ class Shortcode {
 			'mobile_overlay_breakpoint' => '',
 			'darken_bg'                 => $layout->darken_background,
 			'submit_btn'                => null,
-			'submit_text'               => null
+			'submit_text'               => null,
+			'icon_color'                => ''
 		), $atts, $tag );
 
 		$searchArgs['class'] .= empty( $searchArgs['class'] ) ? 'woocommerce' : ' woocommerce';

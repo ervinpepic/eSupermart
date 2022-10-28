@@ -29,7 +29,7 @@ class WooCommerceProductsFilter {
 
 		add_action( 'pre_get_posts', array( $this, 'search_products' ), 900000 );
 
-		add_filter( 'woof_print_content_before_search_form', array( $this, 'inject_search_filter' ) );
+		add_action( 'woof_before_draw_filter', array( $this, 'inject_search_filter' ), 10, 2 );
 
 		add_filter( 'woof_get_filtered_price_query', array( $this, 'get_filtered_price_query' ) );
 
@@ -62,12 +62,17 @@ class WooCommerceProductsFilter {
 	/**
 	 * Inject our custom search param to object with plugin's filters
 	 *
-	 * @param string $content
+	 * @param string $key
+	 * @param array $shortcode_atts
 	 *
-	 * @return string
+	 * @return void
 	 */
-	public function inject_search_filter( $content = '' ) {
-		ob_start();
+	public function inject_search_filter() {
+		global $dgwtWcasWoofInjected;
+
+		if ( $dgwtWcasWoofInjected ) {
+			return;
+		}
 		?>
 		<script>
 			function dgwt_wcas_s_init() {
@@ -83,9 +88,7 @@ class WooCommerceProductsFilter {
 			}
 		</script>
 		<?php
-		$content .= ob_get_clean();
-
-		return $content;
+		$dgwtWcasWoofInjected = true;
 	}
 
 	/**

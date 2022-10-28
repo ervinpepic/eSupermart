@@ -4,7 +4,7 @@ Tags: woocommerce search, ajax search, search by sku, product search, woocommerc
 Requires at least: 5.0
 Tested up to: 6.0
 Requires PHP: 7.0
-Stable tag: 1.19.0
+Stable tag: 1.20.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -105,7 +105,7 @@ We have prepared a one-click replacement of the search bar for the following the
 *  Astra
 *  Avada
 *  Sailent
-*  and 31 more... See a complete list of integrated themes on [our documentation](https://fibosearch.com/documentation/themes-integrations/?utm_source=readme&utm_medium=referral&utm_campaign=asfw&utm_content=theme-integrations).
+*  and 34 more... See a complete list of integrated themes on [our documentation](https://fibosearch.com/documentation/themes-integrations/?utm_source=readme&utm_medium=referral&utm_campaign=asfw&utm_content=theme-integrations).
 
 
 If you want to replace your search bar in another theme, please [contact our support team](https://fibosearch.com/contact/?utm_source=readme&utm_medium=referral&utm_campaign=asfw&utm_content=contact&utm_gen=utmdc).
@@ -142,6 +142,23 @@ You can read more and compare Pro and Free features here: [Full comparison - Pro
 
 == Changelog ==
 
+= 1.20.0, September 13, 2022 =
+* ADD: Integration with Woostify theme
+* ADD: Integration with Neve theme
+* ADD: Integration with WP Rocket
+* ADD: Include block sources in the plugin package
+* ADD: Possibility to reset search statistics from the settings page
+* ADD: Support for &lt;sub&gt; element in autocomplete suggestions
+
+* FIX: Incorrect display of styles with personalization of the search
+* FIX: Wrong settings index in Impreza and Enfold theme
+* FIX: Removed of unnecessary language files
+* FIX: Always set cursor at the end of the input
+* FIX: Incorrect verification if the browser supports speech recognition
+* FIX: FiboSearch Analytics - not working “check” buttons of the latest loading list
+* FIX: Unnecessary options and transients after uninstalling plugin
+
+
 = 1.19.0, July 27, 2022 =
 * ADD: New feature - New search layout called “Pirx”
 * ADD: New feature - FiboSearch Analytics
@@ -149,7 +166,7 @@ You can read more and compare Pro and Free features here: [Full comparison - Pro
 * ADD: New feature - Voice search
 * ADD: New feature - FiboSearch blocks in the block editor
 * ADD: Separated option “mobile_overlay_breakpoint” to handle overlay on mobile breakpoint
-* ADD: Add "mobile_overlay_breakpoint" as a shortcode param to add the opportunity to set this value independently from global settings
+* ADD: Add "mobile_overlay_breakpoint" as a shortcode param to add the opportunity to set this value independently from global settings.
 * ADD: New search bars fixer: try to regenerate search bars when they were added by AJAX callbacks
 * ADD: Support for header builder in integration with Astra theme
 * ADD: Another question marks for FiboSearch settings that cover our documentation

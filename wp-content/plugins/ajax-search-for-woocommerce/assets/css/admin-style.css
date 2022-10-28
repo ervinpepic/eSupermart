@@ -402,6 +402,10 @@
 	transition: all 150ms ease-in-out;
 }
 
+[data-dgwt-wcas-active="autocomplete"] .dgwt-wcas-preview .dgwt-wcas-style-pirx .dgwt-wcas-sf-wrapp {
+	border-radius: 10px 10px 0 0;
+}
+
 .dgwt_wcas_settings-group .form-table td {
 	margin-bottom: 0;
 }
@@ -1830,7 +1834,8 @@ h3.dgwt-wcas-troubleshooting-issue-title {
 }
 
 .dgwt-wcas-tab-progress,
-.dgwt-wcas-troubleshooting-wrapper .dgwt-wcas-ajax-loader {
+.dgwt-wcas-troubleshooting-wrapper .dgwt-wcas-ajax-loader,
+.dgwt-wcas-analytics-body .dgwt-wcas-ajax-loader {
 	-moz-transition: opacity 0.2s;
 	-webkit-transition: opacity 0.2s;
 	transition: opacity 0.2s;
@@ -1844,7 +1849,17 @@ h3.dgwt-wcas-troubleshooting-issue-title {
 	margin-left: 5px;
 }
 
-.dgwt-wcas-troubleshooting-wrapper .dgwt-wcas-ajax-loader.loading {
+.dgwt-wcas-troubleshooting-wrapper .dgwt-wcas-ajax-loader.loading,
+.dgwt-wcas-analytics-body .dgwt-wcas-ajax-loader.loading {
+	opacity: 1;
+}
+
+.dgwt-wcas-analytics-body .dgwt-wcas-ajax-loader {
+	display: none;
+}
+
+.dgwt-wcas-analytics-body .dgwt-wcas-ajax-loader.loading {
+	display: inline-block;
 	opacity: 1;
 }
 

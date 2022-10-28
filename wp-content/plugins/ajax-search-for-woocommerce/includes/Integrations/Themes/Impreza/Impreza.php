@@ -53,8 +53,8 @@ class Impreza extends ThemeIntegration {
 
 		// Mark that the value of the option "mobile breakpoint" is forced
 		add_filter( 'dgwt/wcas/settings/section=form', function ( $settings ) {
-			$settings[690]['disabled'] = true;
-			$settings[690]['label']    = Helpers::createOverrideTooltip( 'ovtt-storefront-breakpoint', Helpers::getOverrideOptionText( $this->themeName ) ) . $settings[690]['label'];
+			$settings[685]['disabled'] = true;
+			$settings[685]['label']    = Helpers::createOverrideTooltip( 'ovtt-storefront-breakpoint', Helpers::getOverrideOptionText( $this->themeName ) ) . $settings[685]['label'];
 
 			return $settings;
 		} );
