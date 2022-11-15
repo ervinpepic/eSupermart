@@ -3,7 +3,7 @@
  * functions.php
  * @package WordPress
  * @subpackage Groci
- * @since Groci 2.2.4
+ * @since Groci 2.2.5
  * 
  */
  
@@ -198,7 +198,7 @@ function groci_register_required_plugins() {
             'slug'                  => 'js_composer',
             'source'                => $mainurl . 'js-composer.zip',
             'required'              => false,
-            'version'               => '6.9.0',
+            'version'               => '6.10.0',
             'force_activation'      => false,
             'force_deactivation'    => false,
             'external_url'          => '',
@@ -220,7 +220,7 @@ function groci_register_required_plugins() {
             'slug'                  => 'revslider',
             'source'                => $mainurl . 'revslider.zip',
             'required'              => false,
-            'version'               => '6.5.25',
+            'version'               => '6.6.5',
             'force_activation'      => false,
             'force_deactivation'    => false,
             'external_url'          => '',

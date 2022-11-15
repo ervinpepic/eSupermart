@@ -65,11 +65,21 @@ class RevSliderFunctions extends RevSliderData {
 	 * update general settings
 	 * @before: RevSliderOperations::updateGeneralSettings()
 	 */
-	public function set_global_settings($global){
+	public function set_global_settings($global, $merge = false){
 		$this->delete_wp_cache('_get_global_settings');
-		
+		if($this->_truefalse($merge) === true){
+			$_global = $this->get_global_settings();
+			if(!is_array($_global)) $_global = array();
+			if(!is_array($global)) $global = array();
+
+			$global = array_merge($_global, $global);
+		}
+
 		$global = json_encode($global);
-		return update_option('revslider-global-settings', $global);
+		
+		update_option('revslider-global-settings', $global);
+		
+		return true;
 	}
 
 
@@ -289,6 +299,34 @@ class RevSliderFunctions extends RevSliderData {
 		return false;
 	}
 	
+	/**
+	 * compress an array/object/string to a string
+	 * @since 6.6.0
+	 **/
+	public function do_compress($data, $level = 9){
+		if(is_array($data) || is_object($data)) $data = json_encode($data);
+		
+		if(!function_exists('gzcompress') || !function_exists('gzuncompress')) return $data; //gzencode / gzdecode
+
+		return base64_encode(gzcompress($data, $level));
+	}
+
+	/**
+	 * decompress an string to an array/object/string
+	 * @since 6.6.0
+	 **/
+	public function do_uncompress($data){
+		if($data === false || empty($data) || is_array($data) || is_object($data)) return $data;
+		$_data = json_decode($data, true);
+		if(is_array($_data) || is_object($_data)) return $_data;
+		if(!function_exists('gzcompress') || !function_exists('gzuncompress')) return $data; //gzencode / gzdecode
+
+		$data = gzuncompress(base64_decode($data));
+		$_data = json_decode($data, true);
+
+		return (!empty($_data)) ? $_data : $data;
+	}
+
 	/**
 	 * get attachment image url
 	 * before: RevSliderFunctionsWP::getUrlAttachmentImage();
@@ -566,7 +604,7 @@ class RevSliderFunctions extends RevSliderData {
 				$categories	= array_merge($categories, $cats);
 			}
 		}else{
-			$args = array('taxonomy' => $taxonomy);
+			$args = array('taxonomy' => $taxonomy, 'number' => 10000);
 			$cats = get_categories($args);
 			foreach($cats as $cat){
 				$num				= $cat->count;
@@ -972,89 +1010,7 @@ class RevSliderFunctions extends RevSliderData {
 		}
 		
 		if($fdl === 'preload'){
-			if(!empty($fonts)){
-				$upload_dir	= wp_upload_dir();
-				$base_dir	= $upload_dir['basedir'];
-				$base_url	= $upload_dir['baseurl'];
-				$rs_google_ts = get_option('rs_google_font', 0);
-				
-				foreach($fonts as $key => $font){
-					//check if we downloaded the font already
-					$font = str_replace('%7C', '', $font);
-					$font_name = preg_replace('/[^-a-z0-9 ]+/i', '', $key);
-					$font_name = strtolower(str_replace(' ', '-', esc_attr($font_name)));
-					
-					$f_raw		= explode(':', $font);
-					$weights	= (!empty($f_raw) && is_array($f_raw) && isset($f_raw[1])) ? explode('%2C', $f_raw[1]) : array('400');
-					$f_family	= str_replace('+', ' ', $f_raw[0]);
-					
-					$f_download = false;
-					foreach($weights as $weight){
-						if(!is_file($base_dir.'/revslider/gfonts/'. $font_name . '/' . $font_name . '-' . $weight . '.woff2') || filemtime($base_dir.'/revslider/gfonts/'. $font_name . '/' . $font_name . '-' . $weight . '.woff2') < $rs_google_ts){
-							$f_download = true;
-							break;
-						}
-					}
-					
-					if($f_download){
-						if(!is_dir($base_dir.'/revslider/gfonts/')){
-							mkdir($base_dir.'/revslider/gfonts/');
-						}
-						
-						if(!is_dir($base_dir.'/revslider/gfonts/'.$font_name)){
-							mkdir($base_dir.'/revslider/gfonts/'.$font_name);
-						}
-						
-						$regex_url	= "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
-						$regex_fw	= "/(?<=font-weight:)(.*)(?=;)/";
-						$regex_fs	= "/(?<=font-style:)(.*)(?=;)/";
-						$url		= 'https://fonts.googleapis.com/css?family='.$font;
-						
-						$content	= wp_remote_get($url);
-						$body		= $this->get_val($content, 'body', '');
-						$body		= explode('}', $body);
-						if(!empty($body)){
-							foreach($body as $b){
-								if(preg_match($regex_url, $b, $found_fonts)){
-									$found_font = rtrim($found_fonts[0], ')');
-									$found_fw = (preg_match($regex_fw, $b, $found_fw)) ? trim($found_fw[0]) : '400';
-									$found_fs = (preg_match($regex_fs, $b, $found_fs)) ? trim($found_fs[0]) : 'normal';
-									
-									$f_c = wp_remote_get($found_font);
-									$f_c_body = $this->get_val($f_c, 'body', '');
-									
-									$found_fs = ($found_fs !== 'normal') ? $found_fs : '';
-									$found_fw = ($found_fw === '400' && $found_fs !== '') ? '' : $found_fw;
-									
-									$file = $base_dir.'/revslider/gfonts/'. $font_name . '/' . $font_name . '-' . $found_fw . $found_fs . '.woff2';
-									
-									@mkdir(dirname($file));
-									@file_put_contents($file, $f_c_body);
-								}
-							}
-						}
-					}
-					
-					if(!empty($weights) && is_array($weights)){
-						$ret .= '<style>';
-						foreach($weights as $weight){
-							$style	 = (strpos($weight, 'italic') !== false) ? 'italic' : 'normal';
-							$_weight = str_replace('italic', '', $weight);
-							$_weight = (empty(trim($_weight))) ? '400' : $_weight;
-							$ret	.=
-"@font-face {
-  font-family: '".$f_family."';
-  font-style: ".$style.";
-  font-weight: ".$_weight.";
-  font-display: swap;
-  src: local('".$f_family."'), local('".$f_family."'), url(".$base_url.'/revslider/gfonts/'. $font_name . '/' . $font_name . '-' . $weight . '.woff2'.") format('woff2');
-}";
-						}
-						$ret .= '</style>';
-					}
-				}
-			}
-			
+			$ret .= $this->preload_fonts($fonts);
 		}else{
 			$url = $this->modify_fonts_url('https://fonts.googleapis.com/css?family=');
 			$ret .= ($tcf !== '') ? '<link href="'.$url.$tcf.'&display=swap" rel="stylesheet" property="stylesheet" media="all" type="text/css" >'."\n" : '';
@@ -1062,6 +1018,98 @@ class RevSliderFunctions extends RevSliderData {
 		}
 		
 		return apply_filters('revslider_printCleanFontImport', $ret);
+	}
+
+	/**
+	 * preloading fonts and return style for it
+	 **/
+	public function preload_fonts($fonts){
+		$ret = '';
+
+		if(!empty($fonts)){
+			$upload_dir	= wp_upload_dir();
+			$base_dir	= $upload_dir['basedir'];
+			$base_url	= $upload_dir['baseurl'];
+			$rs_google_ts = get_option('rs_google_font', 0);
+			
+			foreach($fonts as $key => $font){
+				//check if we downloaded the font already
+				$font = str_replace('%7C', '', $font);
+				$font_name = preg_replace('/[^-a-z0-9 ]+/i', '', $key);
+				$font_name = strtolower(str_replace(' ', '-', esc_attr($font_name)));
+				
+				$f_raw		= explode(':', $font);
+				$weights	= (!empty($f_raw) && is_array($f_raw) && isset($f_raw[1])) ? explode('%2C', $f_raw[1]) : array('400');
+				$f_family	= str_replace('+', ' ', $f_raw[0]);
+				
+				$f_download = false;
+				foreach($weights as $weight){
+					if(!is_file($base_dir.'/revslider/gfonts/'. $font_name . '/' . $font_name . '-' . $weight . '.woff2') || filemtime($base_dir.'/revslider/gfonts/'. $font_name . '/' . $font_name . '-' . $weight . '.woff2') < $rs_google_ts){
+						$f_download = true;
+						break;
+					}
+				}
+				
+				if($f_download){
+					if(!is_dir($base_dir.'/revslider/gfonts/')){
+						mkdir($base_dir.'/revslider/gfonts/');
+					}
+					
+					if(!is_dir($base_dir.'/revslider/gfonts/'.$font_name)){
+						mkdir($base_dir.'/revslider/gfonts/'.$font_name);
+					}
+					
+					$regex_url	= "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
+					$regex_fw	= "/(?<=font-weight:)(.*)(?=;)/";
+					$regex_fs	= "/(?<=font-style:)(.*)(?=;)/";
+					$url		= 'https://fonts.googleapis.com/css?family='.$font;
+					
+					$content	= wp_remote_get($url);
+					$body		= $this->get_val($content, 'body', '');
+					$body		= explode('}', $body);
+					if(!empty($body)){
+						foreach($body as $b){
+							if(preg_match($regex_url, $b, $found_fonts)){
+								$found_font = rtrim($found_fonts[0], ')');
+								$found_fw = (preg_match($regex_fw, $b, $found_fw)) ? trim($found_fw[0]) : '400';
+								$found_fs = (preg_match($regex_fs, $b, $found_fs)) ? trim($found_fs[0]) : 'normal';
+								
+								$f_c = wp_remote_get($found_font);
+								$f_c_body = $this->get_val($f_c, 'body', '');
+								
+								$found_fs = ($found_fs !== 'normal') ? $found_fs : '';
+								$found_fw = ($found_fw === '400' && $found_fs !== '') ? '' : $found_fw;
+								
+								$file = $base_dir.'/revslider/gfonts/'. $font_name . '/' . $font_name . '-' . $found_fw . $found_fs . '.woff2';
+								
+								@mkdir(dirname($file));
+								@file_put_contents($file, $f_c_body);
+							}
+						}
+					}
+				}
+
+				if(!empty($weights) && is_array($weights)){
+					$ret .= '<style>';
+					foreach($weights as $weight){
+						$style	 = (strpos($weight, 'italic') !== false) ? 'italic' : 'normal';
+						$_weight = str_replace('italic', '', $weight);
+						$_weight = (empty(trim($_weight))) ? '400' : $_weight;
+						$ret	.=
+"@font-face {
+font-family: '".$f_family."';
+font-style: ".$style.";
+font-weight: ".$_weight.";
+font-display: swap;
+src: local('".$f_family."'), local('".$f_family."'), url(".$base_url.'/revslider/gfonts/'. $font_name . '/' . $font_name . '-' . $weight . '.woff2'.") format('woff2');
+}";
+					}
+					$ret .= '</style>';
+				}
+			}
+		}
+
+		return $ret;
 	}
 	
 	/**

@@ -75,9 +75,23 @@ class RevSliderAdmin extends RevSliderFunctionsAdmin {
 		global $pagenow;
 		if(!in_array($this->get_val($_GET, 'page'), $this->pages) && !$this->is_edit_page() && (!isset($pagenow) || $pagenow !== 'plugins.php')) return;
 		
-		wp_enqueue_style('rs-open-sans', '//fonts.googleapis.com/css?family=Open+Sans:400,300,700,600,800');
-		wp_enqueue_style('rs-roboto', '//fonts.googleapis.com/css?family=Roboto');
-		wp_enqueue_style('tp-material-icons', '//fonts.googleapis.com/icon?family=Material+Icons');
+		$f	 = new RevSliderFunctions();
+		$gs	 = $f->get_global_settings();
+		$fdl = $f->get_val($gs, 'fontdownload', 'off');
+		if($fdl === 'off'){
+			$url_css = $f->modify_fonts_url('https://fonts.googleapis.com/css?family=');
+			$url_material = str_replace('css?', 'icon?', $url_css);
+			wp_enqueue_style('rs-open-sans', $url_css.'Open+Sans:400,300,700,600,800');
+			wp_enqueue_style('rs-roboto', $url_css.'Roboto');
+			wp_enqueue_style('tp-material-icons', $url_material.'Material+Icons');
+		}elseif($fdl === 'preload'){
+			$fonts = array('Open+Sans:400%2C300%2C700%2C600%2C800', 'Roboto:400%2C300%2C700%2C600%2C800', 'Material+Icons');
+			$html = $f->preload_fonts($fonts);
+			if(!empty($html)){
+				echo $html;
+			}
+		}//disable => load on your own
+		
 		//wp_enqueue_style('revslider-global-styles', RS_PLUGIN_URL . 'admin/assets/css/global.css', array(), RS_REVISION);
 		wp_enqueue_style(array('wp-jquery-ui', 'wp-jquery-ui-core', 'wp-jquery-ui-dialog', 'wp-color-picker'));
 		wp_enqueue_style('revbuilder-color-picker-css', RS_PLUGIN_URL . 'admin/assets/css/tp-color-picker.css', array(), RS_REVISION);
@@ -455,7 +469,6 @@ class RevSliderAdmin extends RevSliderFunctionsAdmin {
 
 		$upgrade->force = in_array($this->get_val($_REQUEST, 'checkforupdates', 'false'), array('true', true), true);
 		$upgrade->_retrieve_version_info();
-		
 		$upgrade->add_update_checks();
 	}
 
@@ -1367,7 +1380,8 @@ class RevSliderAdmin extends RevSliderFunctionsAdmin {
 				case 'update_global_settings':
 					$global = $this->get_val($data, 'global_settings', array());
 					if(!empty($global)){
-						$return = $this->set_global_settings($global);
+						$update = $this->get_val($data, 'update', false);
+						$return = $this->set_global_settings($global, $update);
 						if($return === true){
 							$this->ajax_response_success(__('Global Settings saved/updated', 'revslider'));
 						}else{
@@ -2171,23 +2185,23 @@ class RevSliderAdmin extends RevSliderFunctionsAdmin {
 					$this->ajax_response_success(__('Successfully fetched Facebook albums', 'revslider'), array('html' => implode(' ', $return)));
 				break;
 				case 'get_flickr_photosets':
-					$error = __('Could not fetch flickr photosets', 'revslider');
+					$error = __('Could not fetch flickr album', 'revslider');
 					if(!empty($data['url']) && !empty($data['key'])){
 						$flickr = new RevSliderFlickr($data['key']);
 						$user_id = $flickr->get_user_from_url($data['url']);
 						$return = $flickr->get_photo_sets($user_id, $data['count'], $data['set']);
 						if(!empty($return)){
-							$this->ajax_response_success(__('Successfully fetched flickr photosets', 'revslider'), array('data' => array('html' => implode(' ', $return))));
+							$this->ajax_response_success(__('Successfully fetched flickr albums', 'revslider'), array('data' => array('html' => implode(' ', $return))));
 						}else{
-							$error = __('Could not fetch flickr photosets', 'revslider');
+							$error = __('Could not fetch flickr albums', 'revslider');
 						}
 					}else{
 						if(empty($data['url']) && empty($data['key'])){
-							$this->ajax_response_success(__('Cleared Photosets', 'revslider'), array('html' => implode(' ', $return)));
+							$this->ajax_response_success(__('Cleared Albums', 'revslider'), array('html' => implode(' ', $return)));
 						}elseif(empty($data['url'])){
-							$error = __('No User URL - Could not fetch flickr photosets', 'revslider');
+							$error = __('No User URL - Could not fetch flickr albums', 'revslider');
 						}else{
-							$error = __('No API KEY - Could not fetch flickr photosets', 'revslider');
+							$error = __('No API KEY - Could not fetch flickr albums', 'revslider');
 						}
 					}
 					
