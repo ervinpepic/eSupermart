@@ -2,9 +2,9 @@
 Contributors: damian-gora, matczar
 Tags: woocommerce search, ajax search, search by sku, product search, woocommerce
 Requires at least: 5.0
-Tested up to: 6.0
+Tested up to: 6.1
 Requires PHP: 7.0
-Stable tag: 1.20.0
+Stable tag: 1.21.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,20 +73,21 @@ Any suggestions or comments are welcome. Feel free to contact us via the [contac
 1. Install the plugin from within the Dashboard or upload the directory `ajax-search-for-woocommerce` and all its contents to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Go to `WooCommerce → FiboSearch` and set your preferences.
-4. Use a shortcode `[fibosearch]` or go to the `Appearance → Menu` and add menu item `FiboSearch` or go to the `Appearance → Widgets` and choose `FiboSearch`
+4. Embed the search bar in your theme.
 
 == Frequently Asked Questions ==
 
 = How do I embed the search bar in my theme? =
-There are five easy ways to display the FiboSearch bar in your theme:
+There are many easy ways to display the FiboSearch bar in your theme:
 
+– **Replacing the existing search bar with one click** - it is possible for dozens of popular themes
 – **As a menu item** - in your WordPress admin panel, go to `Appearance → Menu` and add `FiboSearch bar` as a menu item
 – **Using a shortcode**
 
 `[fibosearch]`
 
 – **As a widget** - in your WordPress admin panel, go to `Appearance → Widgets` and choose `FiboSearch`
-
+– **As a block** - [learn how to use blocks](https://fibosearch.com/documentation/get-started/how-to-add-fibosearch-to-your-website/#add-fibosearch-with-the-dedicated-fibosearch-block) and FiboSearch together
 – **Using PHP**
 
 `<?php echo do_shortcode('[fibosearch]'); ?>`
@@ -142,6 +143,27 @@ You can read more and compare Pro and Free features here: [Full comparison - Pro
 
 == Changelog ==
 
+= 1.21.0, November 21, 2022 =
+* ADD: Integration with Product GTIN (EAN, UPC, ISBN) for WooCommerce plugin
+* ADD: Integration with EAN for WooCommerce plugin
+* ADD: Troubleshooting - checks if products thumbnails need to be regenerated
+
+* FIX: Missing translation domain in some texts
+* FIX: Support variants of &lt;br&gt; tag in product names in autocomplete
+* FIX: Unable to embed search bar as a widget
+* FIX: Disable voice search for Chrome on iPhone or iPad
+* FIX: Integration with the Astra theme - unclosed  &lt;div&gt; tag
+* FIX: Exclude save phrases to analyze when the phrase is 'fibotests' or the user has a specific role.
+* FIX: UI_FIXER: check if event listeners were correctly added to search inputs. If no, reinitiate the search instance
+* FIX: UI_FIXER: rebuild all search bars without correct JS events
+* FIX: Redundant DB queries related to the existence of plugin tables
+
+* CHANGE: Updated Freemius SDK to v2.5.2
+
+
+
+
+
 = 1.20.0, September 13, 2022 =
 * ADD: Integration with Woostify theme
 * ADD: Integration with Neve theme
@@ -166,7 +188,7 @@ You can read more and compare Pro and Free features here: [Full comparison - Pro
 * ADD: New feature - Voice search
 * ADD: New feature - FiboSearch blocks in the block editor
 * ADD: Separated option “mobile_overlay_breakpoint” to handle overlay on mobile breakpoint
-* ADD: Add "mobile_overlay_breakpoint" as a shortcode param to add the opportunity to set this value independently from global settings.
+* ADD: Add "mobile_overlay_breakpoint" as a shortcode param to add the opportunity to set this value independently from global settings
 * ADD: New search bars fixer: try to regenerate search bars when they were added by AJAX callbacks
 * ADD: Support for header builder in integration with Astra theme
 * ADD: Another question marks for FiboSearch settings that cover our documentation

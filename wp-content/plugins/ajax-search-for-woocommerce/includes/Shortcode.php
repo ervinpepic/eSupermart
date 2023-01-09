@@ -72,7 +72,11 @@ class Shortcode {
 		if ( file_exists( $filename ) ) {
 			include $filename;
 
-			if ( function_exists( 'opcache_invalidate' ) ) {
+			/** @see wp_opcache_invalidate() */
+			if (
+				function_exists( 'opcache_invalidate' ) &&
+				( ! ini_get( 'opcache.restrict_api' ) || stripos( realpath( $_SERVER['SCRIPT_FILENAME'] ), ini_get( 'opcache.restrict_api' ) ) === 0 )
+			) {
 				@opcache_invalidate( $filename, true );
 			}
 		}

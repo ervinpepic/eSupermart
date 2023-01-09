@@ -253,6 +253,18 @@ class ThemesCompatibility {
 				'slug' => 'woostify',
 				'name' => 'Woostify',
 			),
+			'oceanwp'          => array(
+				'slug' => 'oceanwp',
+				'name' => 'OceanWP',
+			),
+			'webshop'          => array(
+				'slug' => 'webshop',
+				'name' => 'WebShop',
+				'args' => array(
+					'forceMobileOverlay'           => true,
+					'forceMobileOverlayBreakpoint' => 767,
+				),
+			),
 		);
 	}
 

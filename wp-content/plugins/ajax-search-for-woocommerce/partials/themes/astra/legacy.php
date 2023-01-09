@@ -61,7 +61,7 @@ add_action( 'wp_footer', function () {
 	}
 	// Full Screen Search
 	if ( $search_box === 'search' && $search_box_style === 'full-screen' ) {
-		echo '<div id="wcas-search-instance" style="display: block;"><div class="search-form"><input class="search-field" type="text" style="display:none;">' . do_shortcode( '[wcas-search-form layout="classic" mobile_overlay="1" mobile_breakpoint="' . $header_break_point . '" ]' ) . '</div>';
+		echo '<div id="wcas-search-instance" style="display: block;"><div class="search-form"><input class="search-field" type="text" style="display:none;">' . do_shortcode( '[wcas-search-form layout="classic" mobile_overlay="1" mobile_breakpoint="' . $header_break_point . '" ]' ) . '</div></div>';
 	}
 	?>
 	<script>

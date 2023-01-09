@@ -10,7 +10,7 @@ if ( !defined( 'ABSPATH' ) ) {
 /**
  * Class Solver
  *
- * Solves conflicts with other plugins
+ * Solve conflicts with other plugins
  */
 class Solver
 {
@@ -20,6 +20,7 @@ class Solver
         $this->solveDiviWithBuilderWC();
         $this->solveMedicorCoreScrips();
         $this->solveGeoTargetingWPScripts();
+        $this->solveEmptyImages();
     }
     
     /**
@@ -84,6 +85,44 @@ class Solver
             wp_dequeue_script( 'geot-chosen' );
             wp_dequeue_script( 'geot-selectize' );
         }, 999 );
+    }
+    
+    /**
+     * Preventing empty image URLs (null) from being passed to the indexer
+     *
+     * @return void
+     */
+    public function solveEmptyImages()
+    {
+        add_filter(
+            'dgwt/wcas/product/thumbnail_src',
+            function ( $url, $id, $product ) {
+            return ( empty($url) ? wc_placeholder_img_src() : $url );
+        },
+            PHP_INT_MAX - 5,
+            3
+        );
+        add_filter(
+            'dgwt/wcas/variation/thumbnail_src',
+            function ( $url, $parentID, $variationID ) {
+            return ( empty($url) ? wc_placeholder_img_src() : $url );
+        },
+            PHP_INT_MAX - 5,
+            3
+        );
+        add_filter(
+            'dgwt/wcas/term/thumbnail_src',
+            function (
+            $url,
+            $termID,
+            $size,
+            $term
+        ) {
+            return ( empty($url) ? wc_placeholder_img_src() : $url );
+        },
+            PHP_INT_MAX - 5,
+            4
+        );
     }
 
 }

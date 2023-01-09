@@ -162,6 +162,24 @@
                         h = (h << 5) - h + s.charCodeAt(--i) | 0;
                     }
                     return h < 0 ? h * -1 : h;
+                },
+                isBrowser: function(browser) {
+                    return navigator.userAgent.indexOf(browser) !== -1;
+                },
+                isIOS: function () {
+                    return [
+                            'iPad Simulator',
+                            'iPhone Simulator',
+                            'iPod Simulator',
+                            'iPad',
+                            'iPhone',
+                            'iPod'
+                        ].includes(navigator.platform)
+                        // iPad on iOS 13 detection
+                        || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+                },
+                isIE11: function () {
+                    return !!navigator.userAgent.match(/Trident\/7\./);
                 }
             };
         }()),
@@ -337,6 +355,7 @@
             .replace(/&lt;sub/g, '<sub')
             .replace(/&lt;\/sub/g, '</sub')
             .replace(/sub&gt;/g, 'sub>')
+            .replace(/&lt;br\s?\/?&gt;/g, '<br/>')
             .replace(/&lt;(\/?(strong|b|br|span))&gt;/g, '<$1>')
             .replace(/&lt;(strong|span)\s+class\s*=\s*&quot;([^&]+)&quot;&gt;/g, '<$1 class="$2">');
     }
@@ -477,6 +496,11 @@
         },
         registerEventsSearchBar: function () {
             var that = this;
+
+            // The Control event that checks if other listeners work
+            that.el.on('fibosearch/ping', function () {
+                that.el.addClass('fibosearch-pong');
+            });
 
             // Extra tasks on submit
             that.getForm().on('submit.autocomplete', function (e) {
@@ -2777,6 +2801,8 @@
                 });
             }
 
+            $el.off('fibosearch/ping');
+
             $formWrapper.off('click.autocomplete', '.js-dgwt-wcas-search-icon-handler');
 
             $el.removeData('autocomplete');
@@ -3062,6 +3088,11 @@
                 return false;
             }
 
+            if (utils.isBrowser('Chrome') && utils.isIOS()) {
+                // Chrome speech recognition on iPhone and iPad is not working well.
+                return false;
+            }
+
             that.voiceSearchSetState('inactive', $voiceSearch);
             $formWrapper.addClass(that.options.voiceSearchSupportedClass);
 
@@ -3204,28 +3235,10 @@
     }
 
     (function () {
-
-        function isIOS() {
-            return [
-                    'iPad Simulator',
-                    'iPhone Simulator',
-                    'iPod Simulator',
-                    'iPad',
-                    'iPhone',
-                    'iPod'
-                ].includes(navigator.platform)
-                // iPad on iOS 13 detection
-                || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
-        }
-
-        function isIE11() {
-            return !!navigator.userAgent.match(/Trident\/7\./);
-        }
-
         /*-----------------------------------------------------------------
         /* IE11 polyfills
         /*-----------------------------------------------------------------*/
-        if (isIE11()) {
+        if (utils.isIE11()) {
             // https://polyfill.io/v3/polyfill.min.js?features=Array.prototype.includes%2CString.prototype.includes
             (function (self, undefined) {
                 function Call(t, l) {
@@ -3391,7 +3404,7 @@
             /*-----------------------------------------------------------------
             /* Mobile detection
             /*-----------------------------------------------------------------*/
-            if (isIOS()) {
+            if (utils.isIOS()) {
                 $('html').addClass('dgwt-wcas-is-ios');
             }
 
@@ -3663,8 +3676,22 @@
 
                             that.searchBars.push($searchBar);
                         }
+
+                        if (!that.hasEvents($searchBar)) {
+                            that.reinitSearchBar($searchBar)
+                        }
+
                     });
                 }
+            },
+            hasEvents: function ($searchBarInput) {
+                var hasEvents = false;
+                $searchBarInput.trigger('fibosearch/ping');
+                if ($searchBarInput.hasClass('fibosearch-pong')) {
+                    hasEvents = true;
+                }
+                $('.fibosearch-pong').removeClass('fibosearch-pong');
+                return hasEvents;
             },
             isInitialized: function ($searchBarInput) {
                 return typeof $searchBarInput.data('autocomplete') == 'object';

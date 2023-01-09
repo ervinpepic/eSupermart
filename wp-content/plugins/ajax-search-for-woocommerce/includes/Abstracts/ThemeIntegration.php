@@ -27,13 +27,16 @@ abstract class ThemeIntegration {
 		}
 
 		$this->args = wp_parse_args( $args, array(
-			'replaceSearchSuffix' => '',
-			'partialFilename'     => '',
-			'alwaysEnabled'       => false,
-			'whiteLabel'          => false
+			'replaceSearchSuffix'          => '',
+			'partialFilename'              => '',
+			'alwaysEnabled'                => false,
+			'whiteLabel'                   => false,
+			'forceMobileOverlay'           => false,
+			'forceMobileOverlayBreakpoint' => false,
 		) );
 
 		$this->maybeOverwriteSearch();
+		$this->maybeOverwriteSettings();
 
 		// Run additional functions on init.
 		if ( is_callable( array( $this, 'init' ) ) ) {
@@ -136,6 +139,47 @@ abstract class ThemeIntegration {
 
 		if ( $this->canReplaceSearch() && file_exists( $partialPath ) ) {
 			require_once( $partialPath );
+		}
+	}
+
+	/**
+	 * Overwrite settings
+	 *
+	 * @return void
+	 */
+	protected function maybeOverwriteSettings() {
+		if ( ! $this->canReplaceSearch() ) {
+			return;
+		}
+
+		if ( $this->args['forceMobileOverlay'] ) {
+			// Force enable overlay for mobile search.
+			add_filter( 'dgwt/wcas/settings/load_value/key=enable_mobile_overlay', function () {
+				return 'on';
+			} );
+
+			// Mark that the value of the option "mobile overlay" is forced.
+			add_filter( 'dgwt/wcas/settings/section=form', function ( $settings ) {
+				$settings[680]['disabled'] = true;
+				$settings[680]['label']    = Helpers::createOverrideTooltip( 'ovtt-theme-mobile-overlay', Helpers::getOverrideOptionText( $this->themeName ) ) . $settings[680]['label'];
+
+				return $settings;
+			} );
+		}
+
+		if ( $this->args['forceMobileOverlayBreakpoint'] !== false && intval( $this->args['forceMobileOverlayBreakpoint'] ) > 0 ) {
+			// Change mobile breakpoint.
+			add_filter( 'dgwt/wcas/settings/load_value/key=mobile_overlay_breakpoint', function () {
+				return $this->args['forceMobileOverlayBreakpoint'];
+			} );
+
+			// Mark that the value of the option "mobile breakpoint" is forced.
+			add_filter( 'dgwt/wcas/settings/section=form', function ( $settings ) {
+				$settings[685]['disabled'] = true;
+				$settings[685]['label']    = Helpers::createOverrideTooltip( 'ovtt-theme-breakpoint', Helpers::getOverrideOptionText( $this->themeName ) ) . $settings[685]['label'];
+
+				return $settings;
+			} );
 		}
 	}
 }

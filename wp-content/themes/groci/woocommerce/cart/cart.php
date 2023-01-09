@@ -12,7 +12,7 @@
  *
  * @see     https://docs.woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates
- * @version 4.4.0
+ * @version 7.0.1
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -145,12 +145,12 @@ do_action( 'woocommerce_before_cart' ); ?>
 								<div class="coupon">
 									<label for="coupon_code"><?php esc_html_e( 'Coupon:', 'groci' ); ?></label> 
 									<input type="text" name="coupon_code" class="form-control input-text" id="coupon_code" value="" placeholder="<?php esc_attr_e( 'Coupon code', 'groci' ); ?>" /> 
-									<button type="submit" class="btn btn-secondary button" name="apply_coupon" value="<?php esc_attr_e( 'Apply coupon', 'groci' ); ?>"><?php esc_attr_e( 'Apply coupon', 'groci' ); ?></button>
+									<button type="submit" class="btn btn-secondary button<?php echo esc_attr( wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '' ); ?>" name="apply_coupon" value="<?php esc_attr_e( 'Apply coupon', 'groci' ); ?>"><?php esc_attr_e( 'Apply coupon', 'groci' ); ?></button>
 									<?php do_action( 'woocommerce_cart_coupon' ); ?>
 								</div>
 							<?php } ?>
 
-							<button type="submit" class="btn btn-secondary button" name="update_cart" value="<?php esc_attr_e( 'Update cart', 'groci' ); ?>"><?php esc_html_e( 'Update cart', 'groci' ); ?></button>
+							<button type="submit" class="btn btn-secondary button<?php echo esc_attr( wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '' ); ?>" name="update_cart" value="<?php esc_attr_e( 'Update cart', 'groci' ); ?>"><?php esc_html_e( 'Update cart', 'groci' ); ?></button>
 
 							<?php do_action( 'woocommerce_cart_actions' ); ?>
 

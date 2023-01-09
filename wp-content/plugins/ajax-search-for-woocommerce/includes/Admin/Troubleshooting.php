@@ -2,7 +2,9 @@
 
 namespace DgoraWcas\Admin;
 
+use  DgoraWcas\Admin\Promo\FeedbackNotice ;
 use  DgoraWcas\Admin\Promo\Upgrade ;
+use  DgoraWcas\Engines\TNTSearchMySQL\Indexer\Logger ;
 use  DgoraWcas\Helpers ;
 use  DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder ;
 use  DgoraWcas\Multilingual ;
@@ -15,11 +17,12 @@ class Troubleshooting
     const  SECTION_ID = 'dgwt_wcas_troubleshooting' ;
     const  TRANSIENT_RESULTS_KEY = 'dgwt_wcas_troubleshooting_async_results' ;
     const  ASYNC_TEST_NONCE = 'troubleshooting-async-test' ;
-    const  RESET_ASYNC_TESTS_NONCE = 'troubleshooting-reset-async-tests' ;
     const  FIX_OUTOFSTOCK_NONCE = 'troubleshooting-fix-outofstock' ;
-    const  DISMIS_ELEMENTOR_TEMPLATE_NONCE = 'troubleshooting-dismiss-elementor-template' ;
+    const  ASYNC_ACTION_NONCE = 'troubleshooting-async-action' ;
     const  MAINTENANCE_ANALYTICS_NONCE = 'troubleshooting-maintenance-analytics' ;
     const  SWITCH_ALTERNATIVE_ENDPOINT = 'troubleshooting-switch-alternative-endpoint' ;
+    // Regenerate images.
+    const  IMAGES_ALREADY_REGENERATED_OPT_KEY = 'dgwt_wcas_images_regenerated' ;
     public function __construct()
     {
         if ( !$this->checkRequirements() ) {
@@ -28,10 +31,11 @@ class Troubleshooting
         add_filter( 'dgwt/wcas/settings', array( $this, 'addSettingsTab' ) );
         add_filter( 'dgwt/wcas/settings/sections', array( $this, 'addSettingsSection' ) );
         add_filter( 'dgwt/wcas/scripts/admin/localize', array( $this, 'localizeSettings' ) );
+        add_filter( 'removable_query_args', array( $this, 'addRemovableQueryArgs' ) );
         add_action( DGWT_WCAS_SETTINGS_KEY . '-form_bottom_' . self::SECTION_ID, array( $this, 'tabContent' ) );
         add_action( 'wp_ajax_dgwt_wcas_troubleshooting_test', array( $this, 'asyncTest' ) );
-        add_action( 'wp_ajax_dgwt_wcas_troubleshooting_reset_async_tests', array( $this, 'resetAsyncTests' ) );
-        add_action( 'wp_ajax_dgwt_wcas_troubleshooting_dismiss_elementor_template', array( $this, 'dismissElementorTemplate' ) );
+        add_action( 'wp_ajax_dgwt_wcas_troubleshooting_async_action', array( $this, 'asyncActionHandler' ) );
+        add_action( 'admin_notices', array( $this, 'showNotices' ) );
     }
     
     /**
@@ -71,6 +75,39 @@ class Troubleshooting
     }
     
     /**
+     * Add custom query variable names to remove
+     *
+     * @param array $args
+     *
+     * @return array
+     */
+    public function addRemovableQueryArgs( $args )
+    {
+        $args[] = 'dgwt-wcas-regenerate-images-started';
+        return $args;
+    }
+    
+    /**
+     * Show troubleshooting notices
+     *
+     * @return void
+     */
+    public function showNotices()
+    {
+        
+        if ( isset( $_REQUEST['dgwt-wcas-regenerate-images-started'] ) ) {
+            ?>
+			<div class="notice notice-success dgwt-wcas-notice">
+				<p><?php 
+            _e( 'Regeneration of images started. The process will continue in the background.', 'ajax-search-for-woocommerce' );
+            ?></p>
+			</div>
+			<?php 
+        }
+    
+    }
+    
+    /**
      * AJAX callback for running async test
      */
     public function asyncTest()
@@ -94,29 +131,40 @@ class Troubleshooting
     }
     
     /**
-     * Reset stored results of async tests
+     * Async action handler
      */
-    public function resetAsyncTests()
+    public function asyncActionHandler()
     {
         if ( !current_user_can( 'administrator' ) ) {
             wp_die( -1, 403 );
         }
-        check_ajax_referer( self::RESET_ASYNC_TESTS_NONCE );
-        delete_transient( self::TRANSIENT_RESULTS_KEY );
-        wp_send_json_success();
-    }
-    
-    /**
-     * Dismiss Elementor template error
-     */
-    public function dismissElementorTemplate()
-    {
-        if ( !current_user_can( 'administrator' ) ) {
-            wp_die( -1, 403 );
+        check_ajax_referer( self::ASYNC_ACTION_NONCE );
+        $internalAction = $_POST['internal_action'] ?? '';
+        $data = array();
+        $success = false;
+        switch ( $internalAction ) {
+            case 'dismiss_elementor_template':
+                update_option( 'dgwt_wcas_dismiss_elementor_template', '1' );
+                $success = true;
+                break;
+            case 'reset_async_tests':
+                // Reset stored results of async tests.
+                delete_transient( self::TRANSIENT_RESULTS_KEY );
+                $success = true;
+                break;
+            case 'dismiss_regenerate_images':
+                update_option( self::IMAGES_ALREADY_REGENERATED_OPT_KEY, '1' );
+                $success = true;
+                break;
+            case 'regenerate_images':
+                $this->regenerateImages();
+                $data['args'] = array(
+                    'dgwt-wcas-regenerate-images-started' => true,
+                );
+                $success = true;
+                break;
         }
-        check_ajax_referer( self::DISMIS_ELEMENTOR_TEMPLATE_NONCE );
-        update_option( 'dgwt_wcas_dismiss_elementor_template', '1' );
-        wp_send_json_success();
+        ( $success ? wp_send_json_success( $data ) : wp_send_json_error( $data ) );
     }
     
     /**
@@ -131,9 +179,8 @@ class Troubleshooting
         $localize['troubleshooting'] = array(
             'nonce' => array(
             'troubleshooting_async_test'                  => wp_create_nonce( self::ASYNC_TEST_NONCE ),
-            'troubleshooting_reset_async_tests'           => wp_create_nonce( self::RESET_ASYNC_TESTS_NONCE ),
             'troubleshooting_fix_outofstock'              => wp_create_nonce( self::FIX_OUTOFSTOCK_NONCE ),
-            'troubleshooting_dismiss_elementor_template'  => wp_create_nonce( self::DISMIS_ELEMENTOR_TEMPLATE_NONCE ),
+            'troubleshooting_async_action'                => wp_create_nonce( self::ASYNC_ACTION_NONCE ),
             'troubleshooting_switch_alternative_endpoint' => wp_create_nonce( self::SWITCH_ALTERNATIVE_ENDPOINT ),
             'troubleshooting_maintenance_analytics'       => wp_create_nonce( self::MAINTENANCE_ANALYTICS_NONCE ),
         ),
@@ -571,8 +618,11 @@ class Troubleshooting
             $dismissButton = get_submit_button(
                 __( 'Dismiss', 'ajax-search-for-woocommerce' ),
                 'secondary',
-                'dgwt-wcas-dismiss-elementor-template',
-                false
+                'dgwt-wcas-async-action-dismiss-elementor-template',
+                false,
+                array(
+                'data-internal-action' => 'dismiss_elementor_template',
+            )
             );
             $templateLink = '<a target="_blank" href="' . admin_url( 'post.php?post=' . $document->get_post()->ID . '&action=elementor' ) . '">' . $document->get_post()->post_title . '</a>';
             $result['label'] = __( 'There is no correct template in the Elementor Theme Builder for the WooCommerce search results page.', 'ajax-search-for-woocommerce' );
@@ -580,7 +630,66 @@ class Troubleshooting
             $result['description'] .= '<p><b>' . __( 'Solution', 'ajax-search-for-woocommerce' ) . '</b></p>';
             $result['description'] .= '<p>' . sprintf( __( 'Add <strong>Archive Products</strong> widget to the template <strong>%s</strong> or create a new template dedicated to the WooCommerce search results page. Learn how to do it in <a href="%s" target="_blank">our documentation</a>.', 'ajax-search-for-woocommerce' ), $templateLink, $linkToDocs ) . '</p>';
             $result['description'] .= '<br/><hr/><br/>';
-            $result['description'] .= '<p>' . sprintf( __( 'If you think the search results page is displaying your products correctly, you can ignore and dismiss this message: %s', 'ajax-search-for-woocommerce' ), $dismissButton ) . '</p>';
+            $result['description'] .= '<p>' . sprintf( __( 'If you think the search results page is displaying your products correctly, you can ignore and dismiss this message: %s', 'ajax-search-for-woocommerce' ), $dismissButton ) . '<span class="dgwt-wcas-ajax-loader"></span></p>';
+            $result['status'] = 'critical';
+            return $result;
+        }
+        
+        return $result;
+    }
+    
+    /**
+     * Test if images need to be regenerated
+     *
+     * @return array The test result.
+     */
+    public function getTestNotRegeneratedImages()
+    {
+        global  $wpdb ;
+        $displayImages = DGWT_WCAS()->settings->getOption( 'show_product_image' ) === 'on' || DGWT_WCAS()->settings->getOption( 'show_product_tax_product_cat_images' ) === 'on';
+        $regenerated = get_option( self::IMAGES_ALREADY_REGENERATED_OPT_KEY );
+        $activationDate = get_option( FeedbackNotice::ACTIVATION_DATE_OPT );
+        $isTimeToDisplay = !empty($activationDate) && strtotime( '-2 days' ) >= $activationDate;
+        $placeholderImage = get_option( 'woocommerce_placeholder_image', 0 );
+        $totalImages = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*)\n\t\t\tFROM {$wpdb->posts}\n\t\t\tWHERE post_type = 'attachment'\n\t\t\tAND post_mime_type LIKE 'image/%'\n\t\t\tAND ID != %d", $placeholderImage ) );
+        $imagesBeforeActivation = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*)\n\t\t\tFROM {$wpdb->posts}\n\t\t\tWHERE post_type = 'attachment'\n\t\t\tAND post_mime_type LIKE 'image/%'\n\t\t\tAND ID != %d\n\t\t\tAND post_date < %s\n\t\t\t", $placeholderImage, wp_date( 'Y-m-d H:i:s', $activationDate ) ) );
+        $percentageOfOldImages = 0;
+        if ( $totalImages > 0 ) {
+            $percentageOfOldImages = (double) ($imagesBeforeActivation * 100) / $totalImages;
+        }
+        $result = array(
+            'label'       => '',
+            'status'      => 'good',
+            'description' => '',
+            'actions'     => '',
+            'test'        => 'NotRegeneratedImages',
+        );
+        
+        if ( empty($regenerated) && $displayImages && $isTimeToDisplay && $percentageOfOldImages > 15 ) {
+            $dismissButton = get_submit_button(
+                __( 'Dismiss', 'ajax-search-for-woocommerce' ),
+                'secondary',
+                'dgwt-wcas-async-action-dismiss-regenerate-images',
+                false,
+                array(
+                'data-internal-action' => 'dismiss_regenerate_images',
+            )
+            );
+            $regenerateImagesButton = get_submit_button(
+                __( 'Regenerate WooCommerce images', 'ajax-search-for-woocommerce' ),
+                'secondary',
+                'dgwt-wcas-async-action-regenerate-images',
+                false,
+                array(
+                'data-internal-action' => 'regenerate_images',
+            )
+            );
+            $pluginLink = '<a target="_blank" href="https://wordpress.org/plugins/regenerate-thumbnails/">Regenerate Thumbnails</a>';
+            $result['label'] = __( 'Regenerate images', 'ajax-search-for-woocommerce' );
+            $result['description'] = '<p>' . __( 'It is recommended to generate a special small image size for existing products to ensure a better user experience. This is a one-time action.', 'ajax-search-for-woocommerce' ) . '</p>';
+            $result['description'] .= '<p>' . sprintf( __( 'You can do it by clicking %s or use an external plugin such as %s.', 'ajax-search-for-woocommerce' ), $regenerateImagesButton, $pluginLink ) . '</p>';
+            $result['description'] .= '<hr/>';
+            $result['description'] .= '<p>' . sprintf( __( 'If you have regenerated the images or do not think it is necessary, you can ignore and dismiss this message: %s', 'ajax-search-for-woocommerce' ), $dismissButton ) . '<span class="dgwt-wcas-ajax-loader"></span></p>';
             $result['status'] = 'critical';
             return $result;
         }
@@ -630,6 +739,10 @@ class Troubleshooting
             'test'  => 'ElementorSearchResultsTemplate',
         )
         ),
+            'async'  => array( array(
+            'label' => __( 'Not regenerated images', 'ajax-search-for-woocommerce' ),
+            'test'  => 'NotRegeneratedImages',
+        ) ),
         );
         if ( !dgoraAsfwFs()->is_premium() ) {
             // List of tests only for free plugin version
@@ -818,6 +931,26 @@ class Troubleshooting
         }
         $asyncTestsResults[$result['test']] = $result;
         set_transient( self::TRANSIENT_RESULTS_KEY, $asyncTestsResults, 15 * 60 );
+    }
+    
+    /**
+     * Regenerate images
+     *
+     * @return void
+     */
+    private function regenerateImages()
+    {
+        
+        if ( class_exists( 'WC_Regenerate_Images' ) ) {
+            if ( method_exists( 'Jetpack', 'is_module_active' ) && \Jetpack::is_module_active( 'photon' ) ) {
+                return;
+            }
+            if ( apply_filters( 'woocommerce_background_image_regeneration', true ) ) {
+                \WC_Regenerate_Images::queue_image_regeneration();
+            }
+        }
+        
+        update_option( self::IMAGES_ALREADY_REGENERATED_OPT_KEY, '1' );
     }
 
 }

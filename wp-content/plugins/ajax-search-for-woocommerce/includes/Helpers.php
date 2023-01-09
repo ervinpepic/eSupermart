@@ -3,6 +3,7 @@
 namespace DgoraWcas;
 
 use  DgoraWcas\Engines\TNTSearchMySQL\SearchQuery\SearchResultsPageQuery ;
+use  DgoraWcas\Engines\TNTSearchMySQL\Support\Cache ;
 use  DgoraWcas\Integrations\Solver ;
 // Exit if accessed directly
 if ( !defined( 'ABSPATH' ) ) {
@@ -942,8 +943,9 @@ class Helpers
         if ( empty($tableName) ) {
             return false;
         }
-        $sql = $wpdb->prepare( "SHOW TABLES LIKE %s", $tableName );
-        if ( !empty($wpdb->get_var( $sql )) ) {
+        $sql = $wpdb->prepare( "SHOW TABLES LIKE %s", $wpdb->prefix . 'dgwt_wcas_%' );
+        $result = $wpdb->get_col( $sql );
+        if ( is_array( $result ) && in_array( $tableName, $result ) ) {
             $exist = true;
         }
         return $exist;
@@ -1629,18 +1631,6 @@ class Helpers
     }
     
     /**
-     * Get plugin version
-     *
-     * @return string
-     */
-    public static function getPluginVersion()
-    {
-        global  $wpdb ;
-        $version = $wpdb->get_var( "SELECT option_value FROM {$wpdb->options} WHERE option_name = 'dgwt_wcas_version_pro'" );
-        return ( empty($version) ? '' : $version );
-    }
-    
-    /**
      * Get AJAX search endpoint URL
      *
      * @param null $scheme
@@ -1792,6 +1782,22 @@ class Helpers
         $info['data'] = floatval( $info['data'] );
         $info['index'] = floatval( $info['index'] );
         return $info;
+    }
+    
+    /**
+     * Get names of all FiboSearch options
+     *
+     * @return array
+     */
+    public static function getAllOptionNames()
+    {
+        global  $wpdb ;
+        $options = array();
+        $res = $wpdb->get_col( "SELECT SQL_NO_CACHE option_name FROM {$wpdb->options} WHERE option_name LIKE 'dgwt_wcas_%'" );
+        if ( !empty($res) && is_array( $res ) ) {
+            $options = $res;
+        }
+        return $options;
     }
 
 }

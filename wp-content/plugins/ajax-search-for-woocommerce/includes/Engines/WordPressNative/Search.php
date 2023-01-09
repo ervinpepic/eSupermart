@@ -624,6 +624,12 @@ class Search
                     if ( DGWT_WCAS()->settings->getOption( 'search_in_product_sku' ) === 'on' && in_array( 'sku', $this->searchIn ) ) {
                         $search .= $wpdb->prepare( " OR (dgwt_wcasmsku.meta_key='_sku' AND dgwt_wcasmsku.meta_value LIKE %s)", $like );
                     }
+                    $search = apply_filters(
+                        'dgwt/wcas/native/search_query/search_or',
+                        $search,
+                        $like,
+                        $this
+                    );
                     $search .= ")";
                     $searchand = ' AND ';
                 }
@@ -666,11 +672,14 @@ class Search
             // skip processing
         }
         
+        
         if ( $this->isAjaxSearch() ) {
             if ( DGWT_WCAS()->settings->getOption( 'search_in_product_sku' ) === 'on' && in_array( 'sku', $this->searchIn ) ) {
                 $join .= " INNER JOIN {$wpdb->postmeta} AS dgwt_wcasmsku ON ( {$wpdb->posts}.ID = dgwt_wcasmsku.post_id )";
             }
+            $join = apply_filters( 'dgwt/wcas/native/search_query/join', $join );
         }
+        
         return $join;
     }
     

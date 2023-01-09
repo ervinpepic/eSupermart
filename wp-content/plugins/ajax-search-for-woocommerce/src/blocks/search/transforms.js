@@ -8,7 +8,7 @@ const transforms = {
 	from: [
 		{
 			type: 'block',
-			blocks: ['core/search'],
+			blocks: ['core/search', 'woocommerce/product-search'],
 			transform: () => {
 				return createBlock('fibosearch/search');
 			},
@@ -68,6 +68,13 @@ const transforms = {
 					buttonUseIcon: true,
 					buttonPosition: 'button-inside',
 				});
+			},
+		},
+		{
+			type: 'block',
+			blocks: ['woocommerce/product-search'],
+			transform: () => {
+				return createBlock('woocommerce/product-search');
 			},
 		},
 	],

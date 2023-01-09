@@ -252,7 +252,7 @@ class Settings
             'type'    => 'select',
             'options' => array(
             'solaris' => _x( 'Solaris (default)', 'Solaris is proper name.', 'ajax-search-for-woocommerce' ),
-            'pirx'    => _x( 'Pirx (beta)', 'Pirx is proper name.', 'ajax-search-for-woocommerce' ),
+            'pirx'    => _x( 'Pirx', 'Pirx is proper name.', 'ajax-search-for-woocommerce' ),
         ),
             'default' => 'solaris',
             'class'   => 'js-dgwt-wcas-adv-settings',

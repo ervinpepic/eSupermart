@@ -36,7 +36,7 @@ export default function Edit(props) {
 	const classnamesArg = {};
 	const { deviceType } = useSelect((select) => {
 		const editPost = select('core/edit-post');
-		if (editPost === null) {
+		if (editPost === null || editPost === undefined) {
 			return {
 				deviceType: false,
 			};
