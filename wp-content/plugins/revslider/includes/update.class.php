@@ -204,7 +204,7 @@ class RevSliderUpdate {
 					if(get_option('revslider-valid', 'false') == 'true'){
 						//remove validation, add notice
 						update_option('revslider-valid', 'false');
-						update_option('revslider-deact-notice', true);
+						update_option('revslider-deregister-popup', true);
 					}
 				}
 			}

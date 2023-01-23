@@ -1193,11 +1193,20 @@ if ($wpml->wpml_exists()) {
 							<option value="mouse"><?php _e('Mouse Move', 'revslider');?></option>
 							<option value="scroll"><?php _e('Scroll Position', 'revslider');?></option>
 							<option value="mousescroll"><?php _e('Mouse Move & Scroll', 'revslider');?></option>
+							<option value="mousedrag"><?php _e('Drag & Mouse Move', 'revslider');?></option>
 						</select>
-						<label_a><?php _e('Parallax Orig.', 'revslider');?></label_a><select id="slider_parallax_mouse_origo"  class="sliderinput easyinit tos2 nosearchbox"  data-r="parallax.mouse.origo">
-								<option value="enterpoint"><?php _e('Mouse Enter Point', 'revslider');?></option>
-								<option value="slidercenter"><?php _e('Slider Center', 'revslider');?></option>
-						</select>
+						<div class="parevent_mouse_settings parevent_mousescroll_settings parevent_scroll_settings parallax_mosue_events">
+							<label_a><?php _e('Parallax Orig.', 'revslider');?></label_a><select id="slider_parallax_mouse_origo"  class="sliderinput easyinit tos2 nosearchbox"  data-r="parallax.mouse.origo">
+									<option value="enterpoint"><?php _e('Mouse Enter Point', 'revslider');?></option>
+									<option value="slidercenter"><?php _e('Slider Center', 'revslider');?></option>
+							</select>
+						</div>
+						<div class="parevent_mousedrag_settings parallax_mosue_events">
+							<label_a><?php _e('Direction', 'revslider');?></label_a><select id="slider_parallax_mouse_carousel_direction"  class="sliderinput easyinit tos2 nosearchbox"  data-r="parallax.mouse.dir"><option value="same"><?php _e('Same Axis', 'revslider');?></option><option value="opposite"><?php _e('Opposite Axis', 'revslider');?></option><option value="both"><?php _e('Both', 'revslider');?></option></select>
+							<label_a><?php _e('Environment', 'revslider');?></label_a><select id="slider_parallax_mouse_carousel_env"  class="sliderinput easyinit tos2 nosearchbox"  data-r="parallax.mouse.env"><option value="single"><?php _e('Focused Slide', 'revslider');?></option><option value="all"><?php _e('All Slide', 'revslider');?></option></select>
+							<label_a><?php _e('Same Axis Mult.', 'revslider');?></label_a><input data-numeric="true" data-allowed="" class="sliderinput valueduekeyboard  easyinit" data-r="parallax.mouse.smulti" data-min="0" data-max="1000000" type="text" id="sr_parallax_smulti"/>
+							<label_a><?php _e('Opp. Axis Mult.', 'revslider');?></label_a><input data-numeric="true" data-allowed="" class="sliderinput valueduekeyboard  easyinit" data-r="parallax.mouse.omulti" data-min="0" data-max="1000000" type="text" id="sr_parallax_omulti"/>
+						</div>
 						<div class="parevent_mouse_settings parevent_mousescroll_settings parallax_mosue_events"><label_a><?php _e('Mouse Speed', 'revslider');?></label_a><input data-numeric="true" data-allowed="ms" class="sliderinput valueduekeyboard  easyinit" data-r="parallax.mouse.speed" data-min="0" data-max="1000000" type="text" id="sr_parallax_mbspeed"/></div>
 						<div class="parevent_scroll_settings parevent_mousescroll_settings parallax_mosue_events"><label_a><?php _e('BG Speed', 'revslider');?></label_a><input data-numeric="true" data-allowed="ms" class="sliderinput valueduekeyboard  easyinit" data-r="parallax.mouse.bgSpeed" data-min="0" data-max="1000000" type="text" id="sr_parallax_mbgspeed"/></div>
 						<div class="parevent_scroll_settings parevent_mousescroll_settings parallax_mosue_events"><label_a><?php _e('Layers Speed', 'revslider');?></label_a><input data-numeric="true" data-allowed="ms" class="sliderinput valueduekeyboard  easyinit" data-r="parallax.mouse.layersSpeed" data-min="0" data-max="1000000" type="text" id="sr_parallax_mlayspeed"/></div>

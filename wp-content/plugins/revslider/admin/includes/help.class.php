@@ -6986,6 +6986,19 @@ class RevSliderHelp {
 										$f => "#layer_video_autoplay"
 									)
 								),
+								'pauseOnSlideChange' => array(
+									$t => __("Autoplay", 'revsliderhelp'),
+									$h => "media.pauseOnSlideChange",
+									$k => array("pause video", "carousel video pause", "carousel change pause"),
+									$d => __("Pauses video on carousel change even if video layer is set to be visible always", 'revsliderhelp'),
+									$a => $u . "layer-video-audio-settings/",
+									$hl => array(
+										$dp => array('layerselected::video||audio'), 
+										$m => "#module_layers_trigger, #gst_layer_1", 
+										$st => '#form_layercontent_content_video', 
+										$f => "#layer_video_pauseOnSlideChange"
+									)
+								),
 								'loop' => array(
 									$t => __("Loop Video/Audio", 'revsliderhelp'),
 									$h => "media.loop",

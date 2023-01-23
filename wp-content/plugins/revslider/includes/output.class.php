@@ -62,7 +62,7 @@ class RevSliderOutput extends RevSliderFunctions {
 	public $offset = '';
 	public $modal = '';	
 	public $ajax_loaded = false;
-	
+
 	/**
 	 * if set to true, needed js variables for frontend actions will be added
 	 **/
@@ -1180,7 +1180,7 @@ class RevSliderOutput extends RevSliderFunctions {
 			$this->set_slide($slide);
 			
 			$this->modify_slide_by_skin();
-			$this->modify_layers_by_skin();
+			$this->modify_layer_settings();
 			
 			if($this->is_in_timeframe() === false) continue; //could also be moved to earlier and remove slides instead of continue here
 			
@@ -1329,6 +1329,7 @@ class RevSliderOutput extends RevSliderFunctions {
 			$this->set_slide_id($static_slide->get_id());
 			$layers = $static_slide->get_layers();
 			$this->set_layers($layers);
+			
 			if(!empty($layers)){
 				$sof = $static_slide->get_param(array('static', 'overflow'), '');
 				$scl = $sof;
@@ -1665,8 +1666,8 @@ class RevSliderOutput extends RevSliderFunctions {
 	 * @since: 5.3.0
 	 * @before: RevSliderOutput::putCreativeGroups()
 	 */
-	public function add_groups($puid = '-1'){ //-1 means: we only want to handle groups here that are on the first level
-		$layers = $this->get_layers();
+	public function add_groups($puid = '-1', $layers = false){ //-1 means: we only want to handle groups here that are on the first level
+		$layers = ($layers === false) ? $this->get_layers() : $layers;
 		if(empty($layers)) return false;
 		
 		$container_mode = $this->container_mode;
@@ -1674,23 +1675,29 @@ class RevSliderOutput extends RevSliderFunctions {
 			if($this->get_val($layer, 'type', 'text') !== 'group') continue; //we only want to handle groups here to get the zones we need to create
 			if($this->get_val($layer, array('group', 'puid'), '-1') !== $puid) continue; 
 			
-			//$this->container_mode = '';
-			
-			$uid = $this->get_val($layer, 'uid');
-			
-			$this->set_layer($layer);
-			$this->add_layer(true, 'group'); //add the group layer
-			
-			$this->container_mode = 'group';
-			
-			$this->increase_layer_depth();
-			$this->add_group_layer($uid); //add all layers that are in the group
-			$this->decrease_layer_depth();
-			
-			echo $this->ld().RS_T7.'--></rs-group>'.$this->add_opening_comment()."\n";
+			$this->add_specific_group_layer($layer);
 		}
 
 		$this->container_mode = $container_mode;
+	}
+
+	/**
+	 * Add a single group, specified by the given layer
+	 * @since: 6.6.8
+	 **/
+	public function add_specific_group_layer($layer){
+		$uid = $this->get_val($layer, 'uid');
+		
+		$this->set_layer($layer);
+		$this->add_layer(true, 'group'); //add the group layer
+		
+		$this->container_mode = 'group';
+		
+		$this->increase_layer_depth();
+		$this->add_group_layer($uid); //add all layers that are in the group
+		$this->decrease_layer_depth();
+		
+		echo $this->ld().RS_T7.'--></rs-group>'.$this->add_opening_comment()."\n";
 	}
 	
 	/**
@@ -1744,12 +1751,7 @@ class RevSliderOutput extends RevSliderFunctions {
 			foreach($group_layers as $layer){ //allow groups in groups
 				$this->set_layer($layer);
 				if($this->get_val($layer, 'type') === 'group'){
-					$uid = $this->get_val($layer, 'uid');
-					$this->add_layer(true, 'group'); //add the group layer
-					$this->increase_layer_depth();
-					$this->add_group_layer($uid); //add all layers that are in the group
-					$this->decrease_layer_depth();
-					echo $this->ld().RS_T7.'--></rs-group>'.$this->add_opening_comment()."\n";
+					$this->add_specific_group_layer($layer);
 				}else{
 					$this->add_layer(true); //add the layer into the group
 				}
@@ -1856,7 +1858,6 @@ class RevSliderOutput extends RevSliderFunctions {
 					if((string)$this->get_val($nlayer, array('group', 'puid'), -1) !== $cuid) continue;
 					
 					$_go = $this->get_val($nlayer, array('group', 'groupOrder'));
-					
 					if($_go === ''){ // || isset($group_layers[$_go])
 						$_go = $go;
 						$go++;
@@ -1867,9 +1868,6 @@ class RevSliderOutput extends RevSliderFunctions {
 				
 				$this->container_mode = 'column';
 				
-				//add group layers from the current cuid
-				$this->add_groups($cuid);
-				
 				//sort now the $group_layers
 				if(!empty($group_layers)){
 					ksort($group_layers);
@@ -1877,8 +1875,12 @@ class RevSliderOutput extends RevSliderFunctions {
 					$this->increase_layer_depth();
 					
 					foreach($group_layers as $nlayer){
-						$this->set_layer($nlayer);
-						$this->add_layer(true);
+						if($this->get_val($nlayer, 'type', 'text') === 'group'){
+							$this->add_specific_group_layer($nlayer);
+						}else{
+							$this->set_layer($nlayer);
+							$this->add_layer(true);
+						}
 					}
 					
 					$this->decrease_layer_depth();
@@ -2236,6 +2238,11 @@ class RevSliderOutput extends RevSliderFunctions {
 		if($html_simple_link !== '') $tag = 'a';
 		if($special_type !== false)	 $tag = 'rs-'.$special_type; //if we are special type, only allow div to be the structure, as we will close with a div outside of this function
 		
+		if($tag === 'label'){
+			$labelfor = $this->get_val($layer, 'labelfor', false);
+			if($labelfor !== false) $this->layer_additions['for'] = $this->get_layer_attribute_id($labelfor);
+		}
+
 		return ($tag !== 'div') ? $tag : 'rs-layer';
 	}
 	
@@ -2312,9 +2319,7 @@ class RevSliderOutput extends RevSliderFunctions {
 		}
 
 		if($this->slider->get_param('type', 'standard') === 'carousel'){
-			if($this->get_val($layer, array('visibility', 'alwaysOnCarousel'), false) === true){
-				$class[] = 'rs-on-car';
-			}
+			if($this->get_val($layer, array('visibility', 'alwaysOnCarousel'), false) === true) $class[] = 'rs-on-car';
 		}
 		
 		$add_intrinsic = false;
@@ -4786,6 +4791,7 @@ rs-module .material-icons {
 		$vl		 = $this->get_val($layer, array('media', 'loop'), true);
 		$vpt	 = $this->get_val($layer, array('media', 'pausetimer'), false);
 		$vpt	 = (in_array($vl, array('loop', 'none'), true)) ? true : $vpt;
+		$poch	= $this->get_val($layer, array('media', 'pauseOnSlideChange'), false);
 		$autoplay	= $this->get_val($layer, array('media', 'autoPlay'), 'true');
 		$nextslide	= $this->get_val($layer, array('media', 'nextSlideAtEnd'), true);
 		$poster	 = $this->remove_http($this->get_val($layer, array('media', 'posterUrl'), ''));
@@ -4799,6 +4805,7 @@ rs-module .material-icons {
 		$data['video']['vd'] = $volume;
 		if(!in_array($sta, array('', '-1', -1), true)) $data['video']['sta'] = $sta;
 		if(!in_array($end, array('', '-1', -1), true)) $data['video']['end'] = $end;
+		if($poch === true) $data['video']['poch'] = $poch;
 		if($this->get_val($layer, array('media', 'posterOnPause'), false) !== false) $data['video']['scop'] = 't';
 		if($this->get_val($layer, array('media', 'forceRewind'), true) !== true) $data['video']['rwd'] = 'f';
 		if($this->get_val($layer, array('media', 'nointeraction'), false) !== false) $data['video']['noint'] = 't';
@@ -5754,6 +5761,8 @@ rs-module .material-icons {
 				$data['vimeoid'] = $vimeo_id;
 				$data['vatr'] = $arguments;
 				$data['video']['vc'] = 'none';
+				$sp = $slide->get_param(array('bg', 'video', 'speed'), 1);
+				if(!in_array($sp, array(1, '1'), true)) $data['video']['sp'] = $sp;
 			break;
 			case 'streaminstagram':
 			case 'streaminstagramboth':
@@ -6870,13 +6879,13 @@ rs-module .material-icons {
 		$_mod = $this->get_val($this->custom_skin_data, array($this->custom_skin, 'slide'), array());
 		
 		//3
-		if(!empty($_mod)){
-			$slide = $this->get_slide();
-			$_p = $slide->get_params();
-			$_p = array_replace_recursive($_p, $_mod);
-			$slide->set_params($_p);
-			$this->set_slide($slide);
-		}
+		if(empty($_mod)) return true;
+	
+		$slide = $this->get_slide();
+		$_p = $slide->get_params();
+		$_p = array_replace_recursive($_p, $_mod);
+		$slide->set_params($_p);
+		$this->set_slide($slide);
 	}
 	
 	/**
@@ -6894,16 +6903,78 @@ rs-module .material-icons {
 		if(!isset($this->custom_skin_data[$this->custom_skin])) $this->custom_skin_data[$this->custom_skin] = array();
 		$_mod = $this->get_val($this->custom_skin_data, array($this->custom_skin, 'layers'), array());
 		
+		if(empty($_mod)) return true;
+		
 		//3
-		if(!empty($_mod)){
-			$slide = $this->get_slide();
-			$layers = $slide->get_layers();
-			foreach($layers as $lk => $lv){
-				$layers[$lk] = array_replace_recursive($layers, $_mod);
+		$slide = $this->get_slide();
+		$layers = $slide->get_layers();
+		foreach($layers as $lk => $lv){
+			$layers[$lk] = array_replace_recursive($layers, $_mod);
+		}
+		$slide->set_layers_raw($layers);
+		$this->set_slide($slide);
+	}
+
+	/**
+	 * modfy layer settings alwaysOnCarousel, if paren is false, all children need to be set to false
+	 **/
+	private function modify_layers_by_carousel(){
+		if($this->slider->get_param('type', 'standard') !== 'carousel') return true;
+
+		$map	= array();
+		$slide	= $this->get_slide();
+		$layers	= $slide->get_layers();
+
+		foreach($layers as $lk => $layer){
+			$uid	= intval($this->get_val($layer, 'uid'));
+			$map[$uid] = array(
+				'aoc'	=> $this->get_val($layer, array('visibility', 'alwaysOnCarousel'), false),
+				'puid'	=> intval($this->get_val($layer, array('group', 'puid'), '-1')),
+				'type'	=> $this->get_val($layer, 'type', 'text'),
+			);
+		}
+
+		if(!empty($map)){
+			$mod = false;
+			foreach($map as $uid => $values){
+				if($values['puid'] === -1) continue; //if we do not have a parent, we do not need to change the value on this $uid
+				if($values['aoc'] === false) continue; //as we are true, check if we need to set it to false if parents are somewhere set to false
+				
+				$parent = $values['puid'];
+				$run	= 0;
+				while($parent !== -1){
+					if($run >= 10) break;
+					if(isset($map[$parent]) && $map[$parent]['type'] === 'zone') break;
+					
+					if(!isset($map[$parent]) || $map[$parent]['aoc'] === false){
+						$map[$uid]['aoc'] = false;
+						$mod = true;
+					}
+					$parent = (!isset($map[$parent])) ? -1 : $map[$parent]['puid'];
+					$run++;
+				}
 			}
+
+			if($mod === false) return true;
+
+			foreach($layers as $lk => $layer){
+				$uid = intval($this->get_val($layer, 'uid'));
+				if(!isset($layers[$lk]['visibility'])) $layers[$lk]['visibility'] = array();
+				$layers[$lk]['visibility']['alwaysOnCarousel'] = $this->get_val($map, array($uid, 'aoc'), false);
+			}
+
 			$slide->set_layers_raw($layers);
 			$this->set_slide($slide);
 		}
+	}
+
+	/**
+	 * modify layer settings depending on certain values
+	 * @since: 6.6.8
+	 **/
+	public function modify_layer_settings(){
+		$this->modify_layers_by_skin();
+		$this->modify_layers_by_carousel();
 	}
 	
 	/**
@@ -7907,7 +7978,7 @@ rs-module .material-icons {
 		
 		if($s->get_param(array('parallax', 'set'), false) === false) return $html;
 
-		$sd = $s->get_param(array('parallax', 'setDDD'), false);
+		$sd = $s->get_param(array('parallax', 'setDDD'), false);		
 		$pt = ($sd === true) ? '3D' : $s->get_param(array('parallax', 'mouse', 'type'), 'off');
 		$pl = array();
 		for($i = 0; $i <= 15; $i++){
@@ -7919,6 +7990,8 @@ rs-module .material-icons {
 		$dpm = $s->get_param(array('parallax', 'disableOnMobile'), false);
 		$bgs = $s->get_param(array('parallax', 'mouse', 'bgSpeed'), 0);
 		$ls = $s->get_param(array('parallax', 'mouse', 'layersSpeed'), 0);
+		
+		
 		
 		$p['levels'] = '['.$pl.']';
 		if($pt !== 'off') $p['type'] = $pt;
@@ -7937,6 +8010,12 @@ rs-module .material-icons {
 			if($of !== false) $p['ddd_overflow'] = ($of === false) ? 'visible' : 'hidden';
 			if($lof !== false) $p['ddd_layer_overflow'] = $lof;
 			if(!in_array($zc, array(400, '400', '400px'), true)) $p['ddd_z_correction'] = $zc;
+		} else 
+		if ($pt === 'mousedrag') {
+			$p['car_env']	 = $s->get_param(array('parallax', 'mouse', 'env'), 'single');
+			$p['car_dir']	 = $s->get_param(array('parallax', 'mouse', 'dir'), 'same');
+			$p['car_smulti']	 = $s->get_param(array('parallax', 'mouse', 'smulti'), 1);
+			$p['car_omulti']	 = $s->get_param(array('parallax', 'mouse', 'omulti'), 1);
 		}
 		if(!in_array($bgs, array(0, '0', '0ms'), true)) $p['speedbg'] = $bgs;
 		if(!in_array($ls, array(0, '0', '0ms'), true)) $p['speedls'] = $ls;
