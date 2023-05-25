@@ -7,7 +7,7 @@
 class RWMB_Loader {
 	protected function constants() {
 		// Script version, used to add version for scripts and styles.
-		define( 'RWMB_VER', '5.6.17' );
+		define( 'RWMB_VER', '5.7.1' );
 
 		list( $path, $url ) = self::get_path( dirname( __DIR__ ) );
 
@@ -107,6 +107,9 @@ class RWMB_Loader {
 		$update_settings->init();
 		$update_notification = new \MetaBox\Updater\Notification( $update_checker, $update_option );
 		$update_notification->init();
+
+		// Block Register
+		new \MetaBox\Block\Register;
 
 		if ( is_admin() ) {
 			$about = new RWMB_About( $update_checker );

@@ -80,7 +80,7 @@ class Multilingual {
 	 * @return bool
 	 */
 	public static function isLangCode( $lang ) {
-		return ! empty( $lang ) && is_string( $lang ) && (bool) preg_match( '/^([a-z]{2,3})$|^([a-z]{2}\-[a-z]{2,4})$/', $lang );
+		return ! empty( $lang ) && is_string( $lang ) && (bool) preg_match( '/^([a-z]{2,10})$|^([a-z]{2}\-[a-z]{2,4})$/', $lang );
 	}
 
 	/**
@@ -588,6 +588,16 @@ class Multilingual {
 	public static function switchLanguage( $lang ) {
 		if ( self::isWPML() && ! empty( $lang ) ) {
 			do_action( 'wpml_switch_language', $lang );
+		}
+
+		/**
+		 * Some plugins (e.g. Permalink Manager for WooCommerce) use the get_the_terms() function,
+		 * which caches terms related to the product, and we need to clear this cache when changing the language.
+		 */
+		if ( function_exists( 'wp_cache_flush_group' ) ) {
+			wp_cache_flush_group( 'product_cat_relationships' );
+		} else {
+			wp_cache_flush();
 		}
 
 		do_action( 'dgwt/wcas/multilingual/switch-language', $lang );

@@ -22,8 +22,13 @@ function dgwt_wcas_astra_search_box_type() {
 	return $search_box_type;
 }
 
-// Change mobile breakpoint
-add_filter( 'dgwt/wcas/scripts/mobile_breakpoint', function () {
+// Force mobile overlay breakpoint.
+add_filter( 'dgwt/wcas/settings/load_value/key=mobile_overlay_breakpoint', function () {
+	return dgwt_wcas_astra_header_break_point();
+} );
+
+// Force mobile breakpoint.
+add_filter( 'dgwt/wcas/settings/load_value/key=mobile_breakpoint', function () {
 	return dgwt_wcas_astra_header_break_point();
 } );
 
@@ -45,18 +50,6 @@ if ( ! function_exists( 'astra_get_search_form' ) ) {
 			echo $form;
 		} else {
 			return $form;
-		}
-	}
-}
-
-// Astra cut our search using wp_kses(), so we need overwrite whole function.
-if ( ! function_exists( 'astra_addon_get_search_form' ) ) {
-	function astra_addon_get_search_form( $echo = true ) {
-		$result = apply_filters( 'astra_get_search_form', '' );
-		if ( $echo ) {
-			echo $result;
-		} else {
-			return $result;
 		}
 	}
 }
