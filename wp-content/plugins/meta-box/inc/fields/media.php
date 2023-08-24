@@ -1,4 +1,6 @@
 <?php
+defined( 'ABSPATH' ) || die;
+
 /**
  * Media field class which users WordPress media popup to upload and select files.
  */
@@ -30,7 +32,8 @@ class RWMB_Media_Field extends RWMB_File_Field {
 	}
 
 	public static function add_actions() {
-		add_action( 'print_media_templates', [ get_called_class(), 'print_templates' ] );
+		add_action( 'admin_footer', [ get_called_class(), 'print_templates' ] );
+		add_action( 'wp_footer', [ get_called_class(), 'print_templates' ] );
 	}
 
 	/**
@@ -135,6 +138,10 @@ class RWMB_Media_Field extends RWMB_File_Field {
 		// Add attachment details.
 		$attachments                    = array_values( array_filter( array_map( 'wp_prepare_attachment_for_js', $value ) ) );
 		$attributes['data-attachments'] = wp_json_encode( $attachments );
+
+		if ( empty( $attachments ) ) {
+			unset( $attributes['value'] );
+		}
 
 		return $attributes;
 	}
