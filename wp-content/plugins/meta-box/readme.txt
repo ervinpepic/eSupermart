@@ -4,8 +4,8 @@ Donate link: https://metabox.io/pricing/
 Tags: meta box, custom fields, custom post types, custom taxonomies, cpt, meta boxes, custom field, post type, taxonomy, meta, admin, advanced, custom, edit, field, file, image, magic fields, post types, more fields, post, repeater, simple fields, text, textarea, type, cms, fields post
 Requires at least: 5.9
 Requires PHP: 7.0
-Tested up to: 6.3.1
-Stable tag: 5.8.1
+Tested up to: 6.4.3
+Stable tag: 5.9.3
 License: GPLv2 or later
 
 Meta Box plugin is a powerful, professional developer toolkit to create custom meta boxes and custom fields for your custom post types in WordPress.
@@ -174,6 +174,46 @@ If you like this plugin, you might also like our other WordPress products:
 1. Post Taxonomy Fields
 
 == Changelog ==
+
+= 5.9.3 - 2024-02-02 =
+
+**Highlights:**
+
+Fix security issue of the output shortcode `[rwmb_meta]` not escaping. Users can disable escaping (to revert the previous behavior) by adding this snippet:
+
+```php
+add_filter( 'rwmb_meta_shortcode_secure', '__return_false' );
+// or
+add_filter( 'rwmb_meta_shortcode_secure_{$field_id}', '__return_false' );
+```
+
+Other changes:
+- Fix compatibility with PHP 8.3
+- Fix not showing more than 10 saved users or terms
+
+= 5.9.2 - 2024-01-22 =
+- Validation: fix PHP warning when fields has non-consecutive keys
+- Icon field: fix custom icon not working
+- Update jQuery Validation to 1.20.0. Props Maarten.
+- Prepare css to be inlined. Props Maarten.
+
+= 5.9.1 - 2023-12-25 =
+- Fix preview posts not working in the block editor in WP 6.4.
+- Icon field: allow to set relative path/URL for settings
+- Icon field: add support for scanning CSS file (`icon_css` setting) and parsing CSS class
+- Autocomplete field: fix not saving first value if the value is 0 (integer).
+
+= 5.9.0 - 2023-11-22 =
+
+**Highlights:**
+
+Add new `icon` field type, which supports Font Awesome Free, Font Awesome Pro and custom icon set. Can be used with icon font with CSS file or with SVGs. See the [plugin docs](https://docs.metabox.io/fields/icon/) for how to use it.
+
+The `icon` field type will be added to the new version of Meta Box Builder soon, which will allow you to configure its settings with UI.
+
+= 5.8.2 - 2023-10-13 =
+- Google Maps & OSM: ask for current user location for the map if there is no saved location or no default location is set (#1537)
+- Fix media templates missing in blocks (#1536)
 
 = 5.8.1 - 2023-09-20 =
 - Fix missing validation files
