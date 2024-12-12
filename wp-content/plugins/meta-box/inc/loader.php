@@ -7,7 +7,7 @@
 class RWMB_Loader {
 	protected function constants() {
 		// Script version, used to add version for scripts and styles.
-		define( 'RWMB_VER', '5.9.3' );
+		define( 'RWMB_VER', '5.10.4' );
 
 		list( $path, $url ) = self::get_path( dirname( __DIR__ ) );
 
@@ -101,19 +101,22 @@ class RWMB_Loader {
 		$wpml->init();
 
 		// Update.
-		$update_option  = new \MetaBox\Updater\Option();
-		$update_checker = new \MetaBox\Updater\Checker( $update_option );
-		$update_checker->init();
-		$update_settings = new \MetaBox\Updater\Settings( $update_checker, $update_option );
-		$update_settings->init();
-		$update_notification = new \MetaBox\Updater\Notification( $update_checker, $update_option );
-		$update_notification->init();
+		$update_checker = null;
+		if ( class_exists( '\MetaBox\Updater\Option' ) ) {
+			$update_option = new \MetaBox\Updater\Option();
+			$update_checker = new \MetaBox\Updater\Checker( $update_option );
+			$update_checker->init();
+			$update_settings = new \MetaBox\Updater\Settings( $update_checker, $update_option );
+			$update_settings->init();
+			$update_notification = new \MetaBox\Updater\Notification( $update_checker, $update_option );
+			$update_notification->init();
+		}
 
 		// Register categories for page builders.
-		new \MetaBox\Block\Register();
-		new \MetaBox\Oxygen\Register();
-		new \MetaBox\Elementor\Register();
-		new \MetaBox\Bricks\Register();
+		new \MetaBox\Integrations\Block();
+		new \MetaBox\Integrations\Bricks;
+		new \MetaBox\Integrations\Elementor;
+		new \MetaBox\Integrations\Oxygen();
 
 		if ( is_admin() ) {
 			$about = new RWMB_About( $update_checker );

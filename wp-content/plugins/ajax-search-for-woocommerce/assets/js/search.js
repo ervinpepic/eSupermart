@@ -218,14 +218,9 @@
                     return this.isBrowser('Safari') && !this.isBrowser('Chrome');
                 },
                 isIOS: function () {
-                    return [
-                            'iPad Simulator',
-                            'iPhone Simulator',
-                            'iPod Simulator',
-                            'iPad',
-                            'iPhone',
-                            'iPod'
-                        ].includes(navigator.platform)
+                    var platform = navigator?.userAgent || navigator?.platform || 'unknown';
+
+                    return /iPhone|iPod|iPad/.test(platform)
                         // iPad on iOS 13 detection
                         || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
                 },
@@ -778,7 +773,7 @@
                     }, 110);
 
                 }
-
+                return false;
             });
 
             if ($('.js-dgwt-wcas-initialized').length == 0 && $('.js-dgwt-wcas-search-icon-handler').length > 0) {
@@ -825,15 +820,21 @@
         },
         activateMobileOverlayMode: function () {
             var that = this,
-                $formWrapper = that.getFormWrapper();
+                $formWrapper = that.getFormWrapper(),
+                $iconHandler = $formWrapper.find('.js-dgwt-wcas-search-icon-handler');
 
             if (
                 $formWrapper.hasClass('js-dgwt-wcas-mobile-overlay-enabled')
                 && !$formWrapper.find('.js-dgwt-wcas-enable-mobile-form').length
             ) {
 
-                $formWrapper.prepend('<div class="js-dgwt-wcas-enable-mobile-form dgwt-wcas-enable-mobile-form"></div>');
+                $formWrapper.prepend('<a href="#" class="js-dgwt-wcas-enable-mobile-form dgwt-wcas-enable-mobile-form"></a>');
                 $formWrapper.addClass('dgwt-wcas-mobile-overlay-trigger-active');
+
+                // Don't focus an icon handler when mobile overlay handler is displayed.
+                if ($iconHandler.length) {
+                    $iconHandler.attr('tabindex', '-1');
+                }
 
                 var $el = $formWrapper.find('.js-dgwt-wcas-enable-mobile-form');
 
@@ -847,15 +848,15 @@
                         that.showMobileOverlay();
                     }
 
+                    return false;
                 });
-
             }
 
         },
         deactivateMobileOverlayMode: function () {
             var that = this,
                 $formWrapper = that.getFormWrapper(),
-                $suggestionsWrapper = that.getSuggestionsContainer();
+                $iconHandler = $formWrapper.find('.js-dgwt-wcas-search-icon-handler');
 
             var $el = $formWrapper.find('.js-dgwt-wcas-enable-mobile-form');
 
@@ -865,6 +866,11 @@
                 that.closeOverlayMobile();
                 $el.remove();
                 $formWrapper.removeClass('dgwt-wcas-mobile-overlay-trigger-active');
+
+                // Focus an icon handler when mobile overlay is deactivated.
+                if ($iconHandler.length) {
+                    $iconHandler.removeAttr('tabindex');
+                }
             }
 
         },
@@ -1009,7 +1015,8 @@
         reloadFlexibleLayout: function () {
             var that = this,
                 $searchWrapp = that.getFormWrapper(),
-                flexibleMode = 0;
+                flexibleMode = 0,
+                $iconPreloader = $searchWrapp.find('.dgwt-wcas-icon-preloader');
 
             /**
              * flexibleMode
@@ -1039,6 +1046,9 @@
                 }
 
                 $searchWrapp.addClass('dgwt-wcas-layout-icon-flexible-loaded');
+                if ($iconPreloader.length) {
+                    $iconPreloader.remove();
+                }
             }
         },
         onFocus: function (e) {
@@ -1414,6 +1424,11 @@
                     that.el.blur();
                 }
 
+                // Hide the mobile overlay on ESC.
+                if (e.keyCode === keys.ESC && $('html').hasClass('dgwt-wcas-overlay-mobile-on')) {
+                    that.closeOverlayMobile();
+                }
+
                 return;
             }
 
@@ -1585,7 +1600,7 @@
                     break;
             }
 
-            return $(window).width() <= breakpoint;
+            return window.innerWidth <= breakpoint;
         },
         getQuery: function (value) {
             var delimiter = this.options.delimiter,
@@ -2155,7 +2170,11 @@
 
             $('body').removeClass('dgwt-wcas-open');
             if (!$('html').hasClass('dgwt-wcas-overlay-mobile-on')) {
-                $('html').removeClass('dgwt-wcas-open-' + that.getSearchStyle());
+                var searchStyle = that.getSearchStyle();
+                $('html').removeClass('dgwt-wcas-open-' + searchStyle);
+                if (searchStyle === 'pirx') {
+                    $('html').removeClass('dgwt-wcas-open-pirx-compact');
+                }
             }
             $('body').removeClass('dgwt-wcas-block-scroll');
             $('body').removeClass('dgwt-wcas-is-details');
@@ -2379,6 +2398,10 @@
                             isImg = true;
                         }
 
+                        // Custom content before title (3rd party)
+                        prepend += that.apply3rdPartyPlaceholder('title_before', suggestion);
+                        append += that.apply3rdPartyPlaceholder('title_after', suggestion);
+
                         title = title.length > 0 ? ' title="' + title + '"' : '';
 
                         html += '<a href="' + url + '" class="' + classes + '" data-index="' + i + '">';
@@ -2433,7 +2456,11 @@
 
             // Add class on show
             $('body').addClass('dgwt-wcas-open');
-            $('html').addClass('dgwt-wcas-open-' + that.getSearchStyle());
+            var searchStyle = that.getSearchStyle();
+            $('html').addClass('dgwt-wcas-open-' + searchStyle);
+            if (searchStyle === 'pirx') {
+                $('html').addClass('dgwt-wcas-open-pirx-compact');
+            }
 
             // Reset the latest mousedown position
             that.isMouseDownOnSearchElements = false;
@@ -2519,17 +2546,13 @@
             html += '<div class="dgwt-wcas-st">';
 
             // Custom content before title (3rd party)
-            if (typeof suggestion.title_before != 'undefined' && suggestion.title_before) {
-                html += suggestion.title_before;
-            }
+            html += that.apply3rdPartyPlaceholder('title_before', suggestion);
 
             // Title
             html += '<span class="dgwt-wcas-st-title">' + formatResult(suggestion.value, value, true, options) + parent + '</span>';
 
             // Custom content after title (3rd party)
-            if (typeof suggestion.title_after != 'undefined' && suggestion.title_after) {
-                html += suggestion.title_after;
-            }
+            html += that.apply3rdPartyPlaceholder('title_after', suggestion);
 
             // SKU
             if (options.showSKU === true && typeof suggestion.sku != 'undefined' && suggestion.sku.length > 0) {
@@ -2555,9 +2578,7 @@
             }
 
             // Custom content after description (3rd party)
-            if (typeof suggestion.content_after != 'undefined' && suggestion.content_after) {
-                html += suggestion.content_after;
-            }
+            html += that.apply3rdPartyPlaceholder('content_after', suggestion);
 
             // Close title wrapper
             html += '</div>';
@@ -2574,7 +2595,7 @@
 
             // Custom content before meta (3rd party)
             if (showMetaBefore) {
-                html += suggestion.meta_before;
+                html += that.apply3rdPartyPlaceholder('meta_before', suggestion);
             }
 
             // Price
@@ -2584,7 +2605,7 @@
 
             // Custom content after meta (3rd party)
             if (showMetaAfter) {
-                html += suggestion.meta_after;
+                html += that.apply3rdPartyPlaceholder('meta_after', suggestion);
             }
 
             // Close Meta
@@ -2594,6 +2615,13 @@
             html += '</a>';
 
             return html;
+        },
+        apply3rdPartyPlaceholder: function (name, suggestion) {
+            var content = '';
+            if (typeof suggestion[name] != 'undefined' && suggestion[name]) {
+                content = suggestion[name];
+            }
+            return content;
         },
         getSearchStyle: function () {
             var that = this,
@@ -2605,6 +2633,10 @@
                     style = this.replace(/dgwt-wcas-style-/i, '');
                 }
             });
+
+            if (style === 'pirx-compact') {
+                style = 'pirx';
+            }
 
             return style;
         },
@@ -3285,7 +3317,11 @@
             // Add class on show
             $('body').addClass('dgwt-wcas-open');
             $('body').addClass('dgwt-wcas-open-pre-suggestions');
+            var searchStyle = that.getSearchStyle();
             $('html').addClass('dgwt-wcas-open-' + that.getSearchStyle());
+            if (searchStyle === 'pirx') {
+                $('html').addClass('dgwt-wcas-open-pirx-compact');
+            }
 
             // Reset the latest mousedown position
             that.isMouseDownOnSearchElements = false;
@@ -3596,7 +3632,6 @@
         /* IE11 polyfills
         /*-----------------------------------------------------------------*/
         if (utils.isIE11()) {
-            // https://polyfill.io/v3/polyfill.min.js?features=Array.prototype.includes%2CString.prototype.includes
             (function (self, undefined) {
                 function Call(t, l) {
                     var n = arguments.length > 2 ? arguments[2] : [];

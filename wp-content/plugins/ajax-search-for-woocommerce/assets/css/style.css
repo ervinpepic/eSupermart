@@ -101,6 +101,7 @@
 	align-items: center;
 	resize: vertical;
 	width: 100%;
+	transition: none !important;
 }
 
 .dgwt-wcas-suggestion-nores {
@@ -285,8 +286,9 @@ a.dgwt-wcas-product-details-readmore:hover {
 .dgwt-wcas-suggestion-history-search .dgwt-wcas-si svg {
 	max-width: 18px;
 }
+
 .dgwt-wcas-has-img:not(.dgwt-wcas-has-img-forced) .dgwt-wcas-suggestion-history-product .dgwt-wcas-si > svg {
-	margin-left:10px;
+	margin-left: 10px;
 }
 
 .dgwt-wcas-content-wrapp {
@@ -1564,6 +1566,7 @@ html.dgwt-wcas-overlay-mobile-on {
 	width: 100%;
 	height: 100%;
 	cursor: pointer;
+	display: block;
 }
 
 html:not(.dgwt-wcas-overlay-mobile-on) .dgwt-wcas-icon-mobile .dgwt-wcas-search-form {
@@ -1633,9 +1636,38 @@ html:not(.dgwt-wcas-overlay-mobile-on) .dgwt-wcas-search-wrapp.dgwt-wcas-layout-
 	max-width: 20px;
 }
 
+html:not(.dgwt-wcas-overlay-mobile-on) .menu .dgwt-wcas-search-wrapp.dgwt-wcas-layout-icon {
+	width: auto;
+}
+
 .dgwt-wcas-layout-icon-flexible .dgwt-wcas-search-form,
 .dgwt-wcas-layout-icon-flexible-inv .dgwt-wcas-search-form {
 	opacity: 0;
+}
+
+.dgwt-wcas-layout-icon-flexible:not(.dgwt-wcas-layout-icon-flexible-loaded),
+.dgwt-wcas-layout-icon-flexible-inv:not(.dgwt-wcas-layout-icon-flexible-loaded) {
+	max-width: 20px;
+	min-width: unset;
+}
+
+.dgwt-wcas-layout-icon-flexible:not(.dgwt-wcas-layout-icon-flexible-loaded) .dgwt-wcas-search-form,
+.dgwt-wcas-layout-icon-flexible-inv:not(.dgwt-wcas-layout-icon-flexible-loaded) .dgwt-wcas-search-form {
+	max-width: 20px;
+	min-width: unset;
+}
+
+.dgwt-wcas-icon-preloader {
+	margin: auto;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+
+.dgwt-wcas-layout-icon .dgwt-wcas-icon-preloader {
+	display: none;
 }
 
 .dgwt-wcas-layout-icon-flexible-loaded .dgwt-wcas-search-form {
@@ -1671,6 +1703,11 @@ html:not(.dgwt-wcas-overlay-mobile-on) .dgwt-wcas-search-wrapp.dgwt-wcas-layout-
 	width: 20px;
 	height: auto;
 	cursor: pointer;
+	display: block;
+}
+
+.menu .dgwt-wcas-search-icon {
+	width: auto;
 }
 
 .dgwt-wcas-ico-magnifier-handler {
@@ -1826,6 +1863,15 @@ html:not(.dgwt-wcas-overlay-mobile-on) .dgwt-wcas-search-wrapp.dgwt-wcas-layout-
 	font-family: Roboto, sans-serif;
 	background-color: #eee;
 	border: 2px solid transparent;
+}
+
+.dgwt-wcas-open-pirx .dgwt-wcas-open .dgwt-wcas-suggestions-wrapp,
+.dgwt-wcas-open-pirx .dgwt-wcas-open.dgwt-wcas-nores .dgwt-wcas-suggestions-wrapp {
+	border-radius: 0 0 5px 5px;
+}
+
+.dgwt-wcas-open-pirx .dgwt-wcas-full-width .dgwt-wcas-suggestions-wrapp {
+	border-radius: 0 0 0 5px;
 }
 
 .dgwt-wcas-style-pirx .dgwt-wcas-sf-wrapp input[type=search].dgwt-wcas-search-input:focus {
@@ -2070,6 +2116,48 @@ html:not(.dgwt-wcas-overlay-mobile-on) .dgwt-wcas-search-wrapp.dgwt-wcas-layout-
 	display: none !important;
 }
 
+.dgwt-wcas-style-pirx.dgwt-wcas-style-pirx-compact .dgwt-wcas-sf-wrapp {
+	background: transparent;
+	padding: 4px;
+	border-radius: 10px 10px 0 0;
+}
+
+.dgwt-wcas-open-pirx .dgwt-wcas-style-pirx.dgwt-wcas-style-pirx-compact .dgwt-wcas-sf-wrapp {
+	background: #fff;
+}
+
+.dgwt-wcas-style-pirx.dgwt-wcas-style-pirx-compact .dgwt-wcas-sf-wrapp input[type="search"].dgwt-wcas-search-input {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	line-height: normal;
+	font-size: 14px;
+}
+
+.dgwt-wcas-style-pirx.dgwt-wcas-style-pirx-compact .dgwt-wcas-sf-wrapp button.dgwt-wcas-search-submit {
+	left: 15px;
+	top: 7px;
+}
+
+.dgwt-wcas-style-pirx.dgwt-wcas-style-pirx-compact.dgwt-wcas-search-filled .dgwt-wcas-sf-wrapp button.dgwt-wcas-search-submit {
+	left: auto;
+	right: 23px;
+}
+
+html:not(.dgwt-wcas-overlay-mobile-on) .dgwt-wcas-style-pirx.dgwt-wcas-style-pirx-compact .dgwt-wcas-sf-wrapp input[type="search"].dgwt-wcas-search-input {
+	background: #fff;
+	box-shadow: 0 0 0 1px #eee;
+}
+
+html:not(.dgwt-wcas-overlay-mobile-on) .dgwt-wcas-style-pirx.dgwt-wcas-style-pirx-compact.dgwt-wcas-search-focused .dgwt-wcas-sf-wrapp input[type="search"].dgwt-wcas-search-input {
+	border-color: #333;
+	box-shadow: none;
+}
+
+.dgwt-wcas-open-pirx-compact .dgwt-wcas-suggestions-wrapp,
+.dgwt-wcas-open-pirx-compact .dgwt-wcas-details-wrapp {
+	margin-top: 1px;
+}
+
 .dgwt-wcas-suggestions-wrapp-fixed {
 	position: fixed !important;
 }
@@ -2085,6 +2173,7 @@ html:not(.dgwt-wcas-overlay-mobile-on) .dgwt-wcas-search-wrapp.dgwt-wcas-layout-
 	grid-gap: 20px;
 	justify-content: flex-start;
 }
+
 .dgwt-wcas-posts-results-grid-item {
 	width: calc(25% - 15px);
 	margin-bottom: 30px;

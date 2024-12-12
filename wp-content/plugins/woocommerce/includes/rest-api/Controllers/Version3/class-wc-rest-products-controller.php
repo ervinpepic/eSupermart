@@ -62,6 +62,54 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 				'schema' => array( $this, 'get_public_item_schema' ),
 			)
 		);
+
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/(?P<id>[\d]+)/duplicate',
+			array(
+				'args'   => array(
+					'id' => array(
+						'description' => __( 'Unique identifier for the resource.', 'woocommerce' ),
+						'type'        => 'integer',
+					),
+				),
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'duplicate_product' ),
+					'permission_callback' => array( $this, 'create_item_permissions_check' ),
+					'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::EDITABLE ),
+				),
+				'schema' => array( $this, 'get_public_item_schema' ),
+			)
+		);
+	}
+
+	/**
+	 * Duplicate a product and returns the duplicated product.
+	 * The product status is set to "draft" and the name includes a "(copy)" at the end by default.
+	 *
+	 * @param WP_REST_Request $request Request data.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function duplicate_product( $request ) {
+		$product_id = $request->get_param( 'id' );
+		$product    = wc_get_product( $product_id );
+
+		if ( ! $product ) {
+			return new WP_Error( 'woocommerce_rest_product_invalid_id', __( 'Invalid product ID.', 'woocommerce' ), array( 'status' => 404 ) );
+		}
+
+		// Creating product object from request data in preparation for copying.
+		$updated_product    = $this->prepare_object_for_database( $request );
+		$duplicated_product = ( new WC_Admin_Duplicate_Product() )->product_duplicate( $updated_product );
+
+		if ( is_wp_error( $duplicated_product ) ) {
+			return new WP_Error( 'woocommerce_rest_product_duplicate_error', $duplicated_product->get_error_message(), array( 'status' => 400 ) );
+		}
+
+		$response_data = $duplicated_product->get_data();
+
+		return new WP_REST_Response( $response_data, 200 );
 	}
 
 	/**
@@ -184,7 +232,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		}
 
 		if ( wc_product_sku_enabled() ) {
-			// Do a partial match for a sku. Supercedes sku parameter that does exact matching.
+			// Do a partial match for a sku. Supersedes sku parameter that does exact matching.
 			if ( ! empty( $request['search_sku'] ) ) {
 				// Store this for use in the query clause filters.
 				$this->search_sku_in_product_lookup_table = $request['search_sku'];
@@ -209,6 +257,18 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 					)
 				);
 			}
+		}
+
+		if ( ! empty( $request['global_unique_id'] ) ) {
+			$global_unique_ids  = array_map( 'trim', explode( ',', $request['global_unique_id'] ) );
+			$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				$args,
+				array(
+					'key'     => '_global_unique_id',
+					'value'   => $global_unique_ids,
+					'compare' => 'IN',
+				)
+			);
 		}
 
 		// Filter by tax class.
@@ -325,7 +385,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		global $wpdb;
 		if ( ! empty( $this->search_sku_in_product_lookup_table ) ) {
 			$like_search = '%' . $wpdb->esc_like( $this->search_sku_in_product_lookup_table ) . '%';
-			$where .= ' AND ' . $wpdb->prepare( '(wc_product_meta_lookup.sku LIKE %s)', $like_search );
+			$where      .= ' AND ' . $wpdb->prepare( '(wc_product_meta_lookup.sku LIKE %s)', $like_search );
 		}
 		return $where;
 	}
@@ -370,7 +430,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 
 				if ( 0 === $index ) {
 					$product->set_image_id( $attachment_id );
-					wc_product_attach_featured_image( $attachment_id, $product );
+					wc_product_attach_featured_image( $attachment_id, $product, false );
 				} else {
 					$gallery[] = $attachment_id;
 				}
@@ -511,6 +571,11 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		// SKU.
 		if ( isset( $request['sku'] ) ) {
 			$product->set_sku( wc_clean( $request['sku'] ) );
+		}
+
+		// Unique ID.
+		if ( isset( $request['global_unique_id'] ) ) {
+			$product->set_global_unique_id( wc_clean( $request['global_unique_id'] ) );
 		}
 
 		// Attributes.
@@ -939,7 +1004,12 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 					'context'     => array( 'view', 'edit' ),
 				),
 				'sku'                   => array(
-					'description' => __( 'Unique identifier.', 'woocommerce' ),
+					'description' => __( 'Stock Keeping Unit.', 'woocommerce' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'global_unique_id'      => array(
+					'description' => __( 'GTIN, UPC, EAN or ISBN.', 'woocommerce' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 				),
@@ -1083,7 +1153,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 				),
 				'stock_quantity'        => array(
 					'description' => __( 'Stock quantity.', 'woocommerce' ),
-					'type'        => 'integer',
+					'type'        => has_filter( 'woocommerce_stock_amount', 'intval' ) ? 'integer' : 'number',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'stock_status'          => array(
@@ -1112,7 +1182,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
 				),
-				'low_stock_amount'       => array(
+				'low_stock_amount'      => array(
 					'description' => __( 'Low Stock amount for the product.', 'woocommerce' ),
 					'type'        => array( 'integer', 'null' ),
 					'context'     => array( 'view', 'edit' ),
@@ -1344,7 +1414,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 						),
 					),
 				),
-				'has_options'     => array(
+				'has_options'           => array(
 					'description' => __( 'Shows if the product needs to be configured before it can be bought.', 'woocommerce' ),
 					'type'        => 'boolean',
 					'context'     => array( 'view', 'edit' ),
@@ -1612,6 +1682,10 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 
 			if ( in_array( 'post_password', $fields, true ) ) {
 				$data['post_password'] = $product->get_post_password( $context );
+			}
+
+			if ( in_array( 'global_unique_id', $fields, true ) ) {
+				$data['global_unique_id'] = $product->get_global_unique_id( $context );
 			}
 
 			$post_type_obj = get_post_type_object( $this->post_type );

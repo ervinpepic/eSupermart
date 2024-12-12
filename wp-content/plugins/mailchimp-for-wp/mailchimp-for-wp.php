@@ -1,17 +1,19 @@
 <?php
+
 /*
 Plugin Name: MC4WP: Mailchimp for WordPress
 Plugin URI: https://www.mc4wp.com/#utm_source=wp-plugin&utm_medium=mailchimp-for-wp&utm_campaign=plugins-page
 Description: Mailchimp for WordPress by ibericode. Adds various highly effective sign-up methods to your site.
-Version: 4.9.11
+Version: 4.9.19
 Author: ibericode
-Author URI: https://ibericode.com/
+Author URI: https://www.ibericode.com/
 Text Domain: mailchimp-for-wp
 Domain Path: /languages
-License: GPL v3
+License: GPL-3.0-or-later
+License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 Mailchimp for WordPress
-Copyright (C) 2012-2024, Danny van Kooten, hi@dannyvankooten.com
+Copyright (C) 2012 - 2024, Danny van Kooten, hi@dannyvankooten.com
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -40,33 +42,25 @@ function _mc4wp_load_plugin()
 		return;
 	}
 
-	// don't run if PHP version is lower than 5.3
-	if (!function_exists('array_replace')) {
+	// don't run if PHP version is lower than 7.2.0
+	if (PHP_VERSION_ID < 70200) {
 		return;
 	}
 
 	// bootstrap the core plugin
-	define('MC4WP_VERSION', '4.9.11');
+	define('MC4WP_VERSION', '4.9.19');
 	define('MC4WP_PLUGIN_DIR', __DIR__);
 	define('MC4WP_PLUGIN_FILE', __FILE__);
 
-	// load autoloader if function not yet exists (for compat with sitewide autoloader)
-	if (!function_exists('mc4wp')) {
-		require_once MC4WP_PLUGIN_DIR . '/vendor/autoload.php';
-	}
-
-	require MC4WP_PLUGIN_DIR . '/includes/default-actions.php';
-	require MC4WP_PLUGIN_DIR . '/includes/default-filters.php';
-
-	// require API class manually because Composer's classloader is case-sensitive
-	// but we need it to pass class_exists condition
-	require MC4WP_PLUGIN_DIR . '/includes/api/class-api-v3.php';
+	require __DIR__ . '/autoload.php';
+	require __DIR__ . '/includes/default-actions.php';
+	require __DIR__ . '/includes/default-filters.php';
 
 	/**
 	 * @global MC4WP_Container $GLOBALS['mc4wp']
 	 * @name $mc4wp
 	 */
-	$mc4wp = mc4wp();
+	$mc4wp        = mc4wp();
 	$mc4wp['api'] = 'mc4wp_get_api_v3';
 	$mc4wp['log'] = 'mc4wp_get_debug_log';
 
@@ -88,7 +82,7 @@ function _mc4wp_load_plugin()
 			$ajax = new MC4WP_Admin_Ajax($admin_tools);
 			$ajax->add_hooks();
 		} else {
-			$messages = new MC4WP_Admin_Messages();
+			$messages                = new MC4WP_Admin_Messages();
 			$mc4wp['admin.messages'] = $messages;
 
 			$admin = new MC4WP_Admin($admin_tools, $messages);
@@ -97,7 +91,7 @@ function _mc4wp_load_plugin()
 			$forms_admin = new MC4WP_Forms_Admin($messages);
 			$forms_admin->add_hooks();
 
-			$integrations_admin = new MC4WP_Integration_Admin($mc4wp['integrations'], $messages);
+			$integrations_admin = new MC4WP_Integration_Admin($integration_manager, $messages);
 			$integrations_admin->add_hooks();
 		}
 	}

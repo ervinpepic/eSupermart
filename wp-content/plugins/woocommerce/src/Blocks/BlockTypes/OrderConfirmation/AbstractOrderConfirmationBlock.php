@@ -55,11 +55,12 @@ abstract class AbstractOrderConfirmationBlock extends AbstractBlock {
 		}
 
 		return $block_content ? sprintf(
-			'<div class="wc-block-%4$s %1$s" style="%2$s">%3$s</div>',
+			'<div class="wp-block-%5$s-%4$s wc-block-%4$s %1$s" style="%2$s">%3$s</div>',
 			esc_attr( trim( $classname ) ),
 			esc_attr( $classes_and_styles['styles'] ),
 			$block_content,
-			esc_attr( $this->block_name )
+			esc_attr( $this->block_name ),
+			esc_attr( $this->namespace )
 		) : '';
 	}
 
@@ -113,6 +114,21 @@ abstract class AbstractOrderConfirmationBlock extends AbstractBlock {
 
 		// For customers with accounts, verify the order belongs to the current user or disallow access.
 		if ( $this->is_customer_order( $order ) ) {
+			/**
+			 * Indicates if known (non-guest) shoppers need to be logged in before we let
+			 * them access the order received page.
+			 *
+			 * @param bool $verify_known_shoppers If verification is required.
+			 *
+			 * @since 8.4.0
+			 */
+			$verify_known_shoppers = apply_filters( 'woocommerce_order_received_verify_known_shoppers', true );
+
+			// If verification for known shoppers is disabled, we can show the order details.
+			if ( ! $verify_known_shoppers ) {
+				return 'full';
+			}
+
 			return $this->is_current_customer_order( $order ) ? 'full' : false;
 		}
 
@@ -171,7 +187,13 @@ abstract class AbstractOrderConfirmationBlock extends AbstractBlock {
 	 */
 	protected function is_email_verified( $order ) {
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-		if ( empty( $_POST ) || ! isset( $_POST['email'] ) || ! wp_verify_nonce( $_POST['check_submission'] ?? '', 'wc_verify_email' ) ) {
+		if ( empty( $_POST ) || ! isset( $_POST['email'], $_POST['_wpnonce'] ) ) {
+			return false;
+		}
+
+		$nonce_value = sanitize_key( wp_unslash( $_POST['_wpnonce'] ?? '' ) );
+
+		if ( ! wp_verify_nonce( $nonce_value, 'wc_verify_email' ) && ! wp_verify_nonce( $nonce_value, 'wc_create_account' ) ) {
 			return false;
 		}
 
