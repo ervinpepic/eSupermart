@@ -4,14 +4,14 @@
  * Plugin Name: FiboSearch - AJAX Search for WooCommerce
  * Plugin URI: https://fibosearch.com?utm_source=wp-admin&utm_medium=referral&utm_campaign=author_uri&utm_gen=utmdc
  * Description: The most popular WooCommerce product search. Gives your users a well-designed advanced AJAX search bar with live search suggestions.
- * Version: 1.29.0
+ * Version: 1.30.0
  * Author: FiboSearch Team
  * Author URI: https://fibosearch.com?utm_source=wp-admin&utm_medium=referral&utm_campaign=author_uri&utm_gen=utmdc
  * Text Domain: ajax-search-for-woocommerce
  * Domain Path: /languages
  * Requires Plugins: woocommerce
  * WC requires at least: 5.5
- * WC tested up to: 9.4
+ * WC tested up to: 9.6
  *
  */
 // Exit if accessed directly
@@ -288,7 +288,7 @@ if ( !class_exists( 'DGWT_WC_Ajax_Search' ) && !function_exists( 'dgoraAsfwFs' )
             // Register CSS
             wp_register_style(
                 'dgwt-wcas-admin-style',
-                DGWT_WCAS_URL . 'assets/css/admin-style.css',
+                DGWT_WCAS_URL . 'assets/css/admin-style' . $min . '.css',
                 array(),
                 DGWT_WCAS_VERSION
             );
@@ -322,6 +322,7 @@ if ( !class_exists( 'DGWT_WC_Ajax_Search' ) && !function_exists( 'dgoraAsfwFs' )
                     'images'      => array(
                         'admin_preloader_url' => DGWT_WCAS_URL . 'assets/img/preloader.gif',
                     ),
+                    'postTypes'   => ['post', 'page'],
                 );
                 $localize = apply_filters( 'dgwt/wcas/scripts/admin/localize', $localize );
                 wp_localize_script( 'dgwt-wcas-admin-js', 'dgwt_wcas', $localize );
