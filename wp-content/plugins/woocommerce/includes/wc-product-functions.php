@@ -142,50 +142,13 @@ function wc_delete_product_transients( $post_id = 0 ) {
 		$post_transient_names = array(
 			'wc_product_children_',
 			'wc_var_prices_',
+			'wc_related_',
 			'wc_child_has_weight_',
 			'wc_child_has_dimensions_',
 		);
 
 		foreach ( $post_transient_names as $transient ) {
 			delete_transient( $transient . $post_id );
-		}
-
-		$is_cli = Constants::is_true( 'WP_CLI' );
-		if ( $is_cli ) {
-			wc_delete_related_product_transients( $post_id );
-		} else {
-			// Schedule the async deletion of related product transients.
-			// This should run async cause it also fetches all related products
-			// of the current product to be deleted which we can can't be sure how many there are.
-
-			// Add static cache here which is used to check if the transient is already scheduled.
-			// The cache exists ONLY on the current request to prevent searching the DB for every product.
-			static $scheduled = array();
-			$cache_key        = (int) $post_id;
-			$queue            = WC()->queue();
-
-			if ( ! isset( $scheduled[ $cache_key ] ) ) {
-				$existing                = $queue->search(
-					array(
-						'hook'     => 'wc_delete_related_product_transients_async',
-						'args'     => array( 'post_id' => $post_id ),
-						'status'   => 'pending',
-						'group'    => 'wc_delete_related_product_transients_group',
-						'per_page' => 1,
-					)
-				);
-				$scheduled[ $cache_key ] = ! empty( $existing );
-			}
-
-			if ( ! $scheduled[ $cache_key ] ) {
-				$queue->schedule_single(
-					time(),
-					'wc_delete_related_product_transients_async',
-					array( 'post_id' => $post_id ),
-					'wc_delete_related_product_transients_group'
-				);
-				$scheduled[ $cache_key ] = true;
-			}
 		}
 	}
 
@@ -200,9 +163,12 @@ function wc_delete_product_transients( $post_id = 0 ) {
  * This is necessary because changing one product affects all related products too.
  *
  * @since 9.8.0
+ * @deprecated 10.1.0 This function is deprecated and will be removed in a future version.
  * @param int $post_id The product ID updated/created.
  */
 function wc_delete_related_product_transients( $post_id ) {
+	wc_deprecated_function( 'wc_delete_related_product_transients', '10.1.0', 'This function is deprecated and will be removed in a future version.' );
+
 	if ( ! is_numeric( $post_id ) ) {
 		return;
 	}
@@ -242,7 +208,6 @@ function wc_delete_related_product_transients( $post_id ) {
 	);
 	_wc_delete_transients( $related_product_transients );
 }
-add_action( 'wc_delete_related_product_transients_async', 'wc_delete_related_product_transients' );
 
 /**
  * Function that returns an array containing the IDs of the products that are on sale.
@@ -422,7 +387,7 @@ add_action( 'template_redirect', 'wc_product_canonical_redirect', 5 );
  * @return string
  */
 function wc_placeholder_img_src( $size = 'woocommerce_thumbnail' ) {
-	$src               = WC()->plugin_url() . '/assets/images/placeholder.png';
+	$src               = WC()->plugin_url() . '/assets/images/placeholder.webp';
 	$placeholder_image = get_option( 'woocommerce_placeholder_image', 0 );
 
 	if ( ! empty( $placeholder_image ) ) {
@@ -514,7 +479,7 @@ function wc_get_formatted_variation( $variation, $flat = false, $include_names =
 
 	$list_type = $include_names ? 'dl' : 'ul';
 
-	if ( is_array( $variation_attributes ) ) {
+	if ( is_array( $variation_attributes ) && ! empty( $variation_attributes ) ) {
 
 		if ( ! $flat ) {
 			$return = '<' . $list_type . ' class="variation">';
@@ -531,9 +496,6 @@ function wc_get_formatted_variation( $variation, $flat = false, $include_names =
 				}
 			}
 
-			// Cast to string once before using.
-			$value = (string) $value;
-
 			// Do not list attributes already part of the variation name.
 			if ( '' === $value || ( $skip_attributes_in_name && wc_is_attribute_in_product_name( $value, $variation_name ) ) ) {
 				continue;
@@ -546,7 +508,7 @@ function wc_get_formatted_variation( $variation, $flat = false, $include_names =
 					$variation_list[] = '<dt>' . wc_attribute_label( $name, $product ) . ':</dt><dd>' . rawurldecode( $value ) . '</dd>';
 				}
 			} elseif ( $flat ) {
-				$variation_list[] = rawurldecode( $value );
+					$variation_list[] = rawurldecode( $value );
 			} else {
 				$variation_list[] = '<li>' . rawurldecode( $value ) . '</li>';
 			}
@@ -891,7 +853,7 @@ function wc_get_product_id_by_global_unique_id( $global_unique_id ) {
 }
 
 /**
- * Get attributes/data for an individual variation from the database and maintain it's integrity.
+ * Get attributes/data for an individual variation from the database and maintain its integrity.
  *
  * @since  2.4.0
  * @param  int $variation_id Variation ID.
@@ -1116,6 +1078,25 @@ function wc_get_product_backorder_options() {
  * @return array
  */
 function wc_get_related_products( $product_id, $limit = 5, $exclude_ids = array(), $related_by = array() ) {
+	// Log an error if the limit is not an integer since this is what we expect.
+	// However this is not a problem and we can continue.
+	if ( ! is_int( $limit ) ) {
+		wc_get_logger()->error(
+			sprintf(
+				'Invalid limit type passed to wc_get_related_products. Expected integer, got %s with value: %s',
+				gettype( $limit ),
+				wp_json_encode( $limit )
+			),
+			array( 'source' => 'wc_get_related_products' )
+		);
+	}
+
+	// If the limit is not numeric, set it to null.
+	$limit = is_numeric( $limit ) ? (int) $limit : null;
+
+	if ( null === $limit ) {
+		return array();
+	}
 
 	$product_id     = absint( $product_id );
 	$limit          = $limit >= -1 ? $limit : 5;
@@ -1132,9 +1113,8 @@ function wc_get_related_products( $product_id, $limit = 5, $exclude_ids = array(
 	$transient     = get_transient( $transient_name );
 	$related_posts = $transient && is_array( $transient ) && isset( $transient[ $query_args ] ) ? $transient[ $query_args ] : false;
 
-	// Query related posts if they are not cached
-	// Should happen only once per day due to transient expiration set to 1 DAY_IN_SECONDS, to avoid performance issues.
-	if ( false === $related_posts ) {
+	// We want to query related posts if they are not cached, or we don't have enough.
+	if ( false === $related_posts || count( $related_posts ) < $limit ) {
 
 		$cats_array = apply_filters( 'woocommerce_product_related_posts_relate_by_category', true, $product_id ) ? apply_filters( 'woocommerce_get_related_product_cat_terms', wc_get_product_term_ids( $product_id, 'product_cat' ), $product_id ) : array();
 		$tags_array = apply_filters( 'woocommerce_product_related_posts_relate_by_tag', true, $product_id ) ? apply_filters( 'woocommerce_get_related_product_tag_terms', wc_get_product_term_ids( $product_id, 'product_tag' ), $product_id ) : array();
@@ -1165,6 +1145,8 @@ function wc_get_related_products( $product_id, $limit = 5, $exclude_ids = array(
 			'excluded_ids' => $exclude_ids,
 		)
 	);
+
+	$related_posts = is_array( $related_posts ) ? $related_posts : array();
 
 	if ( apply_filters( 'woocommerce_product_related_posts_shuffle', true ) ) {
 		shuffle( $related_posts );

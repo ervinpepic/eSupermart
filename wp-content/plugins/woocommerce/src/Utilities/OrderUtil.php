@@ -6,6 +6,8 @@
 namespace Automattic\WooCommerce\Utilities;
 
 use Automattic\WooCommerce\Caches\OrderCacheController;
+use Automattic\WooCommerce\Caches\OrderCountCache;
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\Admin\Orders\PageController;
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use Automattic\WooCommerce\Internal\Utilities\COTMigrationUtil;
@@ -205,10 +207,12 @@ final class OrderUtil {
 	public static function get_count_for_type( $order_type ) {
 		global $wpdb;
 
-		$cache_key        = \WC_Cache_Helper::get_cache_prefix( 'orders' ) . 'order-count-' . $order_type;
-		$count_per_status = wp_cache_get( $cache_key, 'counts' );
+		$order_type = (string) $order_type;
 
-		if ( false === $count_per_status ) {
+		$order_count_cache = new OrderCountCache();
+		$count_per_status  = $order_count_cache->get( $order_type );
+
+		if ( null === $count_per_status ) {
 			if ( self::custom_orders_table_usage_is_enabled() ) {
 				// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
 				$results = $wpdb->get_results(
@@ -221,17 +225,18 @@ final class OrderUtil {
 				// phpcs:enable
 
 				$count_per_status = array_map( 'absint', array_column( $results, 'count', 'status' ) );
+
 			} else {
 				$count_per_status = (array) wp_count_posts( $order_type );
 			}
 
 			// Make sure all order statuses are included just in case.
 			$count_per_status = array_merge(
-				array_fill_keys( array_keys( wc_get_order_statuses() ), 0 ),
+				array_fill_keys( array_merge( array_keys( wc_get_order_statuses() ), array( OrderStatus::TRASH ) ), 0 ),
 				$count_per_status
 			);
 
-			wp_cache_set( $cache_key, $count_per_status, 'counts' );
+			$order_count_cache->set_multiple( $order_type, $count_per_status );
 		}
 
 		return $count_per_status;

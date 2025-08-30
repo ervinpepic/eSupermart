@@ -1,31 +1,17 @@
 <?php
 /**
- * This file is part of the MailPoet plugin.
+ * This file is part of the WooCommerce Email Editor package
  *
- * @package MailPoet\EmailEditor
+ * @package Automattic\WooCommerce\EmailEditor
  */
 
 declare(strict_types = 1);
-namespace MailPoet\EmailEditor\Engine;
+namespace Automattic\WooCommerce\EmailEditor\Engine;
 
 /**
  * Class managing the settings for the email editor.
  */
 class Settings_Controller {
-
-	const ALLOWED_BLOCK_TYPES = array(
-		'core/button',
-		'core/buttons',
-		'core/paragraph',
-		'core/heading',
-		'core/column',
-		'core/columns',
-		'core/image',
-		'core/list',
-		'core/list-item',
-		'core/group',
-		'core/spacer',
-	);
 
 	const DEFAULT_SETTINGS = array(
 		'enableCustomUnits' => array( 'px', '%' ),
@@ -67,8 +53,7 @@ class Settings_Controller {
 		$core_default_settings = \get_default_block_editor_settings();
 		$theme_settings        = $this->theme_controller->get_settings();
 
-		$settings                      = array_merge( $core_default_settings, self::DEFAULT_SETTINGS );
-		$settings['allowedBlockTypes'] = self::ALLOWED_BLOCK_TYPES;
+		$settings = array_merge( $core_default_settings, self::DEFAULT_SETTINGS );
 		// Assets for iframe editor (component styles, scripts, etc.).
 		$settings['__unstableResolvedAssets'] = $this->iframe_assets;
 		$editor_content_styles                = file_get_contents( __DIR__ . '/content-editor.css' );
@@ -77,6 +62,10 @@ class Settings_Controller {
 			array( 'css' => $editor_content_styles ),
 			array( 'css' => $shares_content_styles ),
 		);
+
+		$settings['autosaveInterval'] = 60;
+		// Disable code editing in the email editor. We manipulate HTML in renderer so it doesn't make sense to have it enabled.
+		$settings['codeEditingEnabled'] = false;
 
 		$settings['__experimentalFeatures'] = $theme_settings;
 		// Controls which alignment options are available for blocks.
@@ -107,7 +96,8 @@ class Settings_Controller {
 	 *     padding: array{bottom: string, left: string, right: string, top: string}
 	 *   },
 	 *   color: array{
-	 *     background: string
+	 *     background: string,
+	 *     text: string
 	 *   },
 	 *   typography: array{
 	 *     fontFamily: string
