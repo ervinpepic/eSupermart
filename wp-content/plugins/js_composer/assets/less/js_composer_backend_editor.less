@@ -13,6 +13,8 @@
 @import "lib/elements_icons.less";
 // Add element box
 @import "popups/modal_add_element.less";
+// Teasers
+@import "popups/modal_teasers.less";
 
 // Navigation bar
 //@vc_navbar_sprite_left_position: -60px;
@@ -25,24 +27,20 @@
 @import "modules/vc_fullscreen.less";
 // Message box shown when post content is empty
 @import "modules/vc_welcome.less";
-
 // Backend switcher
 @import "modules/vc_switcher.less";
 // Edit form for shortcode
 @import "popups/panel_edit_form.less";
-
 // Template library
 @import "popups/panel_template_library";
-
 // Templates editor
 @import "modules/ui/vc_ui-panel-templates.less";
 //Presets
 @import "modules/ui/vc_ui-panel-preset.less";
 // Teaser box for posts wused by Post grid and post carusel
 @import "modules/vc_teaser_box.less";
-#vc_settings-title-container {
-  display: none;
-}
+
+@import "modules/vc_info_tooltip.less";
 
 // Backend controls
 @import "lib/controls.less";
@@ -108,6 +106,10 @@
 @import "backend_shortcodes/vc_widget_sidebar.less";
 @import "backend_shortcodes/vc_wp_widget.less";
 @import "backend_shortcodes/vc_charts.less";
+@import "backend_shortcodes/vc_grid_container.less";
+@import "backend_shortcodes/vc_grid_container_item.less";
+@import "backend_shortcodes/vc_flexbox_container.less";
+@import "backend_shortcodes/vc_flexbox_container_item.less";
 @import "params/vc_grid_item/vc_gitem_editor.less";
 
 .vc_admin_label {
@@ -241,7 +243,7 @@
   }
 }
 
-#wpb_csseditor {
+.custom_code {
   border: 1px solid #BABABA;
 }
 

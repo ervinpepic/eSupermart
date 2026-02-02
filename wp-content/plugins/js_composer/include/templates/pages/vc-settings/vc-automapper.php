@@ -1,4 +1,8 @@
 <?php
+/**
+ * Automapper tab settings template.
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
@@ -10,5 +14,5 @@ $custom_tag = 'script';
 <form action="options.php" method="post" id="vc_settings-automapper"
 		class="vc_settings-tab-content vc_settings-tab-content-active"
 >
-	<?php vc_automapper()->renderHtml(); ?>
+	<?php vc_automapper()->render_html(); ?>
 </form>

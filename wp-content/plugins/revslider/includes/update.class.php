@@ -2,12 +2,12 @@
 /**
  * @author    ThemePunch <info@themepunch.com>
  * @link      https://www.themepunch.com/
- * @copyright 2022 ThemePunch
+ * @copyright 2024 ThemePunch
  */
  
 if(!defined('ABSPATH')) exit();
 
-class RevSliderUpdate {
+class RevSliderUpdate extends RevSliderFunctions {
 
 	private $plugin_url	 = 'https://www.sliderrevolution.com/';
 	private $remote_url	 = 'check_for_updates.php';
@@ -16,11 +16,13 @@ class RevSliderUpdate {
 	private $version;
 	private $plugins;
 	private $option;
+	private $data;
 	public $force = false;
 	
 	
 	public function __construct($version){
 		$this->option = $this->plugin_slug . '_update_info';
+		$this->data = new stdClass;
 		$this->_retrieve_version_info();
 		$this->version = (empty($version)) ? RS_REVISION : $version;
 	}
@@ -84,7 +86,7 @@ class RevSliderUpdate {
 
 	public function _check_updates(){
 		// Get data
-		if(empty($this->data)){
+		if(empty($this->data) || !isset($this->data->basic)){
 			$data = get_option($this->option, false);
 			$data = $data ? $data : new stdClass;
 			
@@ -127,7 +129,7 @@ class RevSliderUpdate {
 			'version'	=> urlencode(RS_REVISION)
 		);
 		
-		if(get_option('revslider-valid', 'false') !== 'true' && version_compare(RS_REVISION, get_option('revslider-stable-version', '4.2'), '<')){ //We'll get the last stable only now!
+		if($this->_truefalse(get_option('revslider-valid', 'false')) !== true && version_compare(RS_REVISION, get_option('revslider-stable-version', '4.2'), '<')){ //We'll get the last stable only now!
 			$rattr['get_stable'] = 'true';
 		}
 		
@@ -158,7 +160,7 @@ class RevSliderUpdate {
 			update_option('revslider-update-check-short', time());
 			
 			$hash		= ($this->force === true) ? '' : get_option('revslider-update-hash', '');
-			$purchase	= (get_option('revslider-valid', 'false') == 'true') ? get_option('revslider-code', '') : '';
+			$purchase	= ($this->_truefalse(get_option('revslider-valid', 'false')) === true) ? get_option('revslider-code', '') : '';
 			$data		= array(
 				'version' => urlencode(RS_REVISION),
 				'item' => urlencode(RS_PLUGIN_SLUG),
@@ -201,10 +203,13 @@ class RevSliderUpdate {
 				}
 				
 				if(isset($version_info->deactivated) && $version_info->deactivated === true){
-					if(get_option('revslider-valid', 'false') == 'true'){
+					if($this->_truefalse(get_option('revslider-valid', 'false')) === true){
 						//remove validation, add notice
 						update_option('revslider-valid', 'false');
 						update_option('revslider-deregister-popup', true);
+						if(isset($version_info->deactivated_msg) && !empty($version_info->deactivated_msg)){
+							update_option('revslider-deregister-message', $version_info->deactivated_msg);
+						}
 					}
 				}
 			}

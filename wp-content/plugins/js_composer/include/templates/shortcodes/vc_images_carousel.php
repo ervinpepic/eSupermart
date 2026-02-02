@@ -1,9 +1,18 @@
 <?php
+/**
+ * The template for displaying [vc_images_carousel] shortcode output of 'Images Carousel' element.
+ *
+ * This template can be overridden by copying it to yourtheme/vc_templates/vc_images_carousel.php.
+ *
+ * @see https://kb.wpbakery.com/docs/developers-how-tos/change-shortcodes-html-output
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 /**
  * Shortcode attributes
+ *
  * @var $atts
  * @var $title
  * @var $onclick
@@ -59,8 +68,9 @@ if ( 'custom_link' === $onclick ) {
 $images = explode( ',', $images );
 $i = - 1;
 
+$element_class = empty( $this->settings['element_default_class'] ) ? '' : $this->settings['element_default_class'];
 $class_to_filter = 'wpb_images_carousel wpb_content_element vc_clearfix';
-$class_to_filter .= vc_shortcode_custom_css_class( $css, ' ' ) . $this->getExtraClass( $el_class ) . $this->getCSSAnimation( $css_animation );
+$class_to_filter .= vc_shortcode_custom_css_class( $css, ' ' ) . ' ' . esc_attr( $element_class ) . $this->getExtraClass( $el_class ) . $this->getCSSAnimation( $css_animation );
 $css_class = apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, $class_to_filter, $this->settings['base'], $atts );
 
 $carousel_id = 'vc_images-carousel-' . WPBakeryShortCode_Vc_Images_Carousel::getCarouselIndex();
@@ -70,16 +80,16 @@ $output = '';
 $output .= '<div' . ( ! empty( $el_id ) ? ' id="' . esc_attr( $el_id ) . '"' : '' ) . ' class="' . esc_attr( apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, $css_class, $this->settings['base'], $atts ) ) . '">';
 $output .= '<div class="wpb_wrapper">';
 
-$output .= wpb_widget_title( array(
+$output .= wpb_widget_title( [
 	'title' => $title,
 	'extraclass' => 'wpb_gallery_heading',
-) );
+] );
 
 $output .= '<div id="' . esc_attr( $carousel_id ) . '" data-ride="vc_carousel" data-wrap="' . ( 'yes' === $wrap ? 'true' : 'false' ) . '" style="width: ' . esc_attr( $slider_width ) . ';" data-interval="' . ( 'yes' === $autoplay ? esc_attr( $speed ) : 0 ) . '" data-auto-height="yes" data-mode="' . esc_attr( $mode ) . '" data-partial="' . ( 'yes' === $partial_view ? 'true' : 'false' ) . '" data-per-view="' . esc_attr( $slides_per_view ) . '" data-hide-on-end="' . ( 'yes' === $autoplay ? 'false' : 'true' ) . '" class="vc_slide vc_images_carousel">';
 if ( 'yes' !== $hide_pagination_control ) {
 	$output .= '<ol class="vc_carousel-indicators">';
 	$count = count( $images );
-	for ( $z = 0; $z < $count; $z ++ ) {
+	for ( $z = 0; $z < $count; $z++ ) {
 		$output .= '<li data-target="#' . esc_attr( $carousel_id ) . '" data-slide-to="' . esc_attr( $z ) . '"></li>';
 	}
 	$output .= '</ol>';
@@ -87,15 +97,20 @@ if ( 'yes' !== $hide_pagination_control ) {
 
 $output .= '<div class="vc_carousel-inner"><div class="vc_carousel-slideline"><div class="vc_carousel-slideline-inner">';
 foreach ( $images as $attach_id ) {
-	$i ++;
+	$i++;
 	if ( $attach_id > 0 ) {
-		$post_thumbnail = wpb_getImageBySize( array(
+		$post_thumbnail = wpb_getImageBySize( [
 			'attach_id' => $attach_id,
 			'thumb_size' => $img_size,
-		) );
+		] );
 	} else {
-		$post_thumbnail = array();
-		$post_thumbnail['thumbnail'] = '<img src="' . esc_url( vc_asset_url( 'vc/no_image.png' ) ) . '" />';
+		$post_thumbnail = [];
+		$attributes = [
+			'src' => esc_url( vc_asset_url( 'vc/no_image.png' ) ),
+			'alt' => __( 'No image', 'js_composer' ),
+		];
+		$attributes = vc_add_lazy_loading_attribute( $attributes );
+		$post_thumbnail['thumbnail'] = '<img ' . vc_stringify_attributes( $attributes ) . ' />';
 		$post_thumbnail['p_img_large'][0] = vc_asset_url( 'vc/no_image.png' );
 	}
 	$thumbnail = $post_thumbnail['thumbnail'];

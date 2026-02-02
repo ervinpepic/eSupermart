@@ -13,7 +13,7 @@
  * @see     https://docs.woocommerce.com/document/template-structure/
  * @author  WooThemes
  * @package WooCommerce/Templates
- * @version 2.6.0
+ * @version 9.3.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,14 +23,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 $customer_id = get_current_user_id();
 
 if ( ! wc_ship_to_billing_address_only() && wc_shipping_enabled() ) {
-	$get_addresses = apply_filters( 'woocommerce_my_account_get_addresses', array(
-		'billing' => esc_html__( 'Billing address', 'groci' ),
-		'shipping' => esc_html__( 'Shipping address', 'groci' ),
-	), $customer_id );
+	$get_addresses = apply_filters(
+		'woocommerce_my_account_get_addresses',
+		array(
+			'billing'  => __( 'Billing address', 'groci' ),
+			'shipping' => __( 'Shipping address', 'groci' ),
+		),
+		$customer_id
+	);
 } else {
-	$get_addresses = apply_filters( 'woocommerce_my_account_get_addresses', array(
-		'billing' => esc_html__( 'Billing address', 'groci' ),
-	), $customer_id );
+	$get_addresses = apply_filters(
+		'woocommerce_my_account_get_addresses',
+		array(
+			'billing' => __( 'Billing address', 'groci' ),
+		),
+		$customer_id
+	);
 }
 
 $oldcol = 1;
@@ -46,6 +54,11 @@ $col    = 1;
 <?php endif; ?>
 
 <?php foreach ( $get_addresses as $name => $title ) : ?>
+	<?php
+		$address = wc_get_account_formatted_address( $name );
+		$col     = $col * -1;
+		$oldcol  = $oldcol * -1;
+	?>
 
 	<div class="u-column<?php echo ( ( $col = $col * -1 ) < 0 ) ? 1 : 2; ?>  woocommerce-Address">
 		<header class="woocommerce-Address-title title">
@@ -53,8 +66,16 @@ $col    = 1;
 			<a href="<?php echo esc_url( wc_get_endpoint_url( 'edit-address', $name ) ); ?>" class="edit"><?php esc_html_e( 'Edit', 'groci' ); ?></a>
 		</header>
 		<address><?php
-			$address = wc_get_account_formatted_address( $name );
-			echo groci_sanitize_data($address) ? wp_kses_post( $address ) : esc_html_e( 'You have not set up this type of address yet.', 'groci' );
+			echo $address ? wp_kses_post( $address ) : esc_html_e( 'You have not set up this type of address yet.', 'woocommerce' );
+
+			/**
+			 * Used to output content after core address fields.
+			 *
+			 * @param string $name Address type.
+			 * @since 8.7.0
+			 */
+			do_action( 'woocommerce_my_account_after_my_address', $name );
+
 		?></address>
 	</div>
 

@@ -14,7 +14,7 @@
  *
  * @see     https://docs.woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates
- * @version 5.2.0
+ * @version 10.0.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -49,7 +49,7 @@ do_action( 'woocommerce_before_mini_cart' ); ?>
 					echo apply_filters( 'woocommerce_cart_item_remove_link', sprintf(
 						'<a href="%s" class="float-right remove-cart remove remove_from_cart_button" aria-label="%s" data-product_id="%s" data-cart_item_key="%s" data-product_sku="%s"><i class="mdi mdi-close"></i></a>',
 						esc_url( wc_get_cart_remove_url( $cart_item_key ) ),
-						esc_html__( 'Remove this item', 'groci' ),
+						esc_attr( sprintf( __( 'Remove %s from cart', 'woocommerce' ), wp_strip_all_tags( $product_name ) ) ),
 						esc_attr( $product_id ),
 						esc_attr( $cart_item_key ),
 						esc_attr( $_product->get_sku() )

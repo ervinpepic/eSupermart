@@ -1,9 +1,13 @@
 <?php
-/** @var Vc_Shared_Templates $controller
- * @package WPBakeryPageBuilder
+/**
+ * Category template for shared templates.
+ *
+ * @var Vc_Shared_Templates $controller
+ * @var array $templates
+ *
+ * phpcs:ignoreFile:Generic.PHP.DisallowAlternativePHPTags.MaybeASPShortOpenTagFound
  */
 
-/** @var array $templates */
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
@@ -32,6 +36,7 @@ $custom_tag = 'script';
 				</a>
 			</div>
 		<?php endif; ?>
+		<div class="vc_ui-panel-message vc_ui-panel-message--error vc_ui-hidden" id="vc_template-library-panel-error-message"></div>
 		<div class="vc_ui-search-box vc_ui-panel-search-box">
 			<div class="vc_ui-search-box-input vc_ui-panel-search">
 				<input type="search" id="vc_template_lib_name_filter" data-vc-template-lib-name-filter="" placeholder="<?php esc_attr_e( 'Search template by name', 'js_composer' ); ?>">
@@ -80,7 +85,7 @@ $custom_tag = 'script';
 	<?php
 	if ( vc_user_access()->part( 'templates' )->checkStateAny( true, null )->get() ) :
 		?>
-		<div class="vc_column vc_col-sm-12 vc_access-library-col">
+		<div class="vc_column vc_col-sm-12 vc_access-library-col" data-vc-hide-on-search="true">
 			<h3 class="vc_ui-panel-title"><?php esc_html_e( 'Download Templates', 'js_composer' ); ?></h3>
 			<p class="vc_description">
 				<?php
@@ -89,14 +94,14 @@ $custom_tag = 'script';
 		updates from WPBakery Page Builder team.', 'js_composer' );
 				?>
 			</p>
-			<button class="vc_general vc_ui-button vc_ui-button-size-sm vc_ui-button-shape-rounded vc_ui-button-action vc_ui-access-library-btn">
+			<button class="vc_general vc_ui-button vc_ui-button-size-md vc_ui-button-shape-rounded vc_ui-button-action vc_ui-access-library-btn">
 				<?php esc_html_e( 'Access Library', 'js_composer' ); ?>
 			</button>
 		</div>
 		<?php
 	else :
 		?>
-		<div class="vc_column vc_col-sm-12 vc_access-library-col">
+		<div class="vc_column vc_col-sm-12 vc_access-library-col" data-vc-hide-on-search="true">
 			<h3 class="vc_ui-panel-title"><?php esc_html_e( 'Template library', 'js_composer' ); ?></h3>
 		</div>
 		<?php
@@ -112,7 +117,7 @@ $custom_tag = 'script';
 <<?php echo esc_attr( $custom_tag ); ?> type="text/html" id="vc_template-item">
 	<div class="vc_ui-template vc_templates-template-type-shared_templates"
 			data-template_id="<%- post_id %>"
-			data-template_name="<%- title %>"
+			data-template_name="<%- _.escape(vc_slugify(title)) %>"
 			data-category="shared_templates"
 			data-template_type="shared_templates"
 			data-template_action="vc_delete_template"

@@ -1,13 +1,16 @@
 <?php
+/**
+ * Frontend template.
+ *
+ * @var Vc_Frontend_Editor $editor
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 
 ?>
 <div id="vc_template-html">
-	<?php
-	/** @var Vc_Frontend_Editor $editor */
-	?>
 	<?php
 	// @codingStandardsIgnoreLine
 	print apply_filters( 'vc_frontend_template_the_content', $editor->parseShortcodesString( $editor->getTemplateContent() ) );
@@ -16,7 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php
 		_print_styles();
 		print_head_scripts();
-		print_late_styles();
 		print_footer_scripts();
 		?>
 	</div>

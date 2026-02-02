@@ -1,17 +1,24 @@
 <?php
+/**
+ * Class that handles specific [vc_button] shortcode
+ *
+ * @see js_composer/include/templates/shortcodes/vc_button.php
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 
 /**
- * WPBakery WPBakery Page Builder shortcodes
+ * WPBakery Page Builder shortcodes
  *
  * @package WPBakeryPageBuilder
- *
  */
 class WPBakeryShortCode_Vc_Button extends WPBakeryShortCode {
 	/**
-	 * @param $title
+	 * Get title.
+	 *
+	 * @param string $title
 	 * @return string
 	 */
 	protected function outputTitle( $title ) {

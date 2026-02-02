@@ -1,8 +1,25 @@
 <?php
+/**
+ * Backward compatibility with "RankMath SEO" WordPress plugin.
+ *
+ * @see https://wordpress.org/plugins/seo-by-rank-math
+ *
+ * @since 4.4 vendors initialization moved to hooks in autoload/vendors.
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
-function vc_rank_math_seo_image_filter( $images, $id ) {
+
+/**
+ * Filter for Rank Math SEO images.
+ *
+ * @param array $images
+ * @param int $id
+ *
+ * @return array
+ */
+function vc_rank_math_seo_image_filter( $images, $id ) { // phpcs:ignore:CognitiveComplexity.Complexity.MaximumComplexity.TooHigh
 	if ( empty( $images ) ) {
 		$post = get_post( $id );
 		if ( $post && strpos( $post->post_content, '[vc_row' ) !== false ) {
@@ -11,10 +28,10 @@ function vc_rank_math_seo_image_filter( $images, $id ) {
 				$ids = explode( ',', $m );
 				foreach ( $ids as $id ) {
 					if ( (int) $id ) {
-						$images[] = array(
+						$images[] = [
 							'src' => wp_get_attachment_url( $id ),
 							'title' => get_the_title( $id ),
-						);
+						];
 					}
 				}
 			}

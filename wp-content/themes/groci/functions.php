@@ -3,7 +3,7 @@
  * functions.php
  * @package WordPress
  * @subpackage Groci
- * @since Groci 2.2.6
+ * @since Groci 2.2.7
  * 
  */
  
@@ -185,9 +185,9 @@ function groci_register_required_plugins() {
         array(
             'name'                  => esc_html__('Theme Options','groci'),
             'slug'                  => 'option-tree',
-            'source'                => $url . 'option-tree.zip',
+            'source'                => $mainurl . 'option-tree.zip',
             'required'              => false,
-            'version'               => '2.6.0',
+            'version'               => '2.7.3',
             'force_activation'      => false,
             'force_deactivation'    => false,
             'external_url'          => '',
@@ -198,7 +198,7 @@ function groci_register_required_plugins() {
             'slug'                  => 'js_composer',
             'source'                => $mainurl . 'js-composer.zip',
             'required'              => false,
-            'version'               => '6.10.0',
+            'version'               => '8.7',
             'force_activation'      => false,
             'force_deactivation'    => false,
             'external_url'          => '',
@@ -209,7 +209,7 @@ function groci_register_required_plugins() {
             'slug'                  => 'klb-shortcode',
             'source'                => $url . 'klb-shortcode.zip',
             'required'              => false,
-            'version'               => '1.6.0',
+            'version'               => '1.6.1',
             'force_activation'      => false,
             'force_deactivation'    => false,
             'external_url'          => '',
@@ -220,7 +220,7 @@ function groci_register_required_plugins() {
             'slug'                  => 'revslider',
             'source'                => $mainurl . 'revslider.zip',
             'required'              => false,
-            'version'               => '6.6.8',
+            'version'               => '6.7.28',
             'force_activation'      => false,
             'force_deactivation'    => false,
             'external_url'          => '',
@@ -231,7 +231,7 @@ function groci_register_required_plugins() {
             'slug'                  => 'envato-market',
             'source'                => $mainurl . 'envato-market.zip',
             'required'              => true,
-            'version'               => '2.0.7',
+            'version'               => '2.0.12',
             'force_activation'      => false,
             'force_deactivation'    => false,
             'external_url'          => '',

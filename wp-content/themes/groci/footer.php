@@ -81,6 +81,7 @@
 
 	<?php $mobilebottommenu = ot_get_option('groci_mobile_bottom_menu'); ?>
 	<?php if($mobilebottommenu == 'on'){ ?>
+		<?php global $woocommerce; ?>
 		<div class="footer-fix-nav shadow">
 			<div class="row mx-0">
 				<div class="col">

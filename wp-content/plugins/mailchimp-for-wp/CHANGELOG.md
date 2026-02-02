@@ -1,6 +1,32 @@
 Changelog
 =========
 
+#### 4.11.0 - Jan 20, 2026
+
+- Add form setting to remove tags from existing subscribers.
+- Add form setting to check for common email typos.
+- In Prosopo integration, link directly to API key screen instead of user profile.
+- Automatically convert string fields to a comma-separated string if an array value is received.
+- Fix undefined key warning for new setting that emails to site administrator on errors.
+
+
+#### 4.10.9 - Nov 28, 2025
+
+- Specify `apiVersion` in call to `registerBlockType` so that WordPress 6.9 knows it can use the new iframe based editor.
+- Add new setting to send an email for critical errors, like API errors returned by Mailchimp.
+
+
+#### 4.10.8 - Oct 21, 2025
+
+- Show warning to administrators if a form is showing but Mailchimp API key is not set.
+- Update third-party JS dependencies.
+
+
+#### 4.10.7 - Sep 05, 2025
+
+- Handle renewing lists through server-side redirect instead of JS component.
+
+
 #### 4.10.6 - Jul 23, 2025
 
 - [WooCommerce Checkout] Fix checkbox from showing up in order confirmation email if using Checkout Block.

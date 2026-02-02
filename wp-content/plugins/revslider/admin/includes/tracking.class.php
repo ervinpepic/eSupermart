@@ -2,7 +2,7 @@
 /**
 * @author	ThemePunch <info@themepunch.com>
 * @link		https://www.themepunch.com/
-* @copyright 2022 ThemePunch
+* @copyright 2024 ThemePunch
 */
 
 
@@ -25,7 +25,9 @@ class RevSliderTracking extends RevSliderFunctions {
 			add_filter('revslider_doing_html_export', array($this, 'count_html_export'), 10, 1);
 			add_filter('revslider_exportSlider_export_data', array($this, 'count_regular_exports'), 10, 1);
 			add_filter('revslider_retrieve_version_info_addition', array($this, 'add_additional_data'), 10, 1);
-			add_action('revslider-retrieve_version_info', array($this, '_run'), 10, 1);
+			add_filter('revslider_deactivate_plugin_info_addition', array($this, 'add_additional_data'), 10, 1);
+			add_filter('revslider_activate_plugin_info_addition', array($this, 'add_additional_data'), 10, 1);
+			add_action('revslider-retrieve_version_info', array($this, '_run'), 10);
 		}
 	}
 
@@ -84,8 +86,9 @@ class RevSliderTracking extends RevSliderFunctions {
 	/**
 	 * this will run the tracking functions and prepare it to be send to the themepunch servers
 	 **/
-	public function _run($update){
+	public function _run($deactivation = 'default'){
 		if(!$this->is_enabled()) return false;
+		global $SR_GLOBALS;
 
 		$sl			= new RevSliderSlide();
 		$data		= $this->get_tracking_data();
@@ -95,9 +98,13 @@ class RevSliderTracking extends RevSliderFunctions {
 		if(!empty($pages)) $shortcodes = $this->get_shortcode_from_page($pages);
 
 		if(!isset($data['html_exports'])) $data['html_exports'] = 0;
-		$data['licensed']	= $this->_truefalse(get_option('revslider-valid', 'true'));
+		$data['environment'] = array(
+			'version'		=> RS_REVISION,
+			'engine'		=> $this->get_val($SR_GLOBALS, 'front_version', 6)
+		);
+		$data['licensed']	= (!in_array($deactivation, array(true, false), true)) ? $this->_truefalse(get_option('revslider-valid', 'true')) : $deactivation; //if $deactivation === false, we are in deactivation process, so set already to false
 		$data['slider']		= array(
-			'number'		=> count($shortcodes),
+			'number'		=> 0,
 			'premium'		=> 0,
 			'import'		=> 0,
 			'sources'		=> array(
@@ -105,11 +112,13 @@ class RevSliderTracking extends RevSliderFunctions {
 				'post'			=> 0,
 				'woocommerce'	=> 0,
 				'social'		=> 0,
+				'social_detail'	=> array(),
 			),
 			'navigations'	=> array(
 				'arrows'	=> 0,
 				'bullets'	=> 0,
 				'tabs'		=> 0,
+				'scrubber'	=> 0,
 				'thumbs'	=> 0,
 				'mouse'		=> 0,
 				'swipe'		=> 0,
@@ -142,8 +151,14 @@ class RevSliderTracking extends RevSliderFunctions {
 
 		if(!empty($shortcodes)){
 			foreach($shortcodes as $alias){
-				$sldr		= new RevSliderSlider();
+				wp_cache_flush();
+				$sldr = new RevSliderSlider();
 				$sldr->init_by_alias($alias);
+				if($sldr->inited === false) continue;
+				$premium	= $sldr->get_param('pakps', false);
+				if($data['licensed'] === false && $premium === true) continue; // do not fetch premium data on unlicensed slider
+
+				$data['slider']['number']++;
 				$slides		= $sldr->get_slides();
 				$static_slide = false;
 				$static_id	= $sl->get_static_slide_id($sldr->get_id());
@@ -156,14 +171,14 @@ class RevSliderTracking extends RevSliderFunctions {
 					if($msl->get_id() !== ''){
 						$static_slide = $msl;
 					}
+					$msl = null;
 				}
 
 				$wc				= false;
 				$post			= $sldr->is_posts();
 				$specific_post	= $sldr->is_specific_posts();
 				$stream			= $sldr->is_stream();
-				$type			= $sldr->get_param('sourcetype', 'gallery');
-				$premium		= $sldr->get_param('pakps', false);
+				$type			= $sldr->get_param('sourcetype', 'gallery');				
 				$import			= $sldr->get_param('imported', false);
 				if($post){
 					if(in_array($type, array('woocommerce', 'woo'))){
@@ -174,7 +189,11 @@ class RevSliderTracking extends RevSliderFunctions {
 
 				if($type === 'gallery')	$data['slider']['sources']['custom']++;
 				if($post === true || $specific_post === true)	$data['slider']['sources']['post']++;
-				if($stream === true)	$data['slider']['sources']['social']++;
+				if($stream !== false){
+					$data['slider']['sources']['social']++;
+					if(!isset($data['slider']['sources']['social_detail'][$stream])) $data['slider']['sources']['social_detail'][$stream] = 0;
+					$data['slider']['sources']['social_detail'][$stream]++;
+				}
 				if($wc === true)		$data['slider']['sources']['woocommerce']++;
 
 				if($premium === true)	$data['slider']['premium']++;
@@ -191,7 +210,7 @@ class RevSliderTracking extends RevSliderFunctions {
 				}
 
 				if($sldr->get_param(array('parallax', 'set'), false) === true || $sldr->get_param(array('parallax', 'setDDD'), false) === true) $data['slider']['parallax']++;
-				if($sldr->get_param(array('scrolleffects', 'set'), false) === true)	$data['slider']['scrolleffects']++;
+				if($sldr->get_param(array('scrolleffects', 'set'), false) === true)		$data['slider']['scrolleffects']++;
 				if($sldr->get_param(array('scrolltimeline', 'set'), false) === true)	$data['slider']['timeline_scroll']++;
 				if($sldr->get_param(array('skins', 'colors'), array()) > 0)				$data['slider']['color_skins']++;
 
@@ -271,9 +290,15 @@ class RevSliderTracking extends RevSliderFunctions {
 								if($this->get_val($layer, array('layerLibSrc'), false) !== false) $data['layer']['library']++;
 								if($this->get_val($layer, array('timeline', 'loop', 'use'), false) === true) $data['layer']['loop']++;
 							}
+							$layers = null;
+							unset($layers);
 						}
 					}
+					$slides = null;
+					unset($slides);
 				}
+				$sldr = null;
+				unset($sldr);
 			}
 		}
 
@@ -295,31 +320,6 @@ class RevSliderTracking extends RevSliderFunctions {
 		}
 
 		return $ids;
-	}
-
-	/**
-	 * this will return the exact alias of the rev_slider modules on given posts/pages
-	 **/
-	public function get_shortcode_from_page($ids){
-		$_shortcodes = array();
-		$ids		 = (!is_array($ids)) ? (array)$ids : $ids;
-
-		foreach($ids as $id){
-			$post = get_post($id);
-			if(is_a($post, 'WP_Post') && has_shortcode($post->post_content, 'rev_slider')){
-				preg_match_all('/\[rev_slider.*alias=.(.*)"\]/', $post->post_content, $shortcodes);
-				
-				if(isset($shortcodes[1]) && $shortcodes[1] !== ''){
-					foreach($shortcodes[1] as $s){
-						if(strpos($s, '"') !== false) $s = $this->get_val(explode('"', $s), 0);
-						if(!RevSliderSlider::alias_exists($s)) continue;
-						if(!in_array($s, $_shortcodes)) $_shortcodes[] = $s;
-					}
-				}
-			}
-		}
-
-		return $_shortcodes;
 	}
 
 	public function add_additional_data($addition){

@@ -1,9 +1,20 @@
 <?php
+/**
+ * The template for displaying [vc_button2] shortcode.
+ *
+ * This template can be overridden by copying it to yourtheme/vc_templates/vc_button2.php.
+ *
+ * @see https://kb.wpbakery.com/docs/developers-how-tos/change-shortcodes-html-output
+ *
+ * @depreacted
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 /**
  * Shortcode attributes
+ *
  * @var $atts
  * @var $link
  * @var $title
@@ -21,7 +32,7 @@ $atts = vc_map_get_attributes( $this->getShortcode(), $atts );
 extract( $atts );
 
 $class = 'vc_btn';
-// parse link
+// parse link.
 $link = ( '||' === $link ) ? '' : $link;
 $link = vc_build_link( $link );
 $a_href = $link['url'];

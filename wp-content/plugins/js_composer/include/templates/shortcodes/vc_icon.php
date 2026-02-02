@@ -1,9 +1,18 @@
 <?php
+/**
+ * The template for displaying [vc_icon] shortcode output of 'Icon' element.
+ *
+ * This template can be overridden by copying it to yourtheme/vc_templates/vc_icon.php.
+ *
+ * @see https://kb.wpbakery.com/docs/developers-how-tos/change-shortcodes-html-output
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 /**
  * Shortcode attributes
+ *
  * @var $atts
  * @var $type
  * @var $icon_fontawesome
@@ -11,6 +20,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @var $icon_typicons
  * @var $icon_entypo
  * @var $icon_linecons
+ * @var $icon_monosocial
+ * @var $icon_material
+ * @var $icon_pixelicons
  * @var $color
  * @var $custom_color
  * @var $background_style
@@ -26,13 +38,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Shortcode class
  * @var WPBakeryShortCode_Vc_Icon $this
  */
-$type = $icon_fontawesome = $icon_openiconic = $icon_typicons = $icon_entypo = $icon_linecons = $color = $custom_color = $background_style = $background_color = $custom_background_color = $size = $align = $el_class = $el_id = $link = $css_animation = $css = $rel = '';
+$type = $icon_fontawesome = $icon_openiconic = $icon_typicons = $icon_entypo = $icon_linecons = $icon_monosocial = $icon_material = $icon_pixelicons = $color = $custom_color = $background_style = $background_color = $custom_background_color = $size = $align = $el_class = $el_id = $link = $css_animation = $css = $rel = '';
 
 $atts = vc_map_get_attributes( $this->getShortcode(), $atts );
 extract( $atts );
 
+$element_class = empty( $this->settings['element_default_class'] ) ? '' : $this->settings['element_default_class'];
 $class_to_filter = '';
-$class_to_filter .= vc_shortcode_custom_css_class( $css, ' ' ) . $this->getExtraClass( $el_class ) . $this->getCSSAnimation( $css_animation );
+$class_to_filter .= vc_shortcode_custom_css_class( $css, ' ' ) . ' ' . esc_attr( $element_class ) . $this->getExtraClass( $el_class ) . $this->getCSSAnimation( $css_animation );
 $css_class = apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, $class_to_filter, $this->settings['base'], $atts );
 
 // Enqueue needed icon font.
@@ -43,13 +56,13 @@ $has_style = false;
 if ( strlen( $background_style ) > 0 ) {
 	$has_style = true;
 	if ( false !== strpos( $background_style, 'outline' ) ) {
-		$background_style .= ' vc_icon_element-outline'; // if we use outline style it is border in css
+		$background_style .= ' vc_icon_element-outline'; // if we use outline style it is border in css.
 	} else {
 		$background_style .= ' vc_icon_element-background';
 	}
 }
 
-$iconClass = isset( ${'icon_' . $type} ) ? esc_attr( ${'icon_' . $type} ) : 'fa fa-adjust';
+$icon_class = isset( ${'icon_' . $type} ) ? esc_attr( ${'icon_' . $type} ) : 'fa fa-adjust';
 
 $style = '';
 if ( 'custom' === $background_color ) {
@@ -73,7 +86,7 @@ $output .= '"><div class="vc_icon_element-inner vc_icon_element-color-' . esc_at
 if ( $has_style ) {
 	$output .= ' vc_icon_element-have-style-inner';
 }
-$output .= ' vc_icon_element-size-' . esc_attr( $size ) . ' vc_icon_element-style-' . esc_attr( $background_style ) . ' vc_icon_element-background-color-' . esc_attr( $background_color ) . '" ' . $style . '><span class="vc_icon_element-icon ' . esc_attr( $iconClass ) . '" ' . ( 'custom' === $color ? 'style="color:' . esc_attr( $custom_color ) . ' !important"' : '' ) . '></span>';
+$output .= ' vc_icon_element-size-' . esc_attr( $size ) . ' vc_icon_element-style-' . esc_attr( $background_style ) . ' vc_icon_element-background-color-' . esc_attr( $background_color ) . '" ' . $style . '><span class="vc_icon_element-icon ' . esc_attr( $icon_class ) . '" ' . ( 'custom' === $color && $custom_color ? 'style="color:' . esc_attr( $custom_color ) . ' !important"' : '' ) . '></span>';
 
 if ( strlen( $link ) > 0 && strlen( $url['url'] ) > 0 ) {
 	$output .= '<a class="vc_icon_element-link" href="' . esc_url( $url['url'] ) . '" ' . $rel . ' title="' . esc_attr( $url['title'] ) . '" target="' . ( strlen( $url['target'] ) > 0 ? esc_attr( $url['target'] ) : '_self' ) . '"></a>';

@@ -12,7 +12,7 @@
  *
  * @see     https://docs.woocommerce.com/document/template-structure/
  * @package WooCommerce/Templates
- * @version 3.9.0
+ * @version 8.6.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -27,8 +27,10 @@ if ( ! $notices ) {
 
 <?php foreach ( $notices as $notice ) : ?>
 	<div class="col-md-12">
-	<div class="woocommerce-message klb-product-tab mt-0" role="alert">
-		<?php echo wc_kses_notice( $notice['notice'] ); ?>
-	</div>
+		<?php foreach ( $notices as $notice ) : ?>
+			<div class="woocommerce-message klb-product-tab mt-0"<?php echo wc_get_notice_data_attr( $notice ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> role="alert">
+				<?php echo wc_kses_notice( $notice['notice'] ); ?>
+			</div>
+		<?php endforeach; ?>
 	</div>
 <?php endforeach; ?>

@@ -12,7 +12,7 @@
  *
  * @see     https://docs.woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates
- * @version 7.0.1
+ * @version 10.1.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -89,23 +89,27 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								<td class="product-quantity" data-title="<?php esc_attr_e( 'Quantity', 'groci' ); ?>">
 								<?php
-								if ( $_product->is_sold_individually() ) {
-									$product_quantity = sprintf( '1 <input type="hidden" name="cart[%s][qty]" value="1" />', $cart_item_key );
-								} else {
+									if ( $_product->is_sold_individually() ) {
+										$min_quantity = 1;
+										$max_quantity = 1;
+									} else {
+										$min_quantity = 0;
+										$max_quantity = $_product->get_max_purchase_quantity();
+									}
+			
 									$product_quantity = woocommerce_quantity_input(
 										array(
 											'input_name'   => "cart[{$cart_item_key}][qty]",
 											'input_value'  => $cart_item['quantity'],
-											'max_value'    => $_product->get_max_purchase_quantity(),
-											'min_value'    => '0',
-											'product_name' => $_product->get_name(),
+											'max_value'    => $max_quantity,
+											'min_value'    => $min_quantity,
+											'product_name' => $product_name,
 										),
 										$_product,
 										false
 									);
-								}
-
-								echo apply_filters( 'woocommerce_cart_item_quantity', $product_quantity, $cart_item_key, $cart_item ); // PHPCS: XSS ok.
+			
+									echo apply_filters( 'woocommerce_cart_item_quantity', $product_quantity, $cart_item_key, $cart_item ); // PHPCS: XSS ok.
 								?>
 								</td>
 
@@ -122,7 +126,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 											sprintf(
 												'<a href="%s" class="btn btn-sm btn-danger remove" aria-label="%s" data-product_id="%s" data-product_sku="%s"><i class="mdi mdi-close-circle-outline"></i></a>',
 												esc_url( wc_get_cart_remove_url( $cart_item_key ) ),
-												esc_html__( 'Remove this item', 'groci' ),
+												esc_attr( sprintf( __( 'Remove %s from cart', 'woocommerce' ), wp_strip_all_tags( $product_name ) ) ),
 												esc_attr( $product_id ),
 												esc_attr( $_product->get_sku() )
 											),

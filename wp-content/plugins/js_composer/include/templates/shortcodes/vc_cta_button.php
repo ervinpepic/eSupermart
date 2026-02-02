@@ -1,10 +1,19 @@
 <?php
+/**
+ * The template for displaying [vc_cta_button] shortcode output.
+ *
+ * This template can be overridden by copying it to yourtheme/vc_templates/vc_cta_button.php.
+ *
+ * @see https://kb.wpbakery.com/docs/developers-how-tos/change-shortcodes-html-output
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 
 /**
  * Shortcode attributes
+ *
  * @var $atts
  * @var $color
  * @var $icon
@@ -42,7 +51,7 @@ $size = ( '' !== $size && 'wpb_regularsize' !== $size ) ? ' wpb_' . $size : ' ' 
 $a_class = '';
 
 if ( '' !== $href ) {
-	$button = '<span class="wpb_button ' . esc_attr( $color . $size . $icon ) . '">' . $title . $i_icon . '</span>';
+	$button = '<span class="wpb_button ' . esc_attr( $color . $size . $icon ) . '">' . esc_html( $title ) . $i_icon . '</span>';
 	$button = '<a class="wpb_button_a' . esc_attr( $a_class ) . '" href="' . esc_url( $href ) . '"' . $target . '>' . $button . '</a>';
 } else {
 	$button = '';
@@ -55,7 +64,7 @@ $output .= '<div class="' . esc_attr( $css_class ) . '">';
 if ( 'cta_align_bottom' !== $position ) {
 	$output .= $button;
 }
-$output .= apply_filters( 'wpb_cta_text', '<h2 class="wpb_call_text">' . $call_text . '</h2>', array( 'content' => $call_text ) );
+$output .= apply_filters( 'wpb_cta_text', '<h2 class="wpb_call_text">' . $call_text . '</h2>', [ 'content' => $call_text ] );
 if ( 'cta_align_bottom' === $position ) {
 	$output .= $button;
 }

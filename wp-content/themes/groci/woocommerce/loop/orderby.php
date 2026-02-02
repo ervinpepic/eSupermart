@@ -12,12 +12,14 @@
  *
  * @see         https://docs.woocommerce.com/document/template-structure/
  * @package     WooCommerce\Templates
- * @version     3.6.0
+ * @version     9.7.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+$id_suffix = wp_unique_id();
 
 ?>
 <div class="row">
@@ -46,6 +48,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php } ?>
 
 		<form class="woocommerce-ordering" method="get">
+			<?php if ( $use_label ) : ?>
+				<label for="woocommerce-orderby-<?php echo esc_attr( $id_suffix ); ?>"><?php echo esc_html__( 'Sort by', 'woocommerce' ); ?></label>
+			<?php endif; ?>
 			<select name="orderby" class="orderby" aria-label="<?php esc_attr_e( 'Shop order', 'groci' ); ?>">
 				<?php foreach ( $catalog_orderby_options as $id => $name ) : ?>
 					<option value="<?php echo esc_attr( $id ); ?>" <?php selected( $orderby, $id ); ?>><?php echo esc_html( $name ); ?></option>

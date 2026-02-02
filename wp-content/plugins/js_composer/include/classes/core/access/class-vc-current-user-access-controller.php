@@ -1,4 +1,12 @@
 <?php
+/**
+ * Controls access for the current user.
+ *
+ * Manages user permissions, capabilities, and access rules.
+ * Extends Vc_Role_Access_Controller to handle user-specific
+ * permissions and roles in the Visual Composer context.
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
@@ -11,6 +19,8 @@ require_once vc_path_dir( 'CORE_DIR', 'access/class-vc-role-access-controller.ph
 class Vc_Current_User_Access_Controller extends Vc_Role_Access_Controller {
 
 	/**
+	 * Sets the access control part and validates user login status.
+	 *
 	 * @param string $part
 	 *
 	 * @return $this
@@ -26,9 +36,11 @@ class Vc_Current_User_Access_Controller extends Vc_Role_Access_Controller {
 	}
 
 	/**
-	 * @param $callback
-	 * @param $valid
-	 * @param $argsList
+	 *  Performs a capability check across multiple arguments using a callback function.
+	 *
+	 * @param callable $callback
+	 * @param bool $valid
+	 * @param array $argsList
 	 *
 	 * @return $this
 	 */
@@ -36,7 +48,6 @@ class Vc_Current_User_Access_Controller extends Vc_Role_Access_Controller {
 		if ( $this->getValidAccess() ) {
 			require_once ABSPATH . 'wp-includes/pluggable.php';
 			$access = ! $valid;
-			/** @var Application $vcapp */
 			$vcapp = vcapp();
 			foreach ( $argsList as &$args ) {
 				if ( ! is_array( $args ) ) {
@@ -57,7 +68,7 @@ class Vc_Current_User_Access_Controller extends Vc_Role_Access_Controller {
 	}
 
 	/**
-	 * Check Wordpress capability. Should be valid one cap at least.
+	 * Check WordPress capability. Should be valid one cap at least.
 	 *
 	 * @return $this
 	 */
@@ -74,7 +85,7 @@ class Vc_Current_User_Access_Controller extends Vc_Role_Access_Controller {
 	}
 
 	/**
-	 * Check Wordpress capability. Should be valid all caps.
+	 * Check WordPress capability. Should be valid all caps.
 	 *
 	 * @return $this
 	 */
@@ -93,7 +104,7 @@ class Vc_Current_User_Access_Controller extends Vc_Role_Access_Controller {
 	/**
 	 * Get capability for current user.
 	 *
-	 * @param $rule
+	 * @param string $rule
 	 *
 	 * @return bool
 	 */
@@ -106,7 +117,7 @@ class Vc_Current_User_Access_Controller extends Vc_Role_Access_Controller {
 	/**
 	 * Add capability to role.
 	 *
-	 * @param $rule
+	 * @param string $rule
 	 * @param bool $value
 	 *
 	 * @return $this
@@ -129,7 +140,7 @@ class Vc_Current_User_Access_Controller extends Vc_Role_Access_Controller {
 	 * @return $this
 	 * @throws \Exception
 	 */
-	public function can( $rule = '', $checkState = true ) {
+	public function can( $rule = '', $checkState = true ) { // phpcs:ignore:Generic.Metrics.CyclomaticComplexity.TooHigh, CognitiveComplexity.Complexity.MaximumComplexity.TooHigh
 		$part = $this->getPart();
 		if ( empty( $part ) ) {
 			throw new \Exception( 'partName for User\Access is not set, please use ->part(partName) method to set!' );
@@ -142,8 +153,7 @@ class Vc_Current_User_Access_Controller extends Vc_Role_Access_Controller {
 		}
 
 		if ( $this->getValidAccess() ) {
-			// Administrators have all access always
-			if ( current_user_can( 'administrator' ) ) {
+			if ( $this->is_admin_with_not_editable_part( $part ) ) {
 				$this->setValidAccess( true );
 
 				return $this;
@@ -169,6 +179,30 @@ class Vc_Current_User_Access_Controller extends Vc_Role_Access_Controller {
 		return $this;
 	}
 
+	/**
+	 * Check if user is administrator and part is not editable for admin role.
+	 *
+	 * @param string $part
+	 * @return bool
+	 */
+	public function is_admin_with_not_editable_part( $part ) {
+        // phpcs:ignore:WordPress.WP.Capabilities.RoleFound
+		if ( current_user_can( 'administrator' ) ) {
+			$admin_parts_list = [
+				'backend_editor',
+			];
+
+			return ! in_array( $part, $admin_parts_list );
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Set state.
+	 *
+	 * @param mixed $value
+	 */
 	public function setState( $value = true ) {
 		if ( false === $value && is_null( $value ) ) {
 			wp_get_current_user()->remove_cap( $this->getStateKey() );
@@ -188,7 +222,8 @@ class Vc_Current_User_Access_Controller extends Vc_Role_Access_Controller {
 	public function getState() {
 		$currentUser = wp_get_current_user();
 		$allCaps = $currentUser->get_role_caps();
-		if ( current_user_can( 'administrator' ) ) {
+
+		if ( $this->is_admin_with_not_editable_part( $this->getPart() ) ) {
 			return true;
 		}
 		$capKey = $this->getStateKey();
@@ -197,9 +232,27 @@ class Vc_Current_User_Access_Controller extends Vc_Role_Access_Controller {
 			$state = $allCaps[ $capKey ];
 		}
 
+		// if state of rule not saving in settings we should get default value of it.
+		if ( is_null( $state ) && isset( $currentUser->roles ) ) {
+			foreach ( $currentUser->roles as $role ) {
+				$state = vc_role_access()->who( $role )->part( $this->getPart() )->getState();
+
+				if ( is_null( $state ) ) {
+					continue;
+				} else {
+					break;
+				}
+			}
+		}
+
 		return apply_filters( 'vc_user_access_with_' . $this->getPart() . '_get_state', $state, $this->getPart() );
 	}
 
+	/**
+	 * Get all capabilities for current user.
+	 *
+	 * @return array
+	 */
 	public function getAllCaps() {
 		$currentUser = wp_get_current_user();
 		$allCaps = $currentUser->get_role_caps();

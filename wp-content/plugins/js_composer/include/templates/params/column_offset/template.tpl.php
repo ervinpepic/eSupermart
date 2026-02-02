@@ -1,24 +1,30 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	die( '-1' );
-}
 /**
+ * Template for element param column offset.
+ *
+ * @var array $settings
+ * @var string $value
+ * @var array $data
  * @var Vc_Column_Offset $param
  * @var Vc_Column_Offset $sizes ::$size_types
  */
-$layouts = array(
+
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+$layouts = [
 	'xs' => 'portrait-smartphones',
 	'sm' => 'portrait-tablets',
 	'md' => 'landscape-tablets',
 	'lg' => 'default',
-);
+];
 $custom_tag = 'script';
 ?>
 <div class="vc_column-offset" data-column-offset="true">
 	<?php if ( '1' === vc_settings()->get( 'not_responsive_css' ) ) : ?>
 		<div class="wpb_alert wpb_content_element vc_alert_rounded wpb_alert-warning">
 			<div class="messagebox_text">
-				<p><?php printf( esc_html__( 'Responsive design settings are currently disabled. You can enable them in WPBakery Page Builder %ssettings page%s by unchecking "Disable responsive content elements".', 'js_composer' ), '<a href="' . esc_url( admin_url( 'admin.php?page=vc-general' ) ) . '">', '</a>' ); ?></p>
+				<p><?php printf( esc_html__( 'Responsive design settings are currently disabled. You can enable them in WPBakery Page Builder %1$ssettings page%2$s by unchecking "Disable responsive content elements".', 'js_composer' ), '<a href="' . esc_url( admin_url( 'admin.php?page=vc-general' ) ) . '">', '</a>' ); ?></p>
 			</div>
 		</div>
 	<?php endif ?>
@@ -73,10 +79,10 @@ $custom_tag = 'script';
 <<?php echo esc_attr( $custom_tag ); ?>>
 	window.VcI8nColumnOffsetParam =
 	<?php
-	echo wp_json_encode( array(
+	echo wp_json_encode( [
 		'inherit' => esc_html__( 'Inherit: ', 'js_composer' ),
 		'inherit_default' => esc_html__( 'Inherit from default', 'js_composer' ),
-	) )
+	] )
 	?>
 	;
 </<?php echo esc_attr( $custom_tag ); ?>>

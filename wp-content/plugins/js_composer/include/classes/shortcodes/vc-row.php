@@ -1,47 +1,69 @@
 <?php
+/**
+ * Class that handles specific [vc_row] shortcode.
+ *
+ * @see js_composer/include/templates/shortcodes/vc_row.php
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 
 /**
- * WPBakery WPBakery Page Builder row
+ * WPBakery Page Builder row
  *
  * @package WPBakeryPageBuilder
- *
  */
 class WPBakeryShortCode_Vc_Row extends WPBakeryShortCode {
-	protected $predefined_atts = array(
+	/**
+	 * Predefined attributes for shortcode.
+	 *
+	 * @var array
+	 */
+	protected $predefined_atts = [
 		'el_class' => '',
-	);
+	];
 
+	/**
+	 * Non draggable class.
+	 *
+	 * @var string
+	 */
 	public $nonDraggableClass = 'vc-non-draggable-row';
 
 	/**
-	 * @param $settings
+	 * Constructor
+	 *
+	 * @param array $settings
 	 */
 	public function __construct( $settings ) {
 		parent::__construct( $settings );
 		$this->shortcodeScripts();
 	}
 
+	/**
+	 * Register shortcode scripts.
+	 */
 	protected function shortcodeScripts() {
-		wp_register_script( 'vc_jquery_skrollr_js', vc_asset_url( 'lib/bower/skrollr/dist/skrollr.min.js' ), array( 'jquery-core' ), WPB_VC_VERSION, true );
-		wp_register_script( 'vc_youtube_iframe_api_js', 'https://www.youtube.com/iframe_api', array(), WPB_VC_VERSION, true );
+		wp_register_script( 'vc_jquery_skrollr_js', vc_asset_url( 'lib/vendor/dist/skrollr/dist/skrollr.min.js' ), [ 'jquery-core' ], WPB_VC_VERSION, true );
+		wp_register_script( 'vc_youtube_iframe_api_js', 'https://www.youtube.com/iframe_api', [], WPB_VC_VERSION, true );
 	}
 
 	/**
-	 * @param $atts
+	 * Get shortcode output.
+	 *
+	 * @param array $atts
 	 * @param null $content
 	 * @return mixed|string
 	 */
 	protected function content( $atts, $content = null ) {
 		$prefix = '';
 
-		return $prefix . $this->loadTemplate( $atts, $content );
+		return $prefix . $this->loadTemplate( $atts, $content ); // nosemgrep - escaping handled inside templates.
 	}
 
 	/**
-	 * This returs block controls
+	 * This returns block controls.
 	 */
 	public function getLayoutsControl() {
 		global $vc_row_layouts;
@@ -56,15 +78,17 @@ class WPBakeryShortCode_Vc_Row extends WPBakeryShortCode {
 	}
 
 	/**
-	 * @param $controls
+	 * Get column controls.
+	 *
+	 * @param mixed $controls
 	 * @param string $extended_css
 	 * @return string
 	 * @throws \Exception
 	 */
-	public function getColumnControls( $controls, $extended_css = '' ) {
+	public function getColumnControls( $controls, $extended_css = '' ) { // phpcs:ignore:Generic.Metrics.CyclomaticComplexity.TooHigh, CognitiveComplexity.Complexity.MaximumComplexity.TooHigh
 		$output = '<div class="vc_controls vc_controls-row controls_row vc_clearfix">';
 		$controls_end = '</div>';
-		// Create columns
+		// Create columns.
 		$controls_layout = $this->getLayoutsControl();
 
 		$controls_move = ' <a class="vc_control column_move vc_column-move" href="#" title="' . esc_attr__( 'Drag row to reorder', 'js_composer' ) . '" data-vc-control="move"><i class="vc-composer-icon vc-c-icon-dragndrop"></i></a>';
@@ -75,7 +99,9 @@ class WPBakeryShortCode_Vc_Row extends WPBakeryShortCode {
 		$controls_add = ' <a class="vc_control column_add vc_column-add" href="#" title="' . esc_attr__( 'Add column', 'js_composer' ) . '" data-vc-control="add"><i class="vc-composer-icon vc-c-icon-add"></i></a>';
 		$controls_delete = '<a class="vc_control column_delete vc_column-delete" href="#" title="' . esc_attr__( 'Delete this row', 'js_composer' ) . '" data-vc-control="delete"><i class="vc-composer-icon vc-c-icon-delete_empty"></i></a>';
 		$controls_edit = ' <a class="vc_control column_edit vc_column-edit" href="#" title="' . esc_attr__( 'Edit this row', 'js_composer' ) . '" data-vc-control="edit"><i class="vc-composer-icon vc-c-icon-mode_edit"></i></a>';
-		$controls_clone = ' <a class="vc_control column_clone vc_column-clone" href="#" title="' . esc_attr__( 'Clone this row', 'js_composer' ) . '" data-vc-control="clone"><i class="vc-composer-icon vc-c-icon-content_copy"></i></a>';
+		$controls_clone = ' <a class="vc_control column_clone vc_column-clone" href="#" title="' . esc_attr__( 'Clone this row', 'js_composer' ) . '" data-vc-control="clone"><i class="vc-composer-icon vc-c-icon-clone"></i></a>';
+		$controls_copy = ' <a class="vc_control column_copy vc_column-copy" href="#" title="' . esc_attr__( 'Copy this row', 'js_composer' ) . '" data-vc-control="copy"><i class="vc-composer-icon vc-c-icon-copy"></i></a>';
+		$controls_paste = ' <a class="vc_control column_paste vc_column-paste" href="#" title="' . esc_attr__( 'Paste', 'js_composer' ) . '" data-vc-control="paste"><i class="vc-composer-icon vc-c-icon-paste"></i></a>';
 		$controls_toggle = ' <a class="vc_control column_toggle vc_column-toggle" href="#" title="' . esc_attr__( 'Toggle row', 'js_composer' ) . '" data-vc-control="toggle"><i class="vc-composer-icon vc-c-icon-arrow_drop_down"></i></a>';
 		$editAccess = vc_user_access_check_shortcode_edit( $this->shortcode );
 		$allAccess = vc_user_access_check_shortcode_all( $this->shortcode );
@@ -100,7 +126,7 @@ class WPBakeryShortCode_Vc_Row extends WPBakeryShortCode {
 		} else {
 			$row_edit_clone_delete = '<span class="vc_row_edit_clone_delete">';
 			if ( $allAccess ) {
-				$row_edit_clone_delete .= $controls_delete . $controls_clone . $controls_edit;
+				$row_edit_clone_delete .= $controls_delete . $controls_paste . $controls_copy . $controls_clone . $controls_edit;
 			} elseif ( $editAccess ) {
 				$row_edit_clone_delete .= $controls_edit;
 			}
@@ -120,7 +146,9 @@ class WPBakeryShortCode_Vc_Row extends WPBakeryShortCode {
 	}
 
 	/**
-	 * @param $atts
+	 * Load template.
+	 *
+	 * @param array $atts
 	 * @param null $content
 	 * @return string
 	 * @throws \Exception
@@ -151,7 +179,7 @@ class WPBakeryShortCode_Vc_Row extends WPBakeryShortCode {
 				}
 				$param_value = isset( $atts[ $param['param_name'] ] ) ? $atts[ $param['param_name'] ] : '';
 				if ( is_array( $param_value ) ) {
-					// Get first element from the array
+					// Get first element from the array.
 					reset( $param_value );
 					$first_key = key( $param_value );
 					$param_value = $param_value[ $first_key ];
@@ -163,10 +191,12 @@ class WPBakeryShortCode_Vc_Row extends WPBakeryShortCode {
 		$output .= '</div>';
 		$output .= '</div>';
 
-		return $output;
+		return $output; // nosemgrep - we already escaped everything on this step.
 	}
 
 	/**
+	 * Add admin class to css.
+	 *
 	 * @return string
 	 * @throws \Exception
 	 */
@@ -177,17 +207,21 @@ class WPBakeryShortCode_Vc_Row extends WPBakeryShortCode {
 	}
 
 	/**
+	 * Custom admin block params.
+	 *
 	 * @return string
 	 * @deprecated 4.5 - due to it is not used anywhere? 4.5
 	 * @typo Bock - Block
 	 */
 	public function customAdminBockParams() {
-		// this function is depreacted
+		// this function is deprecated.
 
 		return '';
 	}
 
 	/**
+	 * Build additional styles.
+	 *
 	 * @param string $bg_image
 	 * @param string $bg_color
 	 * @param string $bg_image_repeat
@@ -197,10 +231,9 @@ class WPBakeryShortCode_Vc_Row extends WPBakeryShortCode {
 	 *
 	 * @return string
 	 * @deprecated 4.5
-	 *
 	 */
-	public function buildStyle( $bg_image = '', $bg_color = '', $bg_image_repeat = '', $font_color = '', $padding = '', $margin_bottom = '' ) {
-		// this function is deprecated
+	public function buildStyle( $bg_image = '', $bg_color = '', $bg_image_repeat = '', $font_color = '', $padding = '', $margin_bottom = '' ) { // phpcs:ignore:Generic.Metrics.CyclomaticComplexity.TooHigh, CognitiveComplexity.Complexity.MaximumComplexity.TooHigh
+		// this function is deprecated.
 
 		$has_image = false;
 		$style = '';

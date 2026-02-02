@@ -3,8 +3,8 @@ Contributors: Ibericode, DvanKooten, hchouhan, lapzor
 Donate link: https://www.mc4wp.com/contribute/#utm_source=wp-plugin-repo&utm_medium=mailchimp-for-wp&utm_campaign=donate-link
 Tags: mailchimp, subscribe, email, newsletter, form
 Requires at least: 4.6
-Tested up to: 6.8
-Stable tag: 4.10.6
+Tested up to: 6.9
+Stable tag: 4.11.1
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires PHP: 7.4
@@ -55,7 +55,7 @@ This plugins helps you grow your email list in Mailchimp. You can use it to crea
 
 - Developer friendly. For some inspiration, check out our [repository of example code snippets](https://github.com/ibericode/mailchimp-for-wordpress/tree/main/sample-code-snippets).
 
-- Ready for PHP 8.4, but backwards-compatible all the way down to PHP 7.4.
+- Ready for PHP 8.5, but backwards-compatible all the way down to PHP 7.4.
 
 #### What is Mailchimp?
 
@@ -187,6 +187,32 @@ The plugin provides various filter and action hooks that allow you to modify or 
 9. Settings page for e-commerce integration with Mailchimp. Requires [Mailchimp for WordPress Premium](https://www.mc4wp.com/).
 
 == Changelog ==
+
+
+#### 4.11.0 - Jan 20, 2026
+
+- Add form setting to remove tags from existing subscribers.
+- Add form setting to check for common email typos.
+- In Prosopo integration, link directly to API key screen instead of user profile.
+- Automatically convert string fields to a comma-separated string if an array value is received.
+- Fix undefined key warning for new setting that emails to site administrator on errors.
+
+
+#### 4.10.9 - Nov 28, 2025
+
+- Specify `apiVersion` in call to `registerBlockType` so that WordPress 6.9 knows it can use the new iframe based editor.
+- Add new setting to send an email for critical errors, like API errors returned by Mailchimp.
+
+
+#### 4.10.8 - Oct 21, 2025
+
+- Show warning to administrators if a form is showing but Mailchimp API key is not set.
+- Update third-party JS dependencies.
+
+
+#### 4.10.7 - Sep 05, 2025
+
+- Handle renewing lists through server-side redirect instead of JS component.
 
 
 #### 4.10.6 - Jul 23, 2025
@@ -1123,41 +1149,7 @@ Please note that installing this update requires you to also update any add-ons 
 - Fetch Mailchimp lists over AJAX, to speed up perceived performance (especially when your account has many lists).
 - Periodically fetch Mailchimp lists, so cache is always fresh.
 - Improved `<label>` element accessibility for checkbox integrations.
-- Stop using double underscore prefix in function names, as these are reserved in PHP 7.
-- `{post}` and `{user}` shortcodes now accept a `default` parameter.
-
-**Additions**
-
-- Add [MemberPress](https://www.memberpress.com/) integration.
-- Add missing e-commerce related API methods for next week's [WooCommerce Mailchimp e-commerce integration](https://www.mc4wp.com/kb/what-is-ecommerce/) release.
-
-
-#### 4.0.4 - September 7, 2016
-
-**Improvements**
-
-- Allow re-running previous migrations by visiting a certain admin URL.
-- Do not show checkboxes option for fields that only accept a single value.
-- Write field specific errors to debug log when Mailchimp denies a sign-up request.
-- Write to debug log when custom integrations can not find an EMAIL field.
-- Differentiate between connection & authorization errors when testing connection to Mailchimp.
-- Bump limit of number of Mailchimp lists to fetch from 100 to 500.
-
-
-#### 4.0.3 - August 24, 2016
-
-**Fixes**
-
-- Ninja Forms integration not working when using PayPal integration.
-
-**Improvements**
-
-- Show connection errors on Mailchimp settings page.
-
-**Additions**
-
-- Add pre-checked option to Ninja Forms integration.
-- ...
+- Stop using double ...
 
 == Upgrade Notice ==
 

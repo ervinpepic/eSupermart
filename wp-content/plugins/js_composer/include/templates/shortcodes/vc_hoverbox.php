@@ -1,12 +1,20 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	die( '-1' );
-}
 /**
- * @var \WPBakeryShortCode_Vc_Hoverbox $this
+ * The template for displaying [vc_hoverbox] shortcode output of 'Hover Box' element.
+ *
+ * This template can be overridden by copying it to yourtheme/vc_templates/vc_hoverbox.php.
+ *
+ * @see https://kb.wpbakery.com/docs/developers-how-tos/change-shortcodes-html-output
+ *
+ * @var WPBakeryShortCode_Vc_Hoverbox $this
  * @var array $atts
  * @var string $content
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 $atts = vc_map_get_attributes( $this->getShortcode(), $atts );
 
 if ( ! empty( $atts['image'] ) ) {
@@ -32,16 +40,17 @@ if ( ! empty( $atts['el_id'] ) ) {
 
 $class_to_filter = vc_shortcode_custom_css_class( $atts['css'], ' ' ) . $this->getExtraClass( $atts['el_class'] ) . $this->getCSSAnimation( $atts['css_animation'] );
 $css_class = apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, $class_to_filter, $this->settings['base'], $atts );
+$css_class = esc_attr( $css_class );
 
-// Hover Background color
+// Hover Background color.
 if ( 'custom' !== $atts['hover_background_color'] ) {
 	$hover_background_color = vc_convert_vc_color( $atts['hover_background_color'] );
 } else {
 	$hover_background_color = esc_attr( $atts['hover_custom_background'] );
 }
 
-$primary_title = $this->getHeading( 'primary_title', $atts, $atts['primary_align'] );
-$hover_title = $this->getHeading( 'hover_title', $atts, $atts['hover_align'] );
+$primary_title = wp_kses_post( $this->getHeading( 'primary_title', $atts, $atts['primary_align'] ) );
+$hover_title = wp_kses_post( $this->getHeading( 'hover_title', $atts, $atts['hover_align'] ) );
 
 $content = wpb_js_remove_wpautop( $content, true );
 $button = '';

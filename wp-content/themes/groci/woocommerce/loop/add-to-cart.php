@@ -13,7 +13,7 @@
  * @see 	    https://docs.woocommerce.com/document/template-structure/
  * @author 		WooThemes
  * @package 	WooCommerce/Templates
- * @version     3.3.0
+ * @version     9.2.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,6 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 global $product;
+
+$aria_describedby = isset( $args['aria-describedby_text'] ) ? sprintf( 'aria-describedby="woocommerce_loop_add_to_cart_link_describedby_%s"', esc_attr( $product->get_id() ) ) : '';
 
 $stock_status = $product->get_stock_status();
 if($stock_status == 'instock'){

@@ -1,5 +1,7 @@
 <?php
 /**
+ * Shortcodes Manager.
+ *
  * @package WPBakery
  * @noinspection PhpIncludeInspection
  */
@@ -9,19 +11,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- *
+ * Prefix for custom shortcodes.
  */
 define( 'VC_SHORTCODE_CUSTOMIZE_PREFIX', 'vc_theme_' );
 /**
- *
+ * Prefix for custom shortcodes before.
  */
 define( 'VC_SHORTCODE_BEFORE_CUSTOMIZE_PREFIX', 'vc_theme_before_' );
 /**
- *
+ * Prefix for custom shortcodes after.
  */
 define( 'VC_SHORTCODE_AFTER_CUSTOMIZE_PREFIX', 'vc_theme_after_' );
 /**
- *
+ * Prefix for custom filter tag.
  */
 define( 'VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG', 'vc_shortcodes_css_class' );
 
@@ -31,18 +33,28 @@ require_once $this->path( 'SHORTCODES_DIR', 'core/class-wbpakeryshortcodefishbon
 require_once $this->path( 'SHORTCODES_DIR', 'core/class-wpbakeryshortcodescontainer.php' );
 
 /**
- * @since 4.9
- *
  * Class Vc_Shortcodes_Manager
+ *
+ * @since 4.9
  */
 class Vc_Shortcodes_Manager {
-	private $shortcode_classes = array(
-		'default' => array(),
-	);
-
+	/**
+	 * Shortcode classes.
+	 *
+	 * @var array
+	 */
+	private $shortcode_classes = [
+		'default' => [],
+	];
+	/**
+	 * Tag.
+	 *
+	 * @var string
+	 */
 	private $tag;
 	/**
 	 * Core singleton class
+	 *
 	 * @var self - pattern realization
 	 */
 	private static $instance;
@@ -60,16 +72,19 @@ class Vc_Shortcodes_Manager {
 		return self::$instance;
 	}
 
+	/**
+	 * Get tag.
+	 *
+	 * @return string
+	 */
 	public function getTag() {
 		return $this->tag;
 	}
 
 	/**
-	 * @param $tag
-	 * @return $this
-	 */
-	/**
-	 * @param $tag
+	 * Set tag.
+	 *
+	 * @param string $tag
 	 * @return $this
 	 */
 	public function setTag( $tag ) {
@@ -79,12 +94,9 @@ class Vc_Shortcodes_Manager {
 	}
 
 	/**
-	 * @param $tag
-	 * @return \WPBakeryShortCodeFishBones
-	 * @throws \Exception
-	 */
-	/**
-	 * @param $tag
+	 * Get shortcode element classes.
+	 *
+	 * @param string $tag
 	 * @return \WPBakeryShortCodeFishBones
 	 * @throws \Exception
 	 */
@@ -94,7 +106,7 @@ class Vc_Shortcodes_Manager {
 			return $this->shortcode_classes[ $currentScope ][ $tag ];
 		}
 		if ( ! isset( $this->shortcode_classes[ $currentScope ] ) ) {
-			$this->shortcode_classes[ $currentScope ] = array();
+			$this->shortcode_classes[ $currentScope ] = [];
 		}
 		$settings = WPBMap::getShortCode( $tag );
 		if ( empty( $settings ) ) {
@@ -124,10 +136,8 @@ class Vc_Shortcodes_Manager {
 	}
 
 	/**
-	 * @return \WPBakeryShortCodeFishBones
-	 * @throws \Exception
-	 */
-	/**
+	 * Get shortcode element classes.
+	 *
 	 * @return \WPBakeryShortCodeFishBones
 	 * @throws \Exception
 	 */
@@ -136,17 +146,21 @@ class Vc_Shortcodes_Manager {
 	}
 
 	/**
+	 * Get template.
+	 *
 	 * @param string $content
 	 *
 	 * @return string
 	 * @throws \Exception
 	 */
 	public function template( $content = '' ) {
-		return $this->getElementClass( $this->tag )->contentAdmin( array(), $content );
+		return $this->getElementClass( $this->tag )->contentAdmin( [], $content );
 	}
 
 	/**
-	 * @param $name
+	 * Get settings.
+	 *
+	 * @param string $name
 	 *
 	 * @return null
 	 * @throws \Exception
@@ -158,7 +172,9 @@ class Vc_Shortcodes_Manager {
 	}
 
 	/**
-	 * @param $atts
+	 * Rendering.
+	 *
+	 * @param array $atts
 	 * @param null $content
 	 * @param null $tag
 	 *
@@ -166,9 +182,15 @@ class Vc_Shortcodes_Manager {
 	 * @throws \Exception
 	 */
 	public function render( $atts, $content = null, $tag = null ) {
-		return $this->getElementClass( $this->tag )->output( $atts, $content );
+		if ( null !== $tag ) {
+			_deprecated_argument( __METHOD__, '7.9', '$tag' );
+		}
+		return $this->getElementClass( $this->tag )->output( $atts, $content ); // nosemgrep - escaping handled inside templates.
 	}
 
+	/**
+	 * Build shortcodes assets.
+	 */
 	public function buildShortcodesAssets() {
 		$elements = WPBMap::getAllShortCodes();
 		foreach ( $elements as $tag => $settings ) {
@@ -178,6 +200,9 @@ class Vc_Shortcodes_Manager {
 		}
 	}
 
+	/**
+	 * Build shortcodes assets for editable.
+	 */
 	public function buildShortcodesAssetsForEditable() {
 		$elements = WPBMap::getAllShortCodes(); // @todo create pull to use only where it is set inside function. BC problem
 		foreach ( $elements as $tag => $settings ) {
@@ -187,11 +212,9 @@ class Vc_Shortcodes_Manager {
 	}
 
 	/**
-	 * @param $tag
-	 * @return bool
-	 */
-	/**
-	 * @param $tag
+	 * Check if shortcode class is initialized.
+	 *
+	 * @param string $tag
 	 * @return bool
 	 */
 	public function isShortcodeClassInitialized( $tag ) {
@@ -201,11 +224,9 @@ class Vc_Shortcodes_Manager {
 	}
 
 	/**
-	 * @param $tag
-	 * @return bool
-	 */
-	/**
-	 * @param $tag
+	 * Unset element class.
+	 *
+	 * @param string $tag
 	 * @return bool
 	 */
 	public function unsetElementClass( $tag ) {
